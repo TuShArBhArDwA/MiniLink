@@ -1,6 +1,6 @@
 # Contributing to MiniLink
 
-First off, thanks for taking the time to contribute! 🎉
+First off, thanks for taking the time to contribute! 
 
 ## How Can I Contribute?
 
@@ -74,6 +74,18 @@ Examples:
 
 Feel free to open an issue with the `question` label!
 
+
 ---
 
-made with 💙 by tushar bhardwaj
+## Sponsor
+
+If you find this helpful, consider supporting me:
+
+- **Sponsor Me:** [Buy Me a Coffee!](https://github.com/sponsors/TuShArBhArDwA)
+
+
+---
+
+## Connect with me
+
+If you’d like to connect, feel free to reach out — [Click here](https://linktr.ee/codewithtusharbhardwaj)
