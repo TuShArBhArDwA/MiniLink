@@ -80,7 +80,7 @@ export default async function DashboardPage() {
                     Welcome back, {user?.name || session.user.email?.split('@')[0]}! 👋
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400">
-                    Here's how your MiniLink is performing
+                    Here is how your MiniLink is performing
                 </p>
             </div>
 
