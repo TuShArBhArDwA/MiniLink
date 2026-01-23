@@ -34,8 +34,8 @@ First off, thanks for taking the time to contribute! 🎉
 
 ```bash
 # Clone your fork
-git clone https://github.com/YOUR_USERNAME/minilink.git
-cd minilink
+git clone https://github.com/TuShArBhArDwA/MiniLink.git
+cd MiniLink
 
 # Install dependencies
 npm install
