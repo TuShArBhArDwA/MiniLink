@@ -1,5 +1,4 @@
 <div align="center">
-  <img src="https://via.placeholder.com/120x120/8B5CF6/ffffff?text=M" alt="MiniLink Logo" width="120" />
   
   # MiniLink
   
@@ -16,22 +15,22 @@
 
 ---
 
-## ✨ Features
+## Features
 
 | Feature | Description |
 |---------|-------------|
-| 🔗 **Unlimited Links** | Add as many links as you want with drag-drop reordering |
-| 📊 **Real-Time Analytics** | Track views, clicks, and engagement with beautiful charts |
-| 🎨 **6 Custom Themes** | From minimal to neon cyberpunk — express your style |
-| 🌓 **Dark/Light Mode** | Seamless theme switching for comfort |
-| 🔐 **Multiple Auth Options** | Google, GitHub, Twitter, or Email sign-in |
-| 📱 **Fully Responsive** | Looks perfect on any device |
-| ⚡ **Lightning Fast** | Edge-optimized with ISR caching |
-| 🔓 **Open Source** | MIT licensed — contribute and customize |
+| **Unlimited Links** | Add as many links as you want with drag-drop reordering |
+| **Real-Time Analytics** | Track views, clicks, and engagement with beautiful charts |
+| **6 Custom Themes** | From minimal to neon cyberpunk — express your style |
+| **Dark/Light Mode** | Seamless theme switching for comfort |
+| **Multiple Auth Options** | Google, GitHub, Twitter, or Email sign-in |
+| **Fully Responsive** | Looks perfect on any device |
+| **Lightning Fast** | Edge-optimized with ISR caching |
+| **Open Source** | MIT licensed — contribute and customize |
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -63,11 +62,11 @@ npx prisma db push
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) 🎉
+Open [http://localhost:3000](http://localhost:3000) 
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 minilink/
@@ -90,7 +89,7 @@ minilink/
 
 ---
 
-## 🔧 Environment Variables
+## Environment Variables
 
 Create a `.env.local` file:
 
@@ -115,7 +114,7 @@ NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=""
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |-------|------------|
@@ -129,7 +128,7 @@ NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=""
 
 ---
 
-## 📖 Documentation
+## Documentation
 
 - [High-Level Design (HLD)](docs/HLD.md)
 - [Low-Level Design (LLD)](docs/LLD.md)
@@ -137,7 +136,7 @@ NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=""
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
