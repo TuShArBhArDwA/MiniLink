@@ -6,7 +6,7 @@ MiniLink is a full-stack link-in-bio platform that allows users to create person
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                              MINILINK ARCHITECTURE                           │
+│                              MINILINK ARCHITECTURE                          │
 └─────────────────────────────────────────────────────────────────────────────┘
 
                                     ┌──────────────┐
