@@ -43,8 +43,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/minilink.git
-cd minilink
+git clone https://github.com/TuShArBhArDwA/MiniLink.git
+cd MiniLink
 
 # Install dependencies
 npm install
@@ -157,15 +157,20 @@ git push origin feature/amazing-feature
 
 ---
 
-## 📄 License
+## Sponsor
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+If you find this helpful, consider supporting me:
+
+- **Sponsor Me:** [Buy Me a Coffee!](https://github.com/sponsors/TuShArBhArDwA)
 
 ---
 
-<div align="center">
-  <br />
-  <p>Made With 💙 By <a href="https://www.linkedin.com/in/bhardwajtushar2004/"><strong>Tushar Bhardwaj</strong></a></p>
-  <br />
-  <a href="https://github.com/yourusername/minilink">⭐ Star this repo if you found it helpful!</a>
-</div>
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Connect with me
+
+If you’d like to connect, feel free to reach out — [Click here](https://linktr.ee/codewithtusharbhardwaj)
