@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
+import { auth } from '@clerk/nextjs';
 import { prisma } from '@/lib/prisma';
 
 // GET all links for current user
 export async function GET() {
     try {
-        const session = await auth();
+        const { userId } = auth();
 
-        if (!session?.user?.id) {
+        if (!userId) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
         const links = await prisma.link.findMany({
-            where: { userId: session.user.id },
+            where: { userId: userId },
             orderBy: { order: 'asc' },
         });
 
@@ -26,9 +26,9 @@ export async function GET() {
 // POST create new link
 export async function POST(request: NextRequest) {
     try {
-        const session = await auth();
+        const { userId } = auth();
 
-        if (!session?.user?.id) {
+        if (!userId) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 
         // Get the highest order number
         const lastLink = await prisma.link.findFirst({
-            where: { userId: session.user.id },
+            where: { userId: userId },
             orderBy: { order: 'desc' },
         });
 
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
                 url,
                 icon: icon || null,
                 order: newOrder,
-                userId: session.user.id,
+                userId: userId,
             },
         });
 
@@ -66,9 +66,9 @@ export async function POST(request: NextRequest) {
 // PATCH update link order (bulk)
 export async function PATCH(request: NextRequest) {
     try {
-        const session = await auth();
+        const { userId } = auth();
 
-        if (!session?.user?.id) {
+        if (!userId) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
@@ -82,7 +82,7 @@ export async function PATCH(request: NextRequest) {
         await Promise.all(
             links.map((link: { id: string; order: number }) =>
                 prisma.link.update({
-                    where: { id: link.id, userId: session.user.id },
+                    where: { id: link.id, userId: userId },
                     data: { order: link.order },
                 })
             )

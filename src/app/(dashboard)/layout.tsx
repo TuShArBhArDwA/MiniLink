@@ -1,24 +1,33 @@
 import { redirect } from 'next/navigation';
-import { auth } from '@/lib/auth';
+import { currentUser } from "@clerk/nextjs";
 import DashboardNav from '@/components/dashboard/dashboard-nav';
+import { SiteFooter } from '@/components/site-footer';
 
 export default async function DashboardLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    const session = await auth();
+    const user = await currentUser();
 
-    if (!session?.user) {
-        redirect('/login');
+    if (!user) {
+        redirect('/sign-in');
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-            <DashboardNav user={session.user} />
-            <main className="pt-16">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col">
+            <DashboardNav
+                user={{
+                    name: `${user.firstName} ${user.lastName}`,
+                    email: user.emailAddresses[0]?.emailAddress,
+                    username: user.username,
+                    image: user.imageUrl,
+                }}
+            />
+            <main className="pt-16 flex-1">
                 {children}
             </main>
+            <SiteFooter />
         </div>
     );
 }

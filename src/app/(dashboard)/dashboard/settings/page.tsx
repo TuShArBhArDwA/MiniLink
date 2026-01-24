@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession, signOut } from 'next-auth/react';
+import { useUser, useClerk } from '@clerk/nextjs';
 import { Loader2, AlertTriangle, Copy, Check } from 'lucide-react';
 
 export default function SettingsPage() {
-    const { data: session, update } = useSession();
+    const { user } = useUser();
+    const { signOut } = useClerk();
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [copied, setCopied] = useState(false);
@@ -14,8 +15,10 @@ export default function SettingsPage() {
     const [error, setError] = useState('');
 
     useEffect(() => {
-        fetchProfile();
-    }, []);
+        if (user) {
+            fetchProfile();
+        }
+    }, [user]);
 
     const fetchProfile = async () => {
         try {
@@ -64,7 +67,13 @@ export default function SettingsPage() {
             }
 
             setOriginalUsername(username);
-            await update({ username });
+
+            // Optionally update Clerk username if you want to sync, 
+            // but for now we are syncing local DB username.
+            if (user) {
+                await user.update({ username });
+            }
+
         } catch (error) {
             setError('Something went wrong');
         } finally {
@@ -167,7 +176,7 @@ export default function SettingsPage() {
                 <div className="space-y-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-500 mb-1">Email</label>
-                        <p className="text-gray-900 dark:text-white">{session?.user?.email}</p>
+                        <p className="text-gray-900 dark:text-white">{user?.emailAddresses[0]?.emailAddress}</p>
                     </div>
                 </div>
             </div>
@@ -187,7 +196,7 @@ export default function SettingsPage() {
                         </p>
                     </div>
                     <button
-                        onClick={() => signOut({ callbackUrl: '/' })}
+                        onClick={() => signOut()}
                         className="px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-lg font-medium hover:bg-red-200 dark:hover:bg-red-900/50 transition-colors"
                     >
                         Sign Out
@@ -195,9 +204,7 @@ export default function SettingsPage() {
                 </div>
             </div>
 
-            <div className="mt-12 text-center text-sm text-gray-500">
-                made with 💙 by tushar bhardwaj
-            </div>
+
         </div>
     );
 }

@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
+import { auth, currentUser } from '@clerk/nextjs';
 import { prisma } from '@/lib/prisma';
 
 // GET user profile
 export async function GET() {
     try {
-        const session = await auth();
+        const { userId } = auth();
 
-        if (!session?.user?.id) {
+        if (!userId) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const user = await prisma.user.findUnique({
-            where: { id: session.user.id },
+        let user = await prisma.user.findUnique({
+            where: { id: userId },
             select: {
                 id: true,
                 name: true,
@@ -24,6 +24,37 @@ export async function GET() {
             },
         });
 
+        // Sync user if not found in database
+        if (!user) {
+            const clerkUser = await currentUser();
+            if (clerkUser) {
+                const email = clerkUser.emailAddresses[0]?.emailAddress;
+                // Ensure email is available
+                if (!email) {
+                    return NextResponse.json({ error: 'Email required' }, { status: 400 });
+                }
+
+                user = await prisma.user.create({
+                    data: {
+                        id: userId,
+                        email: email,
+                        username: clerkUser.username || email.split('@')[0],
+                        name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim(),
+                        avatar: clerkUser.imageUrl,
+                    },
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        username: true,
+                        bio: true,
+                        avatar: true,
+                        theme: true,
+                    },
+                });
+            }
+        }
+
         return NextResponse.json(user);
     } catch (error) {
         console.error('Error fetching profile:', error);
@@ -34,9 +65,9 @@ export async function GET() {
 // PUT update profile
 export async function PUT(request: NextRequest) {
     try {
-        const session = await auth();
+        const { userId } = auth();
 
-        if (!session?.user?.id) {
+        if (!userId) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
@@ -46,8 +77,11 @@ export async function PUT(request: NextRequest) {
         if (username) {
             const existing = await prisma.user.findFirst({
                 where: {
-                    username,
-                    NOT: { id: session.user.id },
+                    username: {
+                        equals: username,
+                        mode: 'insensitive', // Case insensitive check
+                    },
+                    NOT: { id: userId },
                 },
             });
 
@@ -57,7 +91,7 @@ export async function PUT(request: NextRequest) {
         }
 
         const user = await prisma.user.update({
-            where: { id: session.user.id },
+            where: { id: userId },
             data: {
                 ...(name !== undefined && { name }),
                 ...(bio !== undefined && { bio }),

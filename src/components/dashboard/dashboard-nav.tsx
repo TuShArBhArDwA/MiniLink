@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { signOut } from 'next-auth/react';
+import { UserButton } from "@clerk/nextjs";
 import {
     Link2,
     LayoutDashboard,
@@ -10,13 +10,13 @@ import {
     Palette,
     BarChart3,
     Settings,
-    LogOut,
-    ExternalLink,
     Menu,
-    X
+    X,
+    ExternalLink,
+    Sun,
+    Moon
 } from 'lucide-react';
-import { useState } from 'react';
-import Image from 'next/image';
+import { useState, useEffect } from 'react';
 
 interface DashboardNavProps {
     user: {
@@ -30,6 +30,34 @@ interface DashboardNavProps {
 export default function DashboardNav({ user }: DashboardNavProps) {
     const pathname = usePathname();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isDark, setIsDark] = useState(false);
+
+    useEffect(() => {
+        // Check system preference and current class
+        if (
+            localStorage.theme === 'dark' ||
+            (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches) ||
+            document.documentElement.classList.contains('dark')
+        ) {
+            setIsDark(true);
+            document.documentElement.classList.add('dark');
+        } else {
+            setIsDark(false);
+            document.documentElement.classList.remove('dark');
+        }
+    }, []);
+
+    const toggleTheme = () => {
+        const newIsDark = !isDark;
+        setIsDark(newIsDark);
+        if (newIsDark) {
+            document.documentElement.classList.add('dark');
+            localStorage.theme = 'dark';
+        } else {
+            document.documentElement.classList.remove('dark');
+            localStorage.theme = 'light';
+        }
+    };
 
     const navItems = [
         { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -43,14 +71,19 @@ export default function DashboardNav({ user }: DashboardNavProps) {
 
     return (
         <>
-            <nav className="fixed top-0 left-0 right-0 z-50 h-16 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+            <nav className="fixed top-0 left-0 right-0 z-50 h-16 bg-white dark:bg-[#0a0a0f] border-b border-gray-200 dark:border-gray-800 transition-colors duration-300">
                 <div className="h-full px-4 flex items-center justify-between max-w-7xl mx-auto">
                     {/* Logo */}
-                    <Link href="/dashboard" className="flex items-center gap-2">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
-                            <Link2 className="w-4 h-4 text-white" />
+                    <Link href="/" className="flex items-center gap-2.5 group">
+                        <div className="relative w-9 h-9">
+                            <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-violet-500 via-purple-500 to-pink-500 group-hover:scale-110 transition-transform duration-300"></div>
+                            <div className="absolute inset-[2px] rounded-[10px] bg-white dark:bg-[#0a0a0f] flex items-center justify-center">
+                                <span className="text-lg font-black bg-gradient-to-br from-violet-500 to-pink-500 bg-clip-text text-transparent">M</span>
+                            </div>
                         </div>
-                        <span className="font-bold text-xl hidden sm:block">MiniLink</span>
+                        <span className="font-bold text-xl tracking-tight hidden sm:block">
+                            Mini<span className="bg-gradient-to-r from-violet-500 to-pink-500 bg-clip-text text-transparent">Link</span>
+                        </span>
                     </Link>
 
                     {/* Desktop Nav */}
@@ -62,8 +95,8 @@ export default function DashboardNav({ user }: DashboardNavProps) {
                                     key={item.href}
                                     href={item.href}
                                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${isActive
-                                            ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
-                                            : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+                                        ? 'bg-violet-50 dark:bg-violet-900/20 text-violet-600 dark:text-violet-400'
+                                        : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
                                         }`}
                                 >
                                     <item.icon className="w-4 h-4" />
@@ -75,12 +108,21 @@ export default function DashboardNav({ user }: DashboardNavProps) {
 
                     {/* Right side */}
                     <div className="flex items-center gap-3">
+                        {/* Theme Toggle */}
+                        <button
+                            onClick={toggleTheme}
+                            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-600 dark:text-gray-400"
+                            aria-label="Toggle theme"
+                        >
+                            {isDark ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5" />}
+                        </button>
+
                         {/* View Profile Button */}
                         {profileUrl && (
                             <Link
                                 href={profileUrl}
                                 target="_blank"
-                                className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors"
+                                className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-medium text-violet-600 dark:text-violet-400 hover:bg-violet-50 dark:hover:bg-violet-900/20 rounded-lg transition-colors"
                             >
                                 View Profile
                                 <ExternalLink className="w-4 h-4" />
@@ -91,34 +133,13 @@ export default function DashboardNav({ user }: DashboardNavProps) {
                         <div className="flex items-center gap-3">
                             <div className="hidden sm:block text-right">
                                 <p className="text-sm font-medium text-gray-900 dark:text-white">
-                                    {user.name || user.email}
+                                    {user.name}
                                 </p>
                                 {user.username && (
                                     <p className="text-xs text-gray-500">@{user.username}</p>
                                 )}
                             </div>
-                            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary-400 to-accent-400 flex items-center justify-center overflow-hidden">
-                                {user.image ? (
-                                    <Image
-                                        src={user.image}
-                                        alt={user.name || 'User'}
-                                        width={36}
-                                        height={36}
-                                        className="w-full h-full object-cover"
-                                    />
-                                ) : (
-                                    <span className="text-white font-medium text-sm">
-                                        {(user.name || user.email || 'U')[0].toUpperCase()}
-                                    </span>
-                                )}
-                            </div>
-                            <button
-                                onClick={() => signOut({ callbackUrl: '/' })}
-                                className="hidden sm:flex p-2 text-gray-400 hover:text-red-500 transition-colors"
-                                title="Sign out"
-                            >
-                                <LogOut className="w-5 h-5" />
-                            </button>
+                            <UserButton afterSignOutUrl="/" />
                         </div>
 
                         {/* Mobile menu button */}
@@ -149,8 +170,8 @@ export default function DashboardNav({ user }: DashboardNavProps) {
                                         href={item.href}
                                         onClick={() => setIsMobileMenuOpen(false)}
                                         className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors ${isActive
-                                                ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
-                                                : 'text-gray-600 dark:text-gray-400'
+                                            ? 'bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400'
+                                            : 'text-gray-600 dark:text-gray-400'
                                             }`}
                                     >
                                         <item.icon className="w-5 h-5" />
@@ -169,13 +190,10 @@ export default function DashboardNav({ user }: DashboardNavProps) {
                                     View Profile
                                 </Link>
                             )}
-                            <button
-                                onClick={() => signOut({ callbackUrl: '/' })}
-                                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-red-600"
-                            >
-                                <LogOut className="w-5 h-5" />
-                                Sign out
-                            </button>
+                            <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-800 mt-2 flex items-center justify-between">
+                                <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Account</span>
+                                <UserButton afterSignOutUrl="/" />
+                            </div>
                         </div>
                     </div>
                 </div>

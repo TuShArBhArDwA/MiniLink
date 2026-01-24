@@ -269,9 +269,7 @@ export default function LinksPage() {
                 </DndContext>
             )}
 
-            <div className="mt-12 text-center text-sm text-gray-500">
-                made with 💙 by tushar bhardwaj
-            </div>
+
         </div>
     );
 }

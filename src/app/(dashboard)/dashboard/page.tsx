@@ -1,4 +1,4 @@
-import { auth } from '@/lib/auth';
+import { auth, currentUser } from '@clerk/nextjs';
 import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import {
@@ -14,27 +14,95 @@ import {
 import CopyButton from '@/components/dashboard/copy-button';
 
 export default async function DashboardPage() {
-    const session = await auth();
+    const { userId } = auth();
+    const clerkUser = await currentUser();
 
-    if (!session?.user?.id) {
+    if (!userId || !clerkUser) {
         return null;
+    }
+
+    // Ensure user exists in Prisma
+    let dbUser = await prisma.user.findUnique({
+        where: { id: userId },
+    });
+
+    if (!dbUser) {
+        const email = clerkUser.emailAddresses[0]?.emailAddress;
+        if (email) {
+            // Check for existing user with same email (Legacy/NextAuth user)
+            const existingUser = await prisma.user.findUnique({
+                where: { email },
+            });
+
+            if (existingUser) {
+                // User exists but with different ID -> Migrate them
+                const timestamp = Date.now();
+
+                // 1. Rename old email AND username to free up unique constraints
+                await prisma.user.update({
+                    where: { id: existingUser.id },
+                    data: {
+                        email: `${email}.migrated.${timestamp}`,
+                        username: `${existingUser.username || 'user'}_migrated_${timestamp}`
+                    }
+                });
+
+                // 2. Create new user with Clerk ID
+                dbUser = await prisma.user.create({
+                    data: {
+                        id: userId,
+                        email: email,
+                        username: existingUser.username, // Keep original username
+                        name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim(),
+                        avatar: clerkUser.imageUrl,
+                    }
+                });
+
+                // 3. Move data (Links, PageViews) to new user
+                await prisma.link.updateMany({
+                    where: { userId: existingUser.id },
+                    data: { userId: userId }
+                });
+                await prisma.pageView.updateMany({
+                    where: { userId: existingUser.id },
+                    data: { userId: userId }
+                });
+
+                // 4. Delete old user (now empty of relations)
+                await prisma.user.delete({
+                    where: { id: existingUser.id }
+                });
+
+            } else {
+                // Completely new user
+                dbUser = await prisma.user.create({
+                    data: {
+                        id: userId,
+                        email: email,
+                        username: clerkUser.username || email.split('@')[0],
+                        name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim(),
+                        avatar: clerkUser.imageUrl,
+                    }
+                });
+            }
+        }
     }
 
     const [user, links, totalViews, totalClicks] = await Promise.all([
         prisma.user.findUnique({
-            where: { id: session.user.id },
+            where: { id: userId },
             select: { username: true, name: true, createdAt: true },
         }),
         prisma.link.findMany({
-            where: { userId: session.user.id },
+            where: { userId: userId },
             orderBy: { clicks: 'desc' },
             take: 5,
         }),
         prisma.pageView.count({
-            where: { userId: session.user.id },
+            where: { userId: userId },
         }),
         prisma.link.aggregate({
-            where: { userId: session.user.id },
+            where: { userId: userId },
             _sum: { clicks: true },
         }),
     ]);
@@ -77,7 +145,7 @@ export default async function DashboardPage() {
             {/* Header */}
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                    Welcome back, {user?.name || session.user.email?.split('@')[0]}! 👋
+                    Welcome back, {dbUser?.name || clerkUser.firstName}! 👋
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400">
                     Here is how your MiniLink is performing
@@ -209,10 +277,7 @@ export default async function DashboardPage() {
                 </div>
             </div>
 
-            {/* Footer */}
-            <div className="mt-12 text-center text-sm text-gray-500">
-                made with 💙 by tushar bhardwaj
-            </div>
+
         </div>
     );
 }

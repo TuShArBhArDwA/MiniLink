@@ -3,41 +3,10 @@ import { prisma } from '@/lib/prisma';
 import { headers } from 'next/headers';
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-    Instagram,
-    Youtube,
-    Twitter,
-    Github,
-    Linkedin,
-    Facebook,
-    Globe,
-    Mail,
-    MessageCircle,
-    Send,
-    Music2,
-    Twitch,
-    Coffee,
-    ShoppingBag,
-    Link2
-} from 'lucide-react';
-
-const iconMap: Record<string, any> = {
-    website: Globe,
-    instagram: Instagram,
-    youtube: Youtube,
-    twitter: Twitter,
-    github: Github,
-    linkedin: Linkedin,
-    facebook: Facebook,
-    email: Mail,
-    whatsapp: MessageCircle,
-    telegram: Send,
-    spotify: Music2,
-    twitch: Twitch,
-    kofi: Coffee,
-    shop: ShoppingBag,
-    link: Link2,
-};
+import { Link2 } from 'lucide-react';
+import LinkButton from '@/components/link-button';
+import ProfileLinks from '@/components/public-profile/profile-links';
+import PromoFooter from '@/components/public-profile/promo-footer';
 
 interface Props {
     params: { username: string };
@@ -98,7 +67,7 @@ export default async function ProfilePage({ params }: Props) {
             <div className="max-w-lg mx-auto px-4 py-12">
                 {/* Profile Header */}
                 <div
-                    className="text-center mb-8 p-6 rounded-3xl backdrop-blur-lg"
+                    className="text-center mb-8 p-6 rounded-3xl backdrop-blur-lg animate-fade-in-up"
                     style={{
                         background: 'var(--theme-card)',
                         color: 'var(--theme-text)'
@@ -127,9 +96,6 @@ export default async function ProfilePage({ params }: Props) {
                     <h1 className="text-2xl font-bold mb-1">
                         {user.name || `@${user.username}`}
                     </h1>
-                    {user.name && (
-                        <p className="text-sm opacity-70 mb-2">@{user.username}</p>
-                    )}
                     {user.bio && (
                         <p className="text-sm opacity-80 max-w-xs mx-auto">
                             {user.bio}
@@ -138,88 +104,11 @@ export default async function ProfilePage({ params }: Props) {
                 </div>
 
                 {/* Links */}
-                <div className="space-y-3">
-                    {user.links.map((link) => {
-                        const IconComponent = link.icon ? iconMap[link.icon] : Link2;
-                        const isCustomIcon = link.icon?.startsWith('http');
-
-                        return (
-                            <LinkButton
-                                key={link.id}
-                                link={link}
-                                IconComponent={IconComponent}
-                                isCustomIcon={isCustomIcon}
-                            />
-                        );
-                    })}
-                </div>
+                <ProfileLinks links={user.links} />
 
                 {/* Footer - Promotional */}
-                <div className="mt-12 text-center">
-                    <Link
-                        href="/"
-                        className="inline-flex flex-col items-center gap-1 opacity-70 hover:opacity-100 transition-opacity"
-                        style={{ color: 'var(--theme-text)' }}
-                    >
-                        <span className="text-xs">Create your own free page</span>
-                        <div className="flex items-center gap-1.5">
-                            <div className="w-5 h-5 rounded bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
-                                <Link2 className="w-3 h-3 text-white" />
-                            </div>
-                            <span className="font-semibold text-sm">MiniLink</span>
-                        </div>
-                    </Link>
-                    <p className="text-xs mt-4 opacity-50" style={{ color: 'var(--theme-text)' }}>
-                        made with 💙 by tushar bhardwaj
-                    </p>
-                </div>
+                <PromoFooter />
             </div>
         </div>
-    );
-}
-
-// Client component for tracking clicks
-function LinkButton({
-    link,
-    IconComponent,
-    isCustomIcon
-}: {
-    link: any;
-    IconComponent: any;
-    isCustomIcon: boolean;
-}) {
-    const handleClick = async () => {
-        // Track click
-        fetch(`/api/track/${link.id}`, { method: 'POST' });
-    };
-
-    return (
-        <a
-            href={link.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={handleClick}
-            className="block w-full p-4 rounded-2xl transition-all duration-300 hover:scale-[1.02] hover:shadow-lg group"
-            style={{
-                background: 'var(--theme-link-bg)',
-                border: '1px solid var(--theme-link-border)',
-                color: 'var(--theme-text)',
-            }}
-        >
-            <div className="flex items-center justify-center gap-3">
-                {isCustomIcon ? (
-                    <Image
-                        src={link.icon}
-                        alt=""
-                        width={20}
-                        height={20}
-                        className="w-5 h-5 object-contain"
-                    />
-                ) : IconComponent ? (
-                    <IconComponent className="w-5 h-5" />
-                ) : null}
-                <span className="font-medium">{link.title}</span>
-            </div>
-        </a>
     );
 }

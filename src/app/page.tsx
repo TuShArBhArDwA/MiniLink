@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useUser } from "@clerk/nextjs";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -18,8 +19,10 @@ import {
     Smartphone,
     ChevronRight
 } from 'lucide-react';
+import { SiteFooter } from '@/components/site-footer';
 
 export default function HomePage() {
+    const { isSignedIn } = useUser();
     const [isDark, setIsDark] = useState(false);
     const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
 
@@ -127,18 +130,29 @@ export default function HomePage() {
                             >
                                 <Github className="w-5 h-5" />
                             </Link>
-                            <Link
-                                href="/login"
-                                className="px-4 py-2 text-sm font-medium hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
-                            >
-                                Log In
-                            </Link>
-                            <Link
-                                href="/register"
-                                className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-violet-600 to-pink-600 rounded-xl hover:shadow-lg hover:shadow-violet-500/25 hover:-translate-y-0.5 transition-all duration-300"
-                            >
-                                Get Started
-                            </Link>
+                            {isSignedIn ? (
+                                <Link
+                                    href="/dashboard"
+                                    className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-violet-600 to-pink-600 rounded-xl hover:shadow-lg hover:shadow-violet-500/25 hover:-translate-y-0.5 transition-all duration-300"
+                                >
+                                    Dashboard
+                                </Link>
+                            ) : (
+                                <>
+                                    <Link
+                                        href="/sign-in"
+                                        className="px-4 py-2 text-sm font-medium hover:text-violet-600 dark:hover:text-violet-400 transition-colors"
+                                    >
+                                        Log In
+                                    </Link>
+                                    <Link
+                                        href="/sign-up"
+                                        className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-violet-600 to-pink-600 rounded-xl hover:shadow-lg hover:shadow-violet-500/25 hover:-translate-y-0.5 transition-all duration-300"
+                                    >
+                                        Get Started
+                                    </Link>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -168,7 +182,7 @@ export default function HomePage() {
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                             <Link
-                                href="/register"
+                                href="/sign-up"
                                 className="group inline-flex items-center gap-2 px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-violet-600 to-pink-600 rounded-2xl hover:shadow-xl hover:shadow-violet-500/30 hover:-translate-y-1 transition-all duration-300"
                             >
                                 Create Your MiniLink
@@ -192,7 +206,7 @@ export default function HomePage() {
                                 {/* Laptop Mockup */}
                                 <div className="relative">
                                     {/* Laptop Screen */}
-                                    <div className="relative w-[600px] h-[380px] bg-gray-900 rounded-t-xl p-2 shadow-2xl">
+                                    <div className="relative w-[600px] h-[380px] bg-gray-900 rounded-t-xl p-2 shadow-2xl mx-auto">
                                         {/* Camera */}
                                         <div className="absolute top-2 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-700 rounded-full"></div>
                                         {/* Screen Content */}
@@ -562,7 +576,7 @@ export default function HomePage() {
 
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                                 <Link
-                                    href="/register"
+                                    href="/sign-up"
                                     className="group inline-flex items-center gap-3 px-8 py-4 text-lg font-semibold text-violet-600 bg-white rounded-2xl hover:shadow-2xl hover:shadow-white/20 hover:-translate-y-1 transition-all duration-300"
                                 >
                                     Get Started Free
@@ -583,42 +597,7 @@ export default function HomePage() {
             </section>
 
             {/* Footer */}
-            <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-gray-200/50 dark:border-white/5">
-                <div className="max-w-7xl mx-auto">
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-                        <div className="flex items-center gap-2.5">
-                            <div className="relative w-8 h-8">
-                                <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-violet-500 via-purple-500 to-pink-500"></div>
-                                <div className="absolute inset-[2px] rounded-[6px] bg-white dark:bg-[#0a0a0f] flex items-center justify-center">
-                                    <span className="text-sm font-black bg-gradient-to-br from-violet-500 to-pink-500 bg-clip-text text-transparent">M</span>
-                                </div>
-                            </div>
-                            <span className="font-semibold">MiniLink</span>
-                        </div>
-
-                        <p className="text-gray-600 dark:text-gray-400 text-sm">
-                            Made With 💙 By{' '}
-                            <a
-                                href="https://www.linkedin.com/in/bhardwajtushar2004/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="font-semibold text-violet-600 dark:text-violet-400 hover:underline"
-                            >
-                                Tushar Bhardwaj
-                            </a>
-                        </p>
-
-                        <div className="flex items-center gap-6 text-sm">
-                            <Link href="https://github.com" target="_blank" className="text-gray-600 dark:text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors font-medium">
-                                GitHub
-                            </Link>
-                            <Link href="/login" className="text-gray-600 dark:text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 transition-colors font-medium">
-                                Login
-                            </Link>
-                        </div>
-                    </div>
-                </div>
-            </footer>
+            <SiteFooter />
         </div>
     );
 }

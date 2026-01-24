@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
 import { Loader2, Check, Upload } from 'lucide-react';
 import Image from 'next/image';
+import { CldUploadButton } from 'next-cloudinary';
 
 const THEMES = [
     { id: 'default', name: 'Clean', preview: 'bg-gradient-to-br from-gray-100 to-gray-200' },
@@ -15,7 +17,7 @@ const THEMES = [
 ];
 
 export default function AppearancePage() {
-    const { data: session, update } = useSession();
+    const { user } = useUser();
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [profile, setProfile] = useState({
@@ -26,8 +28,10 @@ export default function AppearancePage() {
     });
 
     useEffect(() => {
-        fetchProfile();
-    }, []);
+        if (user) {
+            fetchProfile();
+        }
+    }, [user]);
 
     const fetchProfile = async () => {
         try {
@@ -46,6 +50,8 @@ export default function AppearancePage() {
         }
     };
 
+    const router = useRouter();
+
     const handleSave = async () => {
         setIsSaving(true);
         try {
@@ -56,11 +62,27 @@ export default function AppearancePage() {
             });
 
             if (res.ok) {
-                // Update session
-                await update({ name: profile.name });
+                // Update Clerk user name if changed
+                // Update Clerk user name if changed
+                if (user && profile.name) {
+                    const nameParts = profile.name.trim().split(/\s+/);
+                    const firstName = nameParts[0];
+                    const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : '';
+
+                    await user.update({
+                        firstName: firstName,
+                        lastName: lastName,
+                    });
+                }
+
+                router.refresh();
+                alert('Changes saved successfully!');
+            } else {
+                alert('Failed to save changes. Please try again.');
             }
         } catch (error) {
             console.error('Failed to save profile:', error);
+            alert('An error occurred. Please try again.');
         } finally {
             setIsSaving(false);
         }
@@ -103,23 +125,37 @@ export default function AppearancePage() {
                                 />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center text-white text-2xl font-bold">
-                                    {(profile.name || session?.user?.email || 'U')[0].toUpperCase()}
+                                    {(profile.name || user?.emailAddresses[0]?.emailAddress || 'U')[0].toUpperCase()}
                                 </div>
                             )}
                         </div>
                     </div>
 
                     <div className="flex-1">
-                        <label className="block text-sm font-medium mb-2">Avatar URL</label>
-                        <input
-                            type="url"
-                            className="input-field"
-                            placeholder="https://res.cloudinary.com/..."
-                            value={profile.avatar}
-                            onChange={(e) => setProfile({ ...profile, avatar: e.target.value })}
-                        />
+                        <label className="block text-sm font-medium mb-2">Avatar</label>
+                        <div className="flex gap-3">
+                            <input
+                                type="url"
+                                className="input-field flex-1"
+                                placeholder="https://..."
+                                value={profile.avatar}
+                                onChange={(e) => setProfile({ ...profile, avatar: e.target.value })}
+                            />
+                            <CldUploadButton
+                                uploadPreset="minilink_preset"
+                                onUpload={(result: any) => {
+                                    if (result.info?.secure_url) {
+                                        setProfile((prev) => ({ ...prev, avatar: result.info.secure_url }));
+                                    }
+                                }}
+                                className="px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-colors flex items-center gap-2"
+                            >
+                                <Upload className="w-4 h-4" />
+                                <span>Upload</span>
+                            </CldUploadButton>
+                        </div>
                         <p className="text-xs text-gray-500 mt-1">
-                            Upload your image to Cloudinary and paste the URL
+                            Upload an image or paste a direct URL
                         </p>
                     </div>
                 </div>
@@ -185,7 +221,7 @@ export default function AppearancePage() {
                 <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="btn-primary"
+                    className="btn-primary min-w-[140px]"
                 >
                     {isSaving ? (
                         <>
@@ -198,9 +234,7 @@ export default function AppearancePage() {
                 </button>
             </div>
 
-            <div className="mt-12 text-center text-sm text-gray-500">
-                made with 💙 by tushar bhardwaj
-            </div>
+
         </div>
     );
 }

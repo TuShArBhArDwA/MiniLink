@@ -1,12 +1,12 @@
-import { auth } from '@/lib/auth';
+import { auth } from '@clerk/nextjs';
 import { prisma } from '@/lib/prisma';
 import { Eye, MousePointer, TrendingUp, BarChart3 } from 'lucide-react';
 import AnalyticsCharts from '@/components/dashboard/analytics-charts';
 
 export default async function AnalyticsPage() {
-    const session = await auth();
+    const { userId } = auth();
 
-    if (!session?.user?.id) {
+    if (!userId) {
         return null;
     }
 
@@ -22,20 +22,20 @@ export default async function AnalyticsPage() {
         recentClicks,
     ] = await Promise.all([
         prisma.pageView.count({
-            where: { userId: session.user.id },
+            where: { userId: userId },
         }),
         prisma.link.aggregate({
-            where: { userId: session.user.id },
+            where: { userId: userId },
             _sum: { clicks: true },
         }),
         prisma.link.findMany({
-            where: { userId: session.user.id },
+            where: { userId: userId },
             orderBy: { clicks: 'desc' },
             select: { id: true, title: true, clicks: true, url: true },
         }),
         prisma.pageView.findMany({
             where: {
-                userId: session.user.id,
+                userId: userId,
                 createdAt: { gte: thirtyDaysAgo },
             },
             select: { createdAt: true },
@@ -43,7 +43,7 @@ export default async function AnalyticsPage() {
         }),
         prisma.click.findMany({
             where: {
-                link: { userId: session.user.id },
+                link: { userId: userId },
                 createdAt: { gte: thirtyDaysAgo },
             },
             select: { createdAt: true },
@@ -195,9 +195,7 @@ export default async function AnalyticsPage() {
                 )}
             </div>
 
-            <div className="mt-12 text-center text-sm text-gray-500">
-                made with 💙 by tushar bhardwaj
-            </div>
+
         </div>
     );
 }
