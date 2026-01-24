@@ -8,30 +8,33 @@
 ┌──────────────────┐       ┌──────────────────┐       ┌──────────────────┐
 │      User        │       │      Link        │       │      Click       │
 ├──────────────────┤       ├──────────────────┤       ├──────────────────┤
-│ id (PK)          │───┐   │ id (PK)          │───┐   │ id (PK)          │
+│ id (PK) [ClerkID]│───┐   │ id (PK)          │───┐   │ id (PK)          │
 │ email (UNIQUE)   │   │   │ title            │   │   │ createdAt        │
 │ username (UNIQUE)│   │   │ url              │   │   │ userAgent        │
 │ name             │   │   │ icon             │   │   │ referer          │
 │ bio              │   │   │ order            │   │   │ country          │
 │ avatar           │   │   │ isActive         │   └──→│ linkId (FK)      │
 │ theme            │   │   │ clicks           │       └──────────────────┘
-│ password         │   │   │ createdAt        │
-│ createdAt        │   │   │ updatedAt        │       ┌──────────────────┐
-│ updatedAt        │   └──→│ userId (FK)      │       │    PageView      │
-└──────────────────┘       └──────────────────┘       ├──────────────────┤
-         │                                            │ id (PK)          │
-         │         ┌──────────────────┐               │ createdAt        │
-         │         │     Account      │               │ userAgent        │
-         │         ├──────────────────┤               │ referer          │
-         │         │ id (PK)          │               │ country          │
-         ├────────→│ userId (FK)      │               │ userId (FK)      │←┐
-         │         │ provider         │               └──────────────────┘ │
-         │         │ providerAccountId│                                    │
-         │         │ access_token     │                                    │
-         │         │ refresh_token    │                                    │
-         │         └──────────────────┘                                    │
-         │                                                                 │
-         └─────────────────────────────────────────────────────────────────┘
+│ createdAt        │   │   │ createdAt        │
+│ updatedAt        │   │   │ updatedAt        │       ┌──────────────────┐
+└──────────────────┘   └──→│ userId (FK)      │       │    PageView      │
+                           └──────────────────┘       ├──────────────────┤
+                                                      │ id (PK)          │
+                                                      │ createdAt        │
+                                                      │ userAgent        │
+                                                      │ referer          │
+                                                      │ country          │
+                                                      │ userId (FK)      │←┐
+                                                      └──────────────────┘ │
+                                                                           │
+                                                                           │
+                                                                           │
+                                                                           │
+           (Note: Auth & Identity managed externally by Clerk)             │
+                                                                           │
+           (User ID in DB matches Clerk User ID for mapping)               │
+                                                                           │
+           └───────────────────────────────────────────────────────────────┘
 ```
 
 ### 1.2 Table Definitions
@@ -39,15 +42,13 @@
 #### User Table
 ```sql
 CREATE TABLE "User" (
-    id            TEXT PRIMARY KEY DEFAULT cuid(),
+    id            TEXT PRIMARY KEY,  -- Matches Clerk User ID
     email         TEXT UNIQUE NOT NULL,
     username      TEXT UNIQUE,
     name          TEXT,
     bio           TEXT,
     avatar        TEXT,
     theme         TEXT DEFAULT 'default',
-    password      TEXT,
-    "emailVerified" TIMESTAMP,
     "createdAt"   TIMESTAMP DEFAULT NOW(),
     "updatedAt"   TIMESTAMP
 );
@@ -78,11 +79,7 @@ CREATE INDEX idx_link_userId ON "Link"("userId");
 ## 2. API Endpoints
 
 ### 2.1 Authentication APIs
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Register new user |
-| POST | `/api/auth/[...nextauth]` | NextAuth handler |
+*Managed by Clerk (External)*
 
 ### 2.2 Link APIs
 
@@ -99,7 +96,7 @@ CREATE INDEX idx_link_userId ON "Link"("userId");
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/user/profile` | Get user profile |
+| GET | `/api/user/profile` | Get user profile (Lazy Sync) |
 | PUT | `/api/user/profile` | Update profile |
 
 ### 2.4 Analytics APIs
@@ -114,35 +111,31 @@ CREATE INDEX idx_link_userId ON "Link"("userId");
 ```
 src/
 ├── app/
-│   ├── (auth)/                 # Auth route group
-│   │   ├── login/page.tsx
-│   │   └── register/page.tsx
-│   ├── (dashboard)/            # Dashboard route group
+│   ├── (auth)/                 # Clerk Auth pages
+│   │   ├── sign-in/[[..sign-in]]/page.tsx
+│   │   └── sign-up/[[..sign-up]]/page.tsx
+│   ├── (dashboard)/            # Protected dashboard
 │   │   └── dashboard/
 │   │       ├── page.tsx        # Dashboard home
 │   │       ├── links/page.tsx  # Link management
 │   │       ├── appearance/page.tsx
 │   │       ├── analytics/page.tsx
 │   │       └── settings/page.tsx
-│   ├── [username]/page.tsx     # Public profile (dynamic)
+│   ├── [username]/page.tsx     # Public profile (SSR + Client Components)
 │   ├── api/                    # API routes
-│   ├── layout.tsx              # Root layout
-│   └── page.tsx                # Landing page
+│   └── layout.tsx              # Root layout
 ├── components/
 │   ├── dashboard/              # Dashboard components
 │   │   ├── dashboard-nav.tsx
-│   │   ├── copy-button.tsx
-│   │   ├── icon-picker.tsx
 │   │   └── analytics-charts.tsx
-│   ├── ui/                     # Reusable UI
-│   │   └── toaster.tsx
-│   └── providers.tsx           # Context providers
+│   ├── public-profile/         # Public profile components
+│   │   ├── profile-links.tsx
+│   │   └── promo-footer.tsx
+│   └── ui/                     # Reusable UI
 ├── lib/
-│   ├── auth.ts                 # NextAuth config
 │   ├── prisma.ts               # Prisma client
 │   └── utils.ts                # Utility functions
-└── types/
-    └── next-auth.d.ts          # Type extensions
+└── middleware.ts               # Clerk Middleware
 ```
 
 ### 3.2 Key Components
@@ -176,12 +169,11 @@ interface Link {
 
 ### 4.1 Server State
 - **Prisma Client** - Database queries via server components
-- **Server Actions** - Form mutations
+- **Clerk `auth()`** - Server-side authentication helpers
 
 ### 4.2 Client State
 - **useState** - Local component state
-- **useSession** - Authentication state (NextAuth)
-- **Context API** - Toast notifications
+- **useUser/useAuth** - Client-side auth state (Clerk)
 
 ## 5. Authentication Flow
 
@@ -191,30 +183,27 @@ interface Link {
 └─────────────────────────────────────────────────────────────────┘
 
   ┌──────────┐     ┌──────────────┐     ┌──────────────┐
-  │  User    │────▶│  Login Page  │────▶│   NextAuth   │
+  │  User    │────▶│  Login Page  │────▶│    Clerk     │
   └──────────┘     └──────────────┘     └──────┬───────┘
                                                │
-                   ┌───────────────────────────┼───────────────────┐
-                   │                           │                   │
-                   ▼                           ▼                   ▼
-          ┌───────────────┐          ┌───────────────┐    ┌───────────────┐
-          │    Google     │          │    GitHub     │    │  Credentials  │
-          │    OAuth      │          │    OAuth      │    │   (Email)     │
-          └───────┬───────┘          └───────┬───────┘    └───────┬───────┘
-                  │                          │                    │
-                  └──────────────────────────┼────────────────────┘
+                                               ▼
+                                      ┌────────────────┐
+                                      │ Authenticated  │
+                                      │   Session      │
+                                      └──────┬─────────┘
                                              │
                                              ▼
-                                    ┌───────────────┐
-                                    │  JWT Session  │
-                                    │   Created     │
-                                    └───────┬───────┘
-                                            │
-                                            ▼
-                                    ┌───────────────┐
-                                    │   Dashboard   │
-                                    │   Redirect    │
-                                    └───────────────┘
+                                     ┌───────────────┐
+                                     │   Dashboard   │
+                                     │   Redirect    │
+                                     └───────┬───────┘
+                                             │
+                                             ▼
+                                  ┌────────────────────┐
+                                  │    Lazy Sync       │
+                                  │ (Check DB & Create │
+                                  │   if not exists)   │
+                                  └────────────────────┘
 ```
 
 ## 6. Theme System

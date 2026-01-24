@@ -55,16 +55,16 @@ MiniLink is a full-stack link-in-bio platform that allows users to create person
 - **Connection Pooling** - Serverless optimization
 - **Row-Level Security** - Data protection
 
-### 2.4 Authentication (NextAuth.js v5)
-- **OAuth Providers** - Google, GitHub, Twitter
-- **Credentials** - Email/Password
-- **JWT Sessions** - Stateless authentication
+### 2.4 Authentication (Clerk)
+- **Managed Auth** - Handles login, sessions, and security
+- **Multi-Factor Auth** - Built-in security
+- **User Management** - Dashboard for user control
 
 ## 3. Data Flow
 
 ### 3.1 User Registration Flow
 ```
-User → Sign Up Page → OAuth/Credentials → NextAuth → Create User → Generate Username → Dashboard
+User → Clerk Sign Up → Clerk Redirect → MiniLink Dashboard → Lazy Sync to Database
 ```
 
 ### 3.2 Public Profile View Flow
@@ -84,16 +84,17 @@ Visitor → Click Link → POST /api/track → Increment Counter → Redirect to
 | **Database** | Connection pooling via Supabase, indexed queries |
 | **Caching** | ISR for public profiles, edge caching |
 | **Images** | Cloudinary CDN with automatic optimization |
+| **Auth** | Offloaded to Clerk (scales independently) |
 | **API** | Edge functions, serverless auto-scaling |
 
 ## 5. Security Measures
 
-- **Authentication** - OAuth 2.0 + JWT tokens
-- **Authorization** - Middleware route protection
+- **Authentication** - Clerk (SOC2 Compliant)
+- **Authorization** - Clerk Middleware
 - **Data Validation** - Zod schemas
 - **SQL Injection** - Prisma parameterized queries
 - **XSS Prevention** - React automatic escaping
-- **CSRF Protection** - NextAuth built-in
+- **CSRF Protection** - Built-in framework protections
 
 ## 6. Third-Party Integrations
 
@@ -102,9 +103,7 @@ Visitor → Click Link → POST /api/track → Increment Counter → Redirect to
 | **Supabase** | PostgreSQL database hosting |
 | **Cloudinary** | Image upload and CDN |
 | **Vercel** | Hosting and deployment |
-| **Google OAuth** | Social authentication |
-| **GitHub OAuth** | Social authentication |
-| **Twitter OAuth** | Social authentication |
+| **Clerk** | Authentication & User Management |
 
 ---
 

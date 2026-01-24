@@ -23,7 +23,9 @@
 | **Real-Time Analytics** | Track views, clicks, and engagement with beautiful charts |
 | **6 Custom Themes** | From minimal to neon cyberpunk — express your style |
 | **Dark/Light Mode** | Seamless theme switching for comfort |
-| **Multiple Auth Options** | Google, GitHub, Twitter, or Email sign-in |
+| **Clerk Authentication** | Secure and easy sign-in with Email, Google, etc. |
+| **Cloudinary Integration** | Fast and optimized image uploads for profiles |
+| **Premium UI** | Animated interfaces, glassmorphism effects, and dynamic gradients |
 | **Fully Responsive** | Looks perfect on any device |
 | **Lightning Fast** | Edge-optimized with ISR caching |
 | **Open Source** | MIT licensed — contribute and customize |
@@ -37,6 +39,8 @@
 - Node.js 18+
 - npm or yarn
 - [Supabase](https://supabase.com) account (free tier)
+- [Clerk](https://clerk.com) account (for auth)
+- [Cloudinary](https://cloudinary.com) account (for images)
 
 ### Installation
 
@@ -98,18 +102,17 @@ Create a `.env.local` file:
 DATABASE_URL="postgresql://..."
 DIRECT_URL="postgresql://..."
 
-# NextAuth
-NEXTAUTH_SECRET="your-secret-key"
-NEXTAUTH_URL="http://localhost:3000"
-
-# OAuth Providers
-GOOGLE_CLIENT_ID=""
-GOOGLE_CLIENT_SECRET=""
-GITHUB_CLIENT_ID=""
-GITHUB_CLIENT_SECRET=""
+# Clerk Authentication
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
 
 # Cloudinary (for image uploads)
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=""
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="your-cloud-name"
+CLOUDINARY_API_KEY="your-api-key"
+CLOUDINARY_API_SECRET="your-api-secret"
+
+# App URL
+NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ```
 
 ---
@@ -123,7 +126,8 @@ NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=""
 | **Styling** | Tailwind CSS |
 | **Database** | PostgreSQL (Supabase) |
 | **ORM** | Prisma |
-| **Auth** | NextAuth.js v5 |
+| **Auth** | Clerk |
+| **Images** | Cloudinary |
 | **Deployment** | Vercel |
 
 ---
