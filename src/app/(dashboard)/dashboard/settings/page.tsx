@@ -71,7 +71,12 @@ export default function SettingsPage() {
             // Optionally update Clerk username if you want to sync, 
             // but for now we are syncing local DB username.
             if (user) {
-                await user.update({ username });
+                try {
+                    await user.update({ username });
+                } catch (clerkError) {
+                    // Ignore Clerk update errors as long as our DB is updated
+                    console.warn('Clerk username sync failed:', clerkError);
+                }
             }
 
         } catch (error) {
@@ -84,6 +89,10 @@ export default function SettingsPage() {
     const profileUrl = username
         ? `${process.env.NEXT_PUBLIC_APP_URL || window.location.origin}/${username}`
         : '';
+
+    const displayDomain = process.env.NEXT_PUBLIC_APP_URL
+        ? process.env.NEXT_PUBLIC_APP_URL.replace(/^https?:\/\//, '')
+        : 'minilink.app';
 
     const handleCopy = async () => {
         await navigator.clipboard.writeText(profileUrl);
@@ -119,7 +128,7 @@ export default function SettingsPage() {
                     <div className="flex gap-3">
                         <div className="flex-1 flex items-center">
                             <span className="px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-r-0 border-gray-200 dark:border-gray-700 rounded-l-xl text-gray-500 text-sm">
-                                minilink.app/
+                                {displayDomain}/
                             </span>
                             <input
                                 type="text"
