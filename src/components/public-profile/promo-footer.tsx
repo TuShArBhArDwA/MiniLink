@@ -27,10 +27,6 @@ export default function PromoFooter() {
                     </span>
                 </div>
             </Link>
-
-            <p className="flex items-center justify-center gap-1.5 text-xs mt-8 opacity-60 font-medium tracking-wide" style={{ color: 'var(--theme-text)' }}>
-                made with <Heart className="w-3 h-3 text-red-500 fill-red-500 animate-pulse-heart" /> by tushar bhardwaj
-            </p>
         </div>
     );
 }
