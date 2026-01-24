@@ -95,7 +95,7 @@ export default async function DashboardPage() {
                         <div className="flex items-center gap-3">
                             <CopyButton text={profileUrl} />
                             <Link
-                                href={`/${user.username}`}
+                                href={`/${user?.username}`}
                                 target="_blank"
                                 className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
                             >
