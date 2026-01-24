@@ -24,8 +24,8 @@ export default function NotFound() {
                 </h2>
 
                 <p className="text-gray-400 mb-8">
-                    The link you are looking for doesn't exist or has been moved.
-                    But hey, that's a great opportunity!
+                    The link you are looking for doesn&apos;t exist or has been moved.
+                    But hey, that&apos;s a great opportunity!
                 </p>
 
                 {/* Cards */}
