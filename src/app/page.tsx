@@ -17,16 +17,301 @@ import {
     Shield,
     Globe,
     Smartphone,
-    ChevronRight
+    ChevronRight,
+    ChevronDown
 } from 'lucide-react';
 import { SiteFooter } from '@/components/site-footer';
+import { Plus, Check, ExternalLink, Copy, MousePointer2 } from 'lucide-react';
 
-export default function HomePage() {
-    const { isSignedIn } = useUser();
-    const [isDark, setIsDark] = useState(false);
-    const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
+// Animated Laptop Demo Component
+function LaptopDemo({ isDark }: { isDark: boolean }) {
+    const [step, setStep] = useState(0);
+    const [typedText, setTypedText] = useState('');
+    const [showCursor, setShowCursor] = useState(true);
+    const [cursorPos, setCursorPos] = useState({ x: 300, y: 150 });
+    const [hoveredLink, setHoveredLink] = useState(-1);
+    const [isClicking, setIsClicking] = useState(false);
+
+    const steps = [
+        { title: 'Create your profile', subtitle: 'Choose your username' },
+        { title: 'Add your first link', subtitle: 'Connect your socials' },
+        { title: 'Your links are ready', subtitle: 'All connected!' },
+        { title: 'Share your MiniLink!', subtitle: 'Copy & share' },
+    ];
+
+    const username = 'tushar';
+
+    // SVG icons for each link
+    const linkIcons = {
+        portfolio: <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>,
+        linkedin: <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>,
+        twitter: <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>,
+        github: <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" /></svg>,
+    };
+
+    const links = [
+        { name: 'Portfolio', icon: linkIcons.portfolio, color: 'from-blue-500 to-cyan-500' },
+        { name: 'LinkedIn', icon: linkIcons.linkedin, color: 'from-blue-600 to-blue-700' },
+        { name: 'Twitter/X', icon: linkIcons.twitter, color: 'from-gray-700 to-gray-900' },
+        { name: 'GitHub', icon: linkIcons.github, color: 'from-purple-600 to-purple-800' },
+    ];
+
+    // Step 0: Typing animation with cursor following
+    useEffect(() => {
+        if (step === 0) {
+            setTypedText('');
+            setHoveredLink(-1);
+            setIsClicking(false);
+            setCursorPos({ x: 320, y: 155 });
+            let i = 0;
+            const typingInterval = setInterval(() => {
+                if (i < username.length) {
+                    setTypedText(username.slice(0, i + 1));
+                    setCursorPos({ x: 320 + (i * 8), y: 155 });
+                    i++;
+                } else {
+                    clearInterval(typingInterval);
+                }
+            }, 200);
+            return () => clearInterval(typingInterval);
+        }
+    }, [step]);
+
+    // Step 1: Cursor moves to Add Link button
+    useEffect(() => {
+        if (step === 1) {
+            setHoveredLink(-1);
+            setIsClicking(false);
+            const timer = setTimeout(() => {
+                setCursorPos({ x: 310, y: 225 });
+            }, 300);
+            return () => clearTimeout(timer);
+        }
+    }, [step]);
+
+    // Step 2: Cursor hovers over each link sequentially
+    useEffect(() => {
+        if (step === 2) {
+            setIsClicking(false);
+            let currentLink = 0;
+            // Adjusted positions to align with the link cards (centered on each link row)
+            const linkPositions = [
+                { x: 420, y: 175 },
+                { x: 420, y: 210 },
+                { x: 420, y: 245 },
+                { x: 420, y: 280 },
+            ];
+
+            setHoveredLink(0);
+            setCursorPos(linkPositions[0]);
+
+            const hoverInterval = setInterval(() => {
+                currentLink = (currentLink + 1) % 4;
+                setHoveredLink(currentLink);
+                setCursorPos(linkPositions[currentLink]);
+            }, 600);
+
+            return () => clearInterval(hoverInterval);
+        }
+    }, [step]);
+
+    // Step 3: Show congratulations
+    useEffect(() => {
+        if (step === 3) {
+            setHoveredLink(-1);
+            setIsClicking(false);
+            // Center cursor near the celebration area
+            setCursorPos({ x: 300, y: 200 });
+        }
+    }, [step]);
 
     useEffect(() => {
+        // Cursor blink for typing
+        const cursorInterval = setInterval(() => setShowCursor(s => !s), 530);
+        return () => clearInterval(cursorInterval);
+    }, []);
+
+    useEffect(() => {
+        // Auto-cycle through steps
+        const stepInterval = setInterval(() => {
+            setStep(s => (s + 1) % 4);
+        }, 3500);
+        return () => clearInterval(stepInterval);
+    }, []);
+
+    return (
+        <div className="relative">
+            {/* Step indicator */}
+            <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
+                {steps.map((_, i) => (
+                    <div
+                        key={i}
+                        className={`h-1.5 rounded-full transition-all duration-500 ${i === step ? 'w-8 bg-violet-500' : 'w-1.5 bg-gray-300 dark:bg-gray-600'}`}
+                    />
+                ))}
+            </div>
+
+            {/* Laptop Screen */}
+            <div className="relative w-[600px] h-[380px] bg-gray-900 rounded-t-xl p-2 shadow-2xl mx-auto">
+                {/* Camera */}
+                <div className="absolute top-2 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-700 rounded-full"></div>
+                {/* Screen Content */}
+                <div className="w-full h-full rounded-lg bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-800 dark:to-gray-900 overflow-hidden">
+                    {/* Browser Chrome */}
+                    <div className="h-8 bg-gray-100 dark:bg-gray-800 flex items-center px-3 gap-2 border-b border-gray-200 dark:border-gray-700">
+                        <div className="flex gap-1.5">
+                            <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                            <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                            <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                        </div>
+                        <div className="flex-1 mx-2">
+                            <div className="bg-white dark:bg-gray-700 rounded-md h-5 flex items-center px-2">
+                                <span className="text-[10px] text-gray-400">minianonlink.vercel.app/dashboard</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Content Area */}
+                    <div className="p-6 h-[calc(100%-2rem)]">
+                        {/* Step Title */}
+                        <div className="text-center mb-4">
+                            <div className="text-xs text-violet-600 dark:text-violet-400 font-medium mb-1">Step {step + 1} of 4</div>
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-white">{steps[step].title}</h3>
+                            <p className="text-xs text-gray-500">{steps[step].subtitle}</p>
+                        </div>
+
+                        {/* Step 0: Username Input */}
+                        {step === 0 && (
+                            <div className="flex flex-col items-center animate-fadeIn">
+                                <div className="flex items-center gap-1 bg-white dark:bg-gray-700 rounded-xl px-4 py-3 shadow-lg border-2 border-violet-500 w-80">
+                                    <span className="text-gray-400 text-xs">minianonlink.vercel.app/</span>
+                                    <span className="text-gray-900 dark:text-white font-medium text-sm">{typedText}</span>
+                                    <span className={`w-0.5 h-4 bg-violet-500 ${showCursor ? 'opacity-100' : 'opacity-0'}`}></span>
+                                </div>
+                                <div className="mt-4 flex items-center gap-2 text-green-500 text-xs">
+                                    <Check className="w-3 h-3" />
+                                    <span>Username available!</span>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Step 1: Add first link */}
+                        {step === 1 && (
+                            <div className="flex flex-col items-center gap-3 animate-fadeIn">
+                                <div className="bg-white dark:bg-gray-700 rounded-xl p-3 shadow-lg border border-gray-200 dark:border-gray-600 w-72">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <div className="w-6 h-6 rounded bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center text-white">
+                                            {links[0].icon}
+                                        </div>
+                                        <input className="flex-1 bg-gray-50 dark:bg-gray-600 rounded-lg px-2 py-1 text-sm text-gray-700 dark:text-gray-200" defaultValue="Portfolio" readOnly />
+                                    </div>
+                                    <input className="w-full bg-gray-50 dark:bg-gray-600 rounded-lg px-2 py-1 text-xs text-gray-500" defaultValue="https://tushar-bhardwaj.vercel.app" readOnly />
+                                </div>
+                                <button className="px-4 py-2 bg-gradient-to-r from-violet-600 to-pink-600 text-white text-sm font-medium rounded-lg flex items-center gap-2 shadow-lg hover:shadow-xl transition-all">
+                                    <Plus className="w-4 h-4" />
+                                    Add Link
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Step 2: Multiple links with hover effect */}
+                        {step === 2 && (
+                            <div className="space-y-2 animate-fadeIn">
+                                {links.map((link, i) => (
+                                    <div
+                                        key={i}
+                                        className={`flex items-center gap-3 bg-white dark:bg-gray-700 rounded-lg p-2 shadow-sm border transition-all duration-200 ${hoveredLink === i ? 'border-violet-500 scale-[1.02] shadow-lg' : 'border-gray-200 dark:border-gray-600'}`}
+                                    >
+                                        <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${link.color} flex items-center justify-center text-white text-sm`}>
+                                            {link.icon}
+                                        </div>
+                                        <span className="text-sm font-medium text-gray-800 dark:text-gray-200">{link.name}</span>
+                                        <Check className={`w-4 h-4 ml-auto transition-colors ${hoveredLink === i ? 'text-violet-500' : 'text-green-500'}`} />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Step 3: Congratulations */}
+                        {step === 3 && (
+                            <div className="flex flex-col items-center gap-4 animate-fadeIn">
+                                {/* Celebration emoji burst */}
+                                <div className="text-4xl animate-bounce">🎉</div>
+                                <h3 className="text-xl font-bold bg-gradient-to-r from-violet-600 to-pink-600 bg-clip-text text-transparent">
+                                    Congratulations!
+                                </h3>
+                                <p className="text-gray-600 dark:text-gray-400 text-sm text-center">
+                                    Your MiniLink is ready to share
+                                </p>
+                                <div className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-pink-600 text-white rounded-lg px-4 py-2 shadow-lg">
+                                    <span className="text-sm font-medium">minianonlink.vercel.app/tushar</span>
+                                    <ExternalLink className="w-4 h-4" />
+                                </div>
+                                <div className="grid grid-cols-4 gap-2 mt-2">
+                                    {links.map((link, i) => (
+                                        <div key={i} className={`w-10 h-10 rounded-lg bg-gradient-to-r ${link.color} flex items-center justify-center text-white shadow-lg animate-bounce`} style={{ animationDelay: `${i * 0.1}s` }}>
+                                            {link.icon}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Animated Cursor */}
+            <div
+                className={`absolute pointer-events-none z-20 transition-all duration-300 ease-out ${isClicking ? 'scale-90' : ''}`}
+                style={{ left: cursorPos.x, top: cursorPos.y }}
+            >
+                <MousePointer2 className="w-5 h-5 text-gray-800 dark:text-white drop-shadow-lg" style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))' }} />
+            </div>
+
+            {/* Laptop Base */}
+            <div className="relative w-[680px] h-4 bg-gray-300 dark:bg-gray-700 rounded-b-xl -mt-1 mx-auto">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-1 bg-gray-400 dark:bg-gray-600 rounded-b"></div>
+            </div>
+            <div className="w-[700px] h-2 bg-gray-200 dark:bg-gray-800 rounded-b-3xl mx-auto shadow-lg"></div>
+        </div>
+    );
+}
+
+// FAQ Accordion Item Component
+function FAQItem({ question, answer, isOpen, onToggle }: { question: string; answer: string; isOpen: boolean; onToggle: () => void }) {
+    return (
+        <div
+            className={`bg-gray-100 dark:bg-gray-800/50 rounded-2xl overflow-hidden border transition-all duration-300 ${isOpen ? 'border-violet-500/50 shadow-lg shadow-violet-500/10' : 'border-gray-200 dark:border-gray-700/50 hover:border-violet-400/30'}`}
+        >
+            <button
+                onClick={onToggle}
+                className="w-full px-6 py-5 flex items-center justify-between text-left"
+            >
+                <span className={`text-lg font-medium transition-colors ${isOpen ? 'text-violet-600 dark:text-violet-400' : 'text-gray-900 dark:text-white'}`}>{question}</span>
+                <ChevronDown
+                    className={`w-5 h-5 transition-all duration-300 ${isOpen ? 'rotate-180 text-violet-600 dark:text-violet-400' : 'text-gray-400 dark:text-gray-500'}`}
+                />
+            </button>
+            <div
+                className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
+            >
+                <div className="px-6 pb-5 text-gray-600 dark:text-gray-400 leading-relaxed">
+                    {answer}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default function HomePage() {
+    const { isSignedIn, isLoaded } = useUser();
+    const [isDark, setIsDark] = useState(false);
+    const [hoveredFeature, setHoveredFeature] = useState<number | null>(null);
+    const [openFAQ, setOpenFAQ] = useState<number | null>(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
         // Check system preference
         if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
             setIsDark(true);
@@ -121,16 +406,15 @@ export default function HomePage() {
                                 className="p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
                                 aria-label="Toggle theme"
                             >
-                                {isDark ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-slate-600" />}
+                                {mounted ? (
+                                    isDark ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5 text-slate-600" />
+                                ) : (
+                                    <Moon className="w-5 h-5 text-slate-600" />
+                                )}
                             </button>
-                            <Link
-                                href="https://github.com"
-                                target="_blank"
-                                className="p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
-                            >
-                                <Github className="w-5 h-5" />
-                            </Link>
-                            {isSignedIn ? (
+                            {!isLoaded ? (
+                                <div className="w-24 h-10 bg-gray-200 dark:bg-gray-700 rounded-xl animate-pulse"></div>
+                            ) : isSignedIn ? (
                                 <Link
                                     href="/dashboard"
                                     className="px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-violet-600 to-pink-600 rounded-xl hover:shadow-lg hover:shadow-violet-500/25 hover:-translate-y-0.5 transition-all duration-300"
@@ -204,76 +488,15 @@ export default function HomePage() {
                         <div className="hidden lg:block">
                             <div className="flex items-center justify-center gap-8">
                                 {/* Laptop Mockup */}
-                                <div className="relative">
-                                    {/* Laptop Screen */}
-                                    <div className="relative w-[600px] h-[380px] bg-gray-900 rounded-t-xl p-2 shadow-2xl mx-auto">
-                                        {/* Camera */}
-                                        <div className="absolute top-2 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-700 rounded-full"></div>
-                                        {/* Screen Content */}
-                                        <div className="w-full h-full rounded-lg bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-800 dark:to-gray-900 overflow-hidden">
-                                            {/* Browser Chrome */}
-                                            <div className="h-8 bg-gray-100 dark:bg-gray-800 flex items-center px-3 gap-2 border-b border-gray-200 dark:border-gray-700">
-                                                <div className="flex gap-1.5">
-                                                    <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                                                    <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                                                    <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                                                </div>
-                                                <div className="flex-1 mx-2">
-                                                    <div className="bg-white dark:bg-gray-700 rounded-md h-5 flex items-center px-2">
-                                                        <span className="text-[10px] text-gray-400">minilink.app/yourprofile</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {/* Dashboard Preview */}
-                                            <div className="p-4">
-                                                <div className="flex gap-4">
-                                                    {/* Sidebar */}
-                                                    <div className="w-48 space-y-2">
-                                                        <div className="h-8 bg-violet-100 dark:bg-violet-900/30 rounded-lg flex items-center px-3">
-                                                            <span className="text-xs text-violet-600 dark:text-violet-400 font-medium">Dashboard</span>
-                                                        </div>
-                                                        <div className="h-8 bg-gray-100 dark:bg-gray-800 rounded-lg"></div>
-                                                        <div className="h-8 bg-gray-100 dark:bg-gray-800 rounded-lg"></div>
-                                                        <div className="h-8 bg-gray-100 dark:bg-gray-800 rounded-lg"></div>
-                                                    </div>
-                                                    {/* Content */}
-                                                    <div className="flex-1 space-y-3">
-                                                        <div className="grid grid-cols-3 gap-2">
-                                                            <div className="h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg p-2">
-                                                                <div className="text-[8px] text-white/80">Views</div>
-                                                                <div className="text-sm font-bold text-white">1,234</div>
-                                                            </div>
-                                                            <div className="h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg p-2">
-                                                                <div className="text-[8px] text-white/80">Clicks</div>
-                                                                <div className="text-sm font-bold text-white">892</div>
-                                                            </div>
-                                                            <div className="h-16 bg-gradient-to-br from-amber-500 to-orange-500 rounded-lg p-2">
-                                                                <div className="text-[8px] text-white/80">Links</div>
-                                                                <div className="text-sm font-bold text-white">12</div>
-                                                            </div>
-                                                        </div>
-                                                        <div className="h-32 bg-gray-100 dark:bg-gray-800 rounded-lg p-3">
-                                                            <div className="text-[10px] font-medium text-gray-500 mb-2">Analytics</div>
-                                                            <div className="flex items-end gap-1 h-20">
-                                                                {[40, 65, 45, 80, 55, 90, 70, 85].map((h, i) => (
-                                                                    <div key={i} className="flex-1 bg-gradient-to-t from-violet-500 to-pink-500 rounded-t" style={{ height: `${h}%` }}></div>
-                                                                ))}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {/* Laptop Base */}
-                                    <div className="relative w-[680px] h-4 bg-gray-300 dark:bg-gray-700 rounded-b-xl -mt-1 mx-auto">
-                                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-20 h-1 bg-gray-400 dark:bg-gray-600 rounded-b"></div>
-                                    </div>
-                                    <div className="w-[700px] h-2 bg-gray-200 dark:bg-gray-800 rounded-b-3xl mx-auto shadow-lg"></div>
-                                </div>
+                                <LaptopDemo isDark={isDark} />
 
                                 {/* iPhone Mockup - More spacing */}
                                 <div className="relative ml-8 mt-16">
+                                    {/* Live Preview Label */}
+                                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-violet-600 to-pink-600 rounded-full shadow-lg">
+                                        <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                                        <span className="text-xs font-semibold text-white whitespace-nowrap">Live Preview</span>
+                                    </div>
                                     {/* iPhone Frame */}
                                     <div className="relative w-[280px] h-[570px] bg-gray-900 rounded-[50px] p-3 shadow-2xl border-4 border-gray-800">
                                         {/* Dynamic Island */}
@@ -283,18 +506,18 @@ export default function HomePage() {
                                             {/* Profile Content */}
                                             <div className="w-full h-full bg-white dark:bg-gray-900 mt-1 rounded-t-[38px] p-6 pt-12">
                                                 <div className="flex flex-col items-center text-center">
-                                                    {/* Avatar with pulse animation */}
-                                                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-violet-400 via-purple-400 to-pink-400 mb-3 ring-4 ring-white dark:ring-gray-800 shadow-xl flex items-center justify-center overflow-hidden animate-pulse">
-                                                        <div className="w-full h-full bg-gradient-to-br from-violet-500 to-pink-500"></div>
+                                                    {/* Avatar with actual photo */}
+                                                    <div className="w-20 h-20 rounded-full mb-3 ring-4 ring-white dark:ring-gray-800 shadow-xl overflow-hidden">
+                                                        <img src="/me.jpeg" alt="Tushar Bhardwaj" className="w-full h-full object-cover" />
                                                     </div>
-                                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">@creator</h3>
-                                                    <p className="text-gray-500 dark:text-gray-400 text-xs mt-0.5">Full Stack Developer</p>
+                                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Tushar Bhardwaj</h3>
+                                                    <p className="text-gray-500 dark:text-gray-400 text-[10px] mt-0.5 px-2 leading-relaxed">Ex - SWE Intern Microsoft | Top 0.1% Club Topmate | Sharing Tech & Career Insights with 23K+ Linkedin</p>
 
                                                     {/* Interactive Links with animations */}
                                                     <div className="w-full mt-5 space-y-2.5">
                                                         {/* Portfolio */}
                                                         <a
-                                                            href="https://linktr.ee/codewithtusharbhardwaj"
+                                                            href="https://tushar-bhardwaj.vercel.app/"
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:border-blue-300 dark:hover:border-blue-600 hover:scale-[1.03] hover:shadow-lg transition-all duration-300 cursor-pointer group"
@@ -304,21 +527,21 @@ export default function HomePage() {
                                                             <span className="group-hover:translate-x-1 transition-transform">Portfolio</span>
                                                             <svg className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                                                         </a>
-                                                        {/* YouTube */}
+                                                        {/* LinkedIn */}
                                                         <a
-                                                            href="https://youtube.com"
+                                                            href="https://www.linkedin.com/in/bhardwajtushar2004/"
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-red-50 dark:hover:bg-red-900/30 hover:border-red-300 dark:hover:border-red-600 hover:scale-[1.03] hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                                                            className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:border-blue-400 dark:hover:border-blue-500 hover:scale-[1.03] hover:shadow-lg transition-all duration-300 cursor-pointer group"
                                                             style={{ animationDelay: '0.2s' }}
                                                         >
-                                                            <svg className="w-5 h-5 text-red-500 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" /></svg>
-                                                            <span className="group-hover:translate-x-1 transition-transform">YouTube</span>
-                                                            <svg className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                                            <svg className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
+                                                            <span className="group-hover:translate-x-1 transition-transform">LinkedIn</span>
+                                                            <svg className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                                                         </a>
                                                         {/* Twitter/X */}
                                                         <a
-                                                            href="https://x.com"
+                                                            href="https://x.com/Tusharab2004"
                                                             target="_blank"
                                                             rel="noopener noreferrer"
                                                             className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-gray-400 dark:hover:border-gray-500 hover:scale-[1.03] hover:shadow-lg transition-all duration-300 cursor-pointer group"
@@ -340,17 +563,17 @@ export default function HomePage() {
                                                             <span className="group-hover:translate-x-1 transition-transform">GitHub</span>
                                                             <svg className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                                                         </a>
-                                                        {/* Buy Me Coffee */}
+                                                        {/* Sponsor */}
                                                         <a
-                                                            href="https://buymeacoffee.com"
+                                                            href="https://github.com/sponsors/TuShArBhArDwA"
                                                             target="_blank"
                                                             rel="noopener noreferrer"
-                                                            className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-amber-50 dark:hover:bg-amber-900/30 hover:border-amber-300 dark:hover:border-amber-600 hover:scale-[1.03] hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                                                            className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-pink-50 dark:hover:bg-pink-900/30 hover:border-pink-300 dark:hover:border-pink-600 hover:scale-[1.03] hover:shadow-lg transition-all duration-300 cursor-pointer group"
                                                             style={{ animationDelay: '0.5s' }}
                                                         >
-                                                            <svg className="w-5 h-5 text-amber-500 group-hover:animate-bounce" fill="currentColor" viewBox="0 0 24 24"><path d="M20.216 6.415l-.132-.666c-.119-.598-.388-1.163-1.001-1.379-.197-.069-.42-.098-.57-.241-.152-.143-.196-.366-.231-.572-.065-.378-.125-.756-.192-1.133-.057-.325-.102-.69-.25-.987-.195-.4-.597-.634-.996-.788a5.723 5.723 0 00-.626-.194c-1-.263-2.05-.36-3.077-.416a25.834 25.834 0 00-3.7.062c-.915.083-1.88.184-2.75.5-.318.116-.646.256-.888.501-.297.302-.393.77-.177 1.146.154.267.415.456.692.58.36.162.737.284 1.123.366 1.075.238 2.189.331 3.287.37 1.218.05 2.437.01 3.65-.118.299-.033.598-.073.896-.119.352-.054.578-.513.474-.834-.124-.383-.457-.531-.834-.473-.466.074-.96.108-1.382.146-1.177.08-2.358.082-3.536.006a22.228 22.228 0 01-1.157-.107c-.086-.01-.18-.025-.258-.036-.243-.036-.484-.08-.724-.13-.111-.027-.111-.185 0-.212h.005c.277-.06.557-.108.838-.147h.002c.131-.009.263-.032.394-.048a25.076 25.076 0 013.426-.12c.674.019 1.347.067 2.017.144l.228.031c.267.04.533.088.798.145.392.085.895.113 1.07.542.055.137.08.288.111.431l.319 1.484a.237.237 0 01-.199.284h-.003c-.037.006-.075.01-.112.015a36.704 36.704 0 01-4.743.295 37.059 37.059 0 01-4.699-.304c-.14-.017-.293-.042-.417-.06-.326-.048-.649-.108-.973-.161-.393-.065-.768-.032-1.123.161-.29.16-.527.404-.675.701-.154.316-.199.66-.267 1-.069.34-.176.707-.135 1.056.087.753.613 1.365 1.37 1.502a39.69 39.69 0 0011.343.376.483.483 0 01.535.53l-.071.697-1.018 9.907c-.041.41-.047.832-.125 1.237-.122.637-.553 1.028-1.182 1.171-.577.131-1.165.2-1.756.205-.656.004-1.31-.025-1.966-.022-.699.004-1.556-.06-2.095-.58-.475-.458-.54-1.174-.605-1.793l-.731-7.013-.322-3.094c-.037-.351-.286-.695-.678-.678-.336.015-.718.3-.678.679l.228 2.185.949 9.112c.147 1.344 1.174 2.068 2.446 2.272.742.12 1.503.144 2.257.156.966.016 1.942.053 2.892-.122 1.408-.258 2.465-1.198 2.616-2.657.34-3.332.683-6.663 1.024-9.995l.215-2.087a.484.484 0 01.39-.426c.402-.078.787-.212 1.074-.518.455-.488.546-1.124.385-1.766zm-1.478.772c-.145.137-.363.201-.578.233-2.416.359-4.866.54-7.308.46-1.748-.06-3.477-.254-5.207-.498-.17-.024-.353-.055-.47-.18-.22-.236-.111-.71-.054-.995.052-.26.152-.609.463-.646.484-.057 1.046.148 1.526.22.577.088 1.156.159 1.737.212 2.48.226 5.002.19 7.472-.14.45-.06.899-.13 1.345-.21.399-.072.84-.206 1.08.206.166.281.188.657.162.974a.544.544 0 01-.169.364z" /></svg>
-                                                            <span className="group-hover:translate-x-1 transition-transform">Buy Me Coffee</span>
-                                                            <svg className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                                                            <svg className="w-5 h-5 text-pink-500 group-hover:animate-pulse" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
+                                                            <span className="group-hover:translate-x-1 transition-transform">Sponsor Me</span>
+                                                            <svg className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                                                         </a>
                                                     </div>
                                                 </div>
@@ -531,6 +754,65 @@ export default function HomePage() {
                 </div>
             </section>
 
+            {/* FAQ Section */}
+            <section className="py-24 px-4 sm:px-6 lg:px-8 relative" id="faq">
+                <div className="max-w-4xl mx-auto">
+                    <div className="text-center mb-16">
+                        <h2 className="text-4xl sm:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                            Questions? <span className="bg-gradient-to-r from-violet-600 to-pink-600 bg-clip-text text-transparent">Answered</span>
+                        </h2>
+                        <p className="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">
+                            Everything you need to know about MiniLink
+                        </p>
+                    </div>
+
+                    <div className="space-y-4">
+                        {[
+                            {
+                                q: "Why do I need a link in bio tool?",
+                                a: "Social media platforms typically only allow one clickable link in your bio. MiniLink lets you share all your important links — your website, social profiles, online store, and more — through a single, customizable landing page."
+                            },
+                            {
+                                q: "Is MiniLink the original link in bio tool?",
+                                a: "MiniLink is a modern, open-source alternative to other link-in-bio tools. We focus on simplicity, speed, and giving you full control over your online presence without any ads or hidden costs."
+                            },
+                            {
+                                q: "Can you get paid and sell things from a MiniLink?",
+                                a: "Yes! You can add links to your online store, payment platforms like PayPal or Stripe, or any e-commerce solution. MiniLink helps you direct traffic to wherever you want to monetize."
+                            },
+                            {
+                                q: "Is MiniLink safe to use on all of my social media profiles?",
+                                a: "Absolutely! MiniLink is 100% safe and trusted by thousands of creators. Our links work seamlessly across Instagram, TikTok, Twitter, YouTube, and all other major platforms."
+                            },
+                            {
+                                q: "What makes MiniLink better than other link in bio options?",
+                                a: "MiniLink is completely free, open-source, and ad-free. We offer beautiful themes, real-time analytics, and lightning-fast load times. Plus, you can self-host it if you want complete control."
+                            },
+                            {
+                                q: "How can I drive more traffic to and through my MiniLink?",
+                                a: "Share your MiniLink URL everywhere — in your social bios, email signatures, business cards, and content. Use our analytics to understand what links perform best and optimize accordingly."
+                            },
+                            {
+                                q: "How many links should I have on my MiniLink?",
+                                a: "There's no limit! However, we recommend keeping it focused. 5-10 links is ideal for most creators. Prioritize your most important destinations at the top for maximum engagement."
+                            },
+                            {
+                                q: "Do I need a website to use MiniLink?",
+                                a: "Not at all! MiniLink can serve as your complete online presence. Many creators use their MiniLink page as their primary hub without needing a separate website."
+                            }
+                        ].map((faq, index) => (
+                            <FAQItem
+                                key={index}
+                                question={faq.q}
+                                answer={faq.a}
+                                isOpen={openFAQ === index}
+                                onToggle={() => setOpenFAQ(openFAQ === index ? null : index)}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </section>
+
             {/* CTA Section */}
             <section className="py-24 px-4 sm:px-6 lg:px-8 relative">
                 <div className="max-w-5xl mx-auto">
@@ -571,10 +853,6 @@ export default function HomePage() {
                         </div>
 
                         <div className="relative px-8 py-16 sm:px-16 sm:py-20 text-center">
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm text-white/90 text-sm font-medium mb-6 border border-white/20">
-                                <Sparkles className="w-4 h-4" />
-                                <span>Join 10,000+ Creators</span>
-                            </div>
 
                             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 text-white leading-tight">
                                 Ready to Share
@@ -593,14 +871,6 @@ export default function HomePage() {
                                 >
                                     Get Started Free
                                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                </Link>
-                                <Link
-                                    href="https://github.com/TuShArBhArDwA/MiniLink"
-                                    target="_blank"
-                                    className="inline-flex items-center gap-2 px-6 py-4 text-white/90 hover:text-white transition-colors"
-                                >
-                                    <Github className="w-5 h-5" />
-                                    <span>Star on GitHub</span>
                                 </Link>
                             </div>
                         </div>
