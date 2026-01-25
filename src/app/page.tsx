@@ -21,7 +21,7 @@ import {
     ChevronDown
 } from 'lucide-react';
 import { SiteFooter } from '@/components/site-footer';
-import { Plus, Check, ExternalLink, Copy, MousePointer2, Linkedin, Youtube, MessageCircle, Send, Lock, Code, Terminal, CheckCircle2 } from 'lucide-react';
+import { Plus, Check, ExternalLink, Copy, MousePointer2, Linkedin, Youtube, MessageCircle, Send, Lock, Code, Terminal, CheckCircle2, Twitter, Instagram } from 'lucide-react';
 
 // Animated Laptop Demo Component
 function LaptopDemo({ isDark }: { isDark: boolean }) {
@@ -419,13 +419,14 @@ function FAQItem({ question, answer, isOpen, onToggle }: { question: string; ans
 }
 
 // Feature Demo Animations
+// Feature Demo Animations
 function AnimatedLinksFeature() {
     const [links, setLinks] = useState<number[]>([]);
 
     useEffect(() => {
         let step = 0;
         const interval = setInterval(() => {
-            if (step < 3) {
+            if (step < 2) {
                 setLinks(prev => [...prev, step]);
                 step++;
             } else {
@@ -437,9 +438,10 @@ function AnimatedLinksFeature() {
     }, []);
 
     const linkData = [
-        { icon: Linkedin, color: 'bg-[#0077b5]', text: 'LinkedIn Profile' },
-        { icon: Github, color: 'bg-[#333]', text: 'GitHub Repos' },
-        { icon: Youtube, color: 'bg-[#ff0000]', text: 'YouTube Channel' }
+        { icon: Linkedin, color: 'bg-[#0077b5]', text: 'LinkedIn' },
+        { icon: Github, color: 'bg-[#333]', text: 'GitHub' },
+        { icon: Youtube, color: 'bg-[#ff0000]', text: 'YouTube' },
+        { icon: Twitter, color: 'bg-[#000000]', text: 'X / Twitter' }
     ];
 
     return (
@@ -461,7 +463,7 @@ function AnimatedLinksFeature() {
                     </div>
                 );
             })}
-            {links.length < 3 && (
+            {links.length < 2 && (
                 <div className="h-12 w-full border-2 border-dashed border-white/20 rounded-xl flex items-center justify-center animate-pulse">
                     <div className="flex items-center gap-2 text-white/40 font-medium text-sm">
                         <Plus className="w-4 h-4" />
@@ -496,15 +498,9 @@ function AnimatedThemesFeature() {
                 {themes.map((t, i) => (
                     <div
                         key={i}
-                        className={`w-8 h-8 rounded-full ${t.color} cursor-pointer transition-all duration-300 ${activeTheme === i ? 'ring-2 ring-offset-2 ring-gray-400 scale-110' : 'opacity-40 hover:opacity-100'}`}
+                        className={`w-8 h-8 rounded-full ${t.color} cursor-pointer transition-all duration-300 ${activeTheme === i ? 'ring-2 ring-offset-2 ring-gray-400 scale-110' : 'opacity-40'}`}
                     />
                 ))}
-                <div className="relative mt-2">
-                    <MousePointer2
-                        className="w-5 h-5 text-gray-500 absolute -top-8 transition-all duration-500 ease-in-out"
-                        style={{ transform: `translateY(${activeTheme * 44}px)` }}
-                    />
-                </div>
             </div>
 
             {/* Phone Mockup Preview */}
@@ -524,18 +520,17 @@ function AnimatedThemesFeature() {
 }
 
 function AnimatedFastFeature() {
-    const [state, setState] = useState(0); // 0: typing, 1: sent, 2: clicking, 3: open
+    const [state, setState] = useState(0);
 
     useEffect(() => {
         const times = [0, 1500, 2500, 3000];
         let timeouts: NodeJS.Timeout[] = [];
-
         const run = () => {
             setState(0);
             timeouts.push(setTimeout(() => setState(1), 1000));
             timeouts.push(setTimeout(() => setState(2), 2500));
             timeouts.push(setTimeout(() => setState(3), 3000));
-            timeouts.push(setTimeout(run, 6000));
+            timeouts.push(setTimeout(run, 7000)); // Longer pause
         };
         run();
         return () => timeouts.forEach(clearTimeout);
@@ -544,20 +539,28 @@ function AnimatedFastFeature() {
     return (
         <div className="relative w-64 h-40 bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 flex flex-col shadow-xl">
             {/* Browser Window Overlay */}
-            {state === 3 && (
-                <div className="absolute inset-0 bg-white dark:bg-gray-900 z-20 animate-in zoom-in-90 duration-300 flex flex-col">
-                    <div className="h-6 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center px-2 gap-1.5">
-                        <div className="w-2 h-2 rounded-full bg-red-400"></div>
-                        <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
-                        <div className="w-2 h-2 rounded-full bg-green-400"></div>
-                        <div className="ml-2 flex-1 h-3 bg-white dark:bg-gray-700 rounded text-[6px] text-gray-400 flex items-center px-1">minilink.bio/me</div>
-                    </div>
-                    <div className="flex-1 p-4 flex flex-col items-center justify-center bg-gray-50 dark:bg-[#0a0a0f]">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 mb-2 shadow-lg animate-bounce"></div>
-                        <div className="h-2 w-20 bg-gray-200 dark:bg-gray-800 rounded-full"></div>
+            <div className={`absolute inset-0 bg-white dark:bg-gray-950 z-20 flex flex-col transition-all duration-500 transform ${state === 3 ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'}`}>
+                <div className="h-6 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center px-2 gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-red-400"></div>
+                    <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
+                    <div className="w-2 h-2 rounded-full bg-green-400"></div>
+                    <div className="ml-2 flex-1 h-3 bg-white dark:bg-gray-700 rounded text-[6px] text-gray-400 flex items-center px-1">minilink.bio/me</div>
+                </div>
+                <div className="flex-1 p-4 flex flex-col items-center pt-6 bg-gray-50 dark:bg-[#0a0a0f] space-y-3">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 shadow-lg"></div>
+                    <div className="h-2 w-20 bg-gray-200 dark:bg-gray-800 rounded-full"></div>
+                    <div className="w-full space-y-2 mt-2">
+                        <div className="h-8 w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm flex items-center px-3 gap-2">
+                            <div className="w-4 h-4 rounded-full bg-blue-100 dark:bg-blue-900/30"></div>
+                            <div className="h-1.5 w-12 bg-gray-100 dark:bg-gray-800 rounded-full"></div>
+                        </div>
+                        <div className="h-8 w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm flex items-center px-3 gap-2">
+                            <div className="w-4 h-4 rounded-full bg-pink-100 dark:bg-pink-900/30"></div>
+                            <div className="h-1.5 w-12 bg-gray-100 dark:bg-gray-800 rounded-full"></div>
+                        </div>
                     </div>
                 </div>
-            )}
+            </div>
 
             {/* Chat Interface */}
             <div className="h-8 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 flex items-center px-3 justify-between">
@@ -583,80 +586,143 @@ function AnimatedFastFeature() {
     );
 }
 
+// Animated Analytics Feature
 function AnimatedAnalyticsFeature() {
-    const [clicks, setClicks] = useState(124);
-    const [activeLink, setActiveLink] = useState(-1);
+    const [clicks, setClicks] = useState(842);
+    const [activeAction, setActiveAction] = useState(0);
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setActiveLink(0);
+            setActiveAction(1); // Move
+            setTimeout(() => setActiveAction(2), 1000); // Click
             setTimeout(() => {
                 setClicks(c => c + 1);
-                setActiveLink(-1);
-            }, 1000); // Click duration
-        }, 3000);
+                setActiveAction(3); // Update
+            }, 1200);
+            setTimeout(() => setActiveAction(0), 4000); // Reset
+        }, 5000);
         return () => clearInterval(interval);
     }, []);
 
+    // Graph points logic
+    const startPath = "M0,40 L0,30 C20,35 40,10 60,25 C80,35 90,5 100,20 L100,40 Z";
+    const endPath = "M0,40 L0,30 C20,35 40,10 60,25 C80,35 90,5 100,10 L100,40 Z"; // Last point raises to 10
+
+    const lineStartPath = "M0,30 C20,35 40,10 60,25 C80,35 90,5 100,20";
+    const lineEndPath = "M0,30 C20,35 40,10 60,25 C80,35 90,5 100,10";
+
     return (
-        <div className="w-full h-full p-6 flex gap-4 absolute inset-0">
-            {/* Dashboard Mockup (Left) */}
-            <div className="flex-1 bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/10 flex flex-col justify-between shadow-2xl">
-                <div>
-                    <div className="text-white/50 text-xs font-medium uppercase tracking-wider mb-1">Total Clicks</div>
-                    <div className="text-3xl font-bold text-white transition-all duration-300 scale-105">{clicks.toLocaleString()}</div>
+        <div className="w-full h-full flex flex-row gap-4 absolute inset-0 p-6">
+            <div className="flex-1 bg-gray-900 rounded-xl border border-white/10 p-3 flex flex-col items-center relative overflow-hidden shadow-2xl">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-violet-500 to-indigo-500 mb-3 shadow-lg"></div>
+                <div className="w-full space-y-2 opacity-80">
+                    <div className={`h-8 w-full bg-white/5 border border-white/10 rounded-lg flex items-center px-2 gap-2 transition-all duration-300 origin-center ${activeAction >= 1 && activeAction <= 2 ? 'bg-white/20 scale-110 shadow-lg border-white/30' : ''}`}>
+                        <div className="w-4 h-4 rounded-full bg-[#0077b5] flex items-center justify-center"><Linkedin size={8} className="text-white" /></div>
+                        <div className="h-1.5 w-12 bg-white/20 rounded-full"></div>
+                    </div>
+                    <div className="h-8 w-full bg-white/5 border border-white/10 rounded-lg flex items-center px-2 gap-2">
+                        <div className="w-4 h-4 rounded-full bg-black flex items-center justify-center"><Github size={8} className="text-white" /></div>
+                        <div className="h-1.5 w-10 bg-white/20 rounded-full"></div>
+                    </div>
                 </div>
-                <div className="h-16 flex items-end gap-1">
-                    {[40, 60, 45, 70, 50].map((h, i) => (
-                        <div key={i} className="flex-1 bg-white/20 rounded-t-sm" style={{ height: `${h}%` }}></div>
-                    ))}
-                    <div className="flex-1 bg-white rounded-t-sm transition-all duration-300 shadow-[0_0_15px_rgba(255,255,255,0.5)]" style={{ height: `${(clicks % 10) * 10 + 20}%` }}></div>
-                </div>
+                <MousePointer2
+                    className={`w-6 h-6 text-white absolute transition-all duration-1000 ease-in-out drop-shadow-md z-20 ${activeAction === 0 ? 'top-[80%] right-[10%]' : 'top-[62px] left-[50%]'
+                        } ${activeAction === 2 ? 'scale-90' : 'scale-100'}`}
+                />
             </div>
 
-            {/* Link List Mockup (Right) */}
-            <div className="w-32 flex flex-col gap-2 opacity-90 py-4">
-                <div className="text-white/40 text-[10px] mb-1 font-medium">Top Sources</div>
-                <div className={`p-2 rounded-lg bg-white/5 border border-white/5 flex items-center gap-2 transition-all duration-300 ${activeLink === 0 ? 'bg-white/20 scale-105 border-white/30 shadow-lg' : ''}`}>
-                    <Linkedin className="w-4 h-4 text-[#0077b5]" />
-                    <div className="h-1.5 w-12 bg-white/20 rounded-full"></div>
-                    {activeLink === 0 && <MousePointer2 className="w-4 h-4 text-white absolute right-1 top-4 filter drop-shadow-md" />}
+            <div className="flex-1 bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/10 flex flex-col justify-between shadow-2xl relative">
+                <div>
+                    <div className="text-white/50 text-[10px] font-medium uppercase tracking-wider mb-1">Total Clicks</div>
+                    <div className={`text-3xl font-bold text-white transition-all duration-300 ${activeAction === 3 ? 'scale-110 text-green-400' : ''}`}>{clicks.toLocaleString()}</div>
                 </div>
-                <div className="p-2 rounded-lg bg-white/5 border border-white/5 flex items-center gap-2 opacity-60">
-                    <Youtube className="w-4 h-4 text-red-500" />
-                    <div className="h-1.5 w-10 bg-white/20 rounded-full"></div>
+
+                <div className="relative h-16 w-full mt-2">
+                    <svg className="w-full h-full overflow-visible" viewBox="0 0 100 40" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="graphGradient" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stopColor="white" stopOpacity="0.3" />
+                                <stop offset="100%" stopColor="white" stopOpacity="0" />
+                            </linearGradient>
+                        </defs>
+                        <path
+                            d={activeAction === 3 ? endPath : startPath}
+                            fill="url(#graphGradient)"
+                            className="transition-all duration-500 ease-out"
+                        />
+                        <path
+                            d={activeAction === 3 ? lineEndPath : lineStartPath}
+                            fill="none"
+                            stroke="white"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            className={`transition-all duration-500 ease-out ${activeAction === 3 ? 'stroke-green-400 drop-shadow-[0_0_8px_rgba(74,222,128,0.5)]' : 'stroke-white/80'}`}
+                        />
+                    </svg>
                 </div>
-                <div className="p-2 rounded-lg bg-white/5 border border-white/5 flex items-center gap-2 opacity-60">
-                    <Globe className="w-4 h-4 text-emerald-500" />
-                    <div className="h-1.5 w-14 bg-white/20 rounded-full"></div>
-                </div>
+
+                <div className={`absolute top-1/2 -left-4 w-4 h-[2px] bg-gradient-to-r from-transparent to-white/50 transition-opacity duration-300 ${activeAction === 3 ? 'opacity-100' : 'opacity-0'}`}></div>
             </div>
         </div>
     );
 }
 
 function AnimatedSecurityFeature() {
+    const [stage, setStage] = useState(0); // 0: scanning, 1: locking, 2: secured
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setStage(0);
+            setTimeout(() => setStage(1), 2000);
+            setTimeout(() => setStage(2), 3000);
+        }, 5000); // Slower cycle
+        return () => clearInterval(interval);
+    }, []);
+
     return (
         <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-2xl bg-[#0d1117] group">
-            {/* Code Background */}
-            <div className="absolute inset-0 p-4 font-mono text-[10px] text-emerald-500/30 leading-relaxed pointer-events-none select-none">
-                {Array(8).fill(0).map((_, i) => (
-                    <div key={i} className="whitespace-nowrap opacity-50">
-                        <span className="text-purple-400">const</span> <span className="text-blue-400">secure</span> = <span className="text-yellow-300">true</span>;
-                        <br />
-                        <span className="text-emerald-400">verify</span>(hash_{i});
-                    </div>
-                ))}
-            </div>
+            <div className="absolute inset-0 bg-[linear-gradient(rgba(16,185,129,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(16,185,129,0.05)_1px,transparent_1px)] bg-[size:20px_20px]"></div>
 
-            {/* Badge */}
-            <div className="relative z-10 flex flex-col items-center gap-2 transform group-hover:scale-110 transition-transform duration-500">
-                <div className="w-16 h-16 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center shadow-2xl ring-1 ring-emerald-500/20">
-                    <Lock className="w-8 h-8 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
+            {/* Floating Icons that get sucked in */}
+            {[
+                { Icon: Github, color: 'text-white', pos: 'translate(-60px, -40px)', delay: 0 },
+                { Icon: Linkedin, color: 'text-blue-400', pos: 'translate(60px, -40px)', delay: 100 },
+                { Icon: Twitter, color: 'text-gray-400', pos: 'translate(-60px, 40px)', delay: 200 },
+                { Icon: Instagram, color: 'text-pink-500', pos: 'translate(60px, 40px)', delay: 300 }
+            ].map((item, i) => (
+                <div
+                    key={i}
+                    className={`absolute transition-all duration-700 ease-in-out z-10 ${stage >= 1
+                        ? 'translate-x-0 translate-y-0 opacity-0 scale-0' // Sucked into vault
+                        : `${item.pos} opacity-100 scale-100 animate-float`
+                        }`}
+                    style={{ transitionDelay: `${item.delay}ms` }}
+                >
+                    <div className="p-2 bg-gray-800 rounded-full border border-gray-700 shadow-lg">
+                        <item.Icon className={`w-6 h-6 ${item.color}`} />
+                    </div>
                 </div>
-                <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center gap-1.5 backdrop-blur-md">
-                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                    <span className="text-emerald-400 text-xs font-medium">Open Source</span>
+            ))}
+
+            {/* Vault/Lock Central Hub */}
+            <div className="relative z-20 flex flex-col items-center">
+                <div className={`w-24 h-24 bg-gray-900 border-2 ${stage === 2 ? 'border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.4)]' : 'border-gray-700'} rounded-3xl flex items-center justify-center transition-all duration-500 relative overflow-hidden`}>
+                    {/* Vault Door Effect */}
+                    <div className={`absolute inset-0 bg-emerald-900/20 transition-transform duration-500 ${stage >= 1 ? 'translate-y-0' : 'translate-y-full'}`}></div>
+
+                    {/* Lock Icon */}
+                    <Lock className={`w-10 h-10 transition-all duration-500 ${stage === 2 ? 'text-emerald-400 scale-110' : 'text-gray-500 scale-100'}`} />
+
+                    {/* Particles when locked */}
+                    {stage === 2 && (
+                        <div className="absolute inset-0 animate-pulse bg-emerald-500/10"></div>
+                    )}
+                </div>
+
+                {/* Status Badge */}
+                <div className={`mt-4 px-4 py-1.5 rounded-full border flex items-center gap-2 transition-all duration-500 ${stage === 2 ? 'bg-emerald-500/10 border-emerald-500/30 translate-y-0 opacity-100' : 'bg-gray-800 border-gray-700 translate-y-2 opacity-0'}`}>
+                    <Shield className="w-3 h-3 text-emerald-400" />
+                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest">Encrypted</span>
                 </div>
             </div>
         </div>
@@ -1076,40 +1142,23 @@ export default function HomePage() {
                     {/* Bento Grid Layout */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {/* Large Feature Card */}
-                        <div className="lg:col-span-2 group relative p-8 rounded-[2.5rem] bg-gradient-to-br from-violet-600 to-indigo-700 overflow-hidden cursor-pointer hover:shadow-2xl hover:shadow-violet-500/30 transition-all duration-500 hover:-translate-y-1">
-                            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150"></div>
-                            <div className="absolute -right-20 -top-20 w-80 h-80 bg-violet-400/30 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+                        <div className="lg:col-span-2 group relative p-8 rounded-[2.5rem] bg-gradient-to-br from-violet-600 to-indigo-700 overflow-hidden cursor-pointer hover:shadow-2xl hover:shadow-violet-500/30 transition-all duration-500 hover:-translate-y-1 h-96">
+                            {/* Full Height Animation Container */}
+                            <div className="absolute inset-0 z-0">
+                                <AnimatedAnalyticsFeature />
+                            </div>
 
-                            {/* Animated Background */}
-                            <AnimatedAnalyticsFeature />
-
-                            <div className="relative z-10">
-                                <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center mb-8 group-hover:rotate-6 transition-transform">
-                                    <BarChart3 className="w-8 h-8 text-white" />
-                                </div>
-                                <h3 className="text-3xl font-bold text-white mb-4">Real-Time Analytics</h3>
-                                <p className="text-violet-100 text-lg max-w-lg mb-8 leading-relaxed">
-                                    Track every click and view with beautiful interactive charts. Understand your audience and optimize your reach with data-driven insights.
+                            {/* Overlay Title (Floating top left) */}
+                            <div className="absolute top-8 left-8 z-10 pointer-events-none">
+                                <h3 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">Real-Time Analytics</h3>
+                                <p className="text-violet-100/80 text-sm max-w-sm backdrop-blur-sm rounded-lg">
+                                    Track every click live.
                                 </p>
-                                <div className="grid grid-cols-3 gap-8 border-t border-white/10 pt-8">
-                                    <div className="text-center group-hover:translate-y-[-5px] transition-transform duration-300 delay-0">
-                                        <div className="text-3xl font-bold text-white mb-1"><CountUp end={10000} suffix="+" /></div>
-                                        <div className="text-violet-200 text-sm font-medium">Daily Clicks</div>
-                                    </div>
-                                    <div className="text-center group-hover:translate-y-[-5px] transition-transform duration-300 delay-75">
-                                        <div className="text-3xl font-bold text-white mb-1">99.9%</div>
-                                        <div className="text-violet-200 text-sm font-medium">Uptime</div>
-                                    </div>
-                                    <div className="text-center group-hover:translate-y-[-5px] transition-transform duration-300 delay-150">
-                                        <div className="text-3xl font-bold text-white mb-1">50ms</div>
-                                        <div className="text-violet-200 text-sm font-medium">Response</div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
                         {/* Unlimited Links */}
-                        <div className="group relative p-8 rounded-[2.5rem] bg-gradient-to-br from-blue-500 to-cyan-500 overflow-hidden cursor-pointer hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1">
+                        <div className="group relative p-8 rounded-[2.5rem] bg-gradient-to-br from-blue-500 to-cyan-500 overflow-hidden cursor-pointer hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1 h-96">
                             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 brightness-100 contrast-150"></div>
                             <div className="relative z-10 flex flex-col h-full">
                                 <div className="mb-auto flex justify-center py-6">
