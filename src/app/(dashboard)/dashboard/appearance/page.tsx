@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
-import { Loader2, Check, Upload } from 'lucide-react';
+import { Loader2, Check, Upload, Laptop, Smartphone } from 'lucide-react';
 import Image from 'next/image';
 import { CldUploadButton } from 'next-cloudinary';
+import { useToast } from '@/components/ui/toaster';
 import ProfilePreview from '@/components/dashboard/profile-preview';
 
 const THEMES = [
@@ -19,8 +20,10 @@ const THEMES = [
 
 export default function AppearancePage() {
     const { user } = useUser();
+    const { addToast } = useToast();
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
+    const [previewDevice, setPreviewDevice] = useState<'mobile' | 'desktop'>('mobile');
     const [profile, setProfile] = useState({
         name: '',
         bio: '',
@@ -90,13 +93,25 @@ export default function AppearancePage() {
                 }
 
                 router.refresh();
-                alert('Changes saved successfully!');
+                addToast({
+                    title: 'Success',
+                    description: 'Your profile appearance has been updated.',
+                    variant: 'success',
+                });
             } else {
-                alert('Failed to save changes. Please try again.');
+                addToast({
+                    title: 'Error',
+                    description: 'Failed to save changes. Please try again.',
+                    variant: 'error',
+                });
             }
         } catch (error) {
             console.error('Failed to save profile:', error);
-            alert('An error occurred. Please try again.');
+            addToast({
+                title: 'Error',
+                description: 'An unexpected error occurred.',
+                variant: 'error',
+            });
         } finally {
             setIsSaving(false);
         }
@@ -121,7 +136,7 @@ export default function AppearancePage() {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-20">
                 {/* Left Column - Editor */}
                 <div className="lg:col-span-7 space-y-6">
                     {/* Profile Section */}
@@ -254,11 +269,35 @@ export default function AppearancePage() {
 
                 {/* Right Column - Preview */}
                 <div className="hidden lg:block lg:col-span-5">
-                    <div className="sticky top-24">
-                        <h3 className="text-lg font-semibold mb-6 text-center text-gray-900 dark:text-white">
-                            Live Preview
-                        </h3>
+                    <div className="sticky top-6">
+                        <div className="flex items-center justify-center gap-4 mb-6">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                Live Preview
+                            </h3>
+                            <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+                                <button
+                                    onClick={() => setPreviewDevice('mobile')}
+                                    className={`p-2 rounded-md transition-all ${previewDevice === 'mobile'
+                                        ? 'bg-white dark:bg-gray-700 shadow-sm text-primary-600 dark:text-primary-400'
+                                        : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'
+                                        }`}
+                                >
+                                    <Smartphone className="w-4 h-4" />
+                                </button>
+                                <button
+                                    onClick={() => setPreviewDevice('desktop')}
+                                    className={`p-2 rounded-md transition-all ${previewDevice === 'desktop'
+                                        ? 'bg-white dark:bg-gray-700 shadow-sm text-primary-600 dark:text-primary-400'
+                                        : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-300'
+                                        }`}
+                                >
+                                    <Laptop className="w-4 h-4" />
+                                </button>
+                            </div>
+                        </div>
+
                         <ProfilePreview
+                            device={previewDevice}
                             data={{
                                 ...profile,
                                 username: user?.username || '',

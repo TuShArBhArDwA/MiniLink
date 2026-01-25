@@ -1,12 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useUser, useClerk } from '@clerk/nextjs';
 import { Loader2, AlertTriangle, Copy, Check } from 'lucide-react';
+import { useToast } from '@/components/ui/toaster';
 
 export default function SettingsPage() {
     const { user } = useUser();
     const { signOut } = useClerk();
+    const { addToast } = useToast();
+    const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [copied, setCopied] = useState(false);
@@ -67,6 +71,13 @@ export default function SettingsPage() {
             }
 
             setOriginalUsername(username);
+            router.refresh();
+
+            addToast({
+                title: 'Success',
+                description: 'Username updated successfully.',
+                variant: 'success',
+            });
 
             // Optionally update Clerk username if you want to sync, 
             // but for now we are syncing local DB username.
@@ -81,6 +92,11 @@ export default function SettingsPage() {
 
         } catch (error) {
             setError('Something went wrong');
+            addToast({
+                title: 'Error',
+                description: 'Failed to update username.',
+                variant: 'error',
+            });
         } finally {
             setIsSaving(false);
         }

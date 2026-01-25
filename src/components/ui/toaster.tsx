@@ -49,11 +49,7 @@ export function useToast() {
 }
 
 export function Toaster() {
-    return (
-        <ToastProvider>
-            <ToasterContent />
-        </ToastProvider>
-    );
+    return <ToasterContent />;
 }
 
 function ToasterContent() {
