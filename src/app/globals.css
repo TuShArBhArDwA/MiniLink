@@ -300,3 +300,36 @@
 .animate-shine {
   animation: shine 3s infinite;
 }
+
+@keyframes roll-text {
+  0% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.animate-roll-text {
+  animation: roll-text 40s linear infinite;
+}
+
+@keyframes text-gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-text-gradient {
+  background-size: 200% auto;
+  animation: text-gradient 5s ease infinite;
+}
