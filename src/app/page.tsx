@@ -21,7 +21,7 @@ import {
     ChevronDown
 } from 'lucide-react';
 import { SiteFooter } from '@/components/site-footer';
-import { Plus, Check, ExternalLink, Copy, MousePointer2 } from 'lucide-react';
+import { Plus, Check, ExternalLink, Copy, MousePointer2, Linkedin, Youtube, MessageCircle, Send, Lock, Code, Terminal, CheckCircle2 } from 'lucide-react';
 
 // Animated Laptop Demo Component
 function LaptopDemo({ isDark }: { isDark: boolean }) {
@@ -418,6 +418,273 @@ function FAQItem({ question, answer, isOpen, onToggle }: { question: string; ans
     );
 }
 
+// Feature Demo Animations
+function AnimatedLinksFeature() {
+    const [links, setLinks] = useState<number[]>([]);
+
+    useEffect(() => {
+        let step = 0;
+        const interval = setInterval(() => {
+            if (step < 3) {
+                setLinks(prev => [...prev, step]);
+                step++;
+            } else {
+                setLinks([]);
+                step = 0;
+            }
+        }, 1500);
+        return () => clearInterval(interval);
+    }, []);
+
+    const linkData = [
+        { icon: Linkedin, color: 'bg-[#0077b5]', text: 'LinkedIn Profile' },
+        { icon: Github, color: 'bg-[#333]', text: 'GitHub Repos' },
+        { icon: Youtube, color: 'bg-[#ff0000]', text: 'YouTube Channel' }
+    ];
+
+    return (
+        <div className="w-full max-w-[240px] space-y-3 opacity-90 p-4">
+            {links.map((i) => {
+                const data = linkData[i];
+                if (!data) return null;
+                const LinkIcon = data.icon;
+                return (
+                    <div key={i} className="h-12 w-full bg-white/10 backdrop-blur-md rounded-xl flex items-center px-4 animate-in fade-in slide-in-from-bottom-4 duration-500 border border-white/10 shadow-lg">
+                        <div className={`w-8 h-8 rounded-full ${data.color} flex items-center justify-center mr-3 shadow-md`}>
+                            <LinkIcon className="w-4 h-4 text-white" />
+                        </div>
+                        <div className="flex-1">
+                            <div className="h-2.5 w-24 bg-white/40 rounded-full mb-1.5"></div>
+                            <div className="h-2 w-16 bg-white/20 rounded-full"></div>
+                        </div>
+                        <ExternalLink className="w-4 h-4 text-white/30" />
+                    </div>
+                );
+            })}
+            {links.length < 3 && (
+                <div className="h-12 w-full border-2 border-dashed border-white/20 rounded-xl flex items-center justify-center animate-pulse">
+                    <div className="flex items-center gap-2 text-white/40 font-medium text-sm">
+                        <Plus className="w-4 h-4" />
+                        <span>Add Link</span>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+function AnimatedThemesFeature() {
+    const [activeTheme, setActiveTheme] = useState(0);
+    const themes = [
+        { name: 'Violet', color: 'bg-violet-500', gradient: 'from-violet-500 to-purple-600' },
+        { name: 'Pink', color: 'bg-pink-500', gradient: 'from-pink-500 to-rose-500' },
+        { name: 'Amber', color: 'bg-amber-500', gradient: 'from-amber-500 to-orange-500' },
+        { name: 'Teal', color: 'bg-teal-500', gradient: 'from-emerald-500 to-teal-500' }
+    ];
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setActiveTheme(prev => (prev + 1) % themes.length);
+        }, 2500);
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <div className="flex gap-4 items-center">
+            {/* Theme Selector Sidebar */}
+            <div className="flex flex-col gap-3 p-3 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
+                {themes.map((t, i) => (
+                    <div
+                        key={i}
+                        className={`w-8 h-8 rounded-full ${t.color} cursor-pointer transition-all duration-300 ${activeTheme === i ? 'ring-2 ring-offset-2 ring-gray-400 scale-110' : 'opacity-40 hover:opacity-100'}`}
+                    />
+                ))}
+                <div className="relative mt-2">
+                    <MousePointer2
+                        className="w-5 h-5 text-gray-500 absolute -top-8 transition-all duration-500 ease-in-out"
+                        style={{ transform: `translateY(${activeTheme * 44}px)` }}
+                    />
+                </div>
+            </div>
+
+            {/* Phone Mockup Preview */}
+            <div className={`w-32 h-56 rounded-[2rem] bg-gradient-to-br ${themes[activeTheme].gradient} transition-all duration-700 shadow-2xl overflow-hidden relative border-[6px] border-white dark:border-gray-800 ring-1 ring-black/5`}>
+                <div className="absolute top-0 inset-x-0 h-4 bg-black/10 mx-8 rounded-b-xl backdrop-blur-sm z-10"></div>
+                <div className="flex flex-col items-center gap-3 pt-8 pb-4 px-3">
+                    <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md shadow-inner mb-1"></div>
+                    <div className="h-2 w-16 bg-white/30 rounded-full shadow-sm mb-3"></div>
+                    <div className="w-full space-y-2">
+                        <div className="h-7 w-full bg-white/20 rounded-lg shadow-sm backdrop-blur-sm transform transition-all duration-500 translate-y-0"></div>
+                        <div className="h-7 w-full bg-white/20 rounded-lg shadow-sm backdrop-blur-sm transform transition-all duration-500 delay-75 translate-y-0"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function AnimatedFastFeature() {
+    const [state, setState] = useState(0); // 0: typing, 1: sent, 2: clicking, 3: open
+
+    useEffect(() => {
+        const times = [0, 1500, 2500, 3000];
+        let timeouts: NodeJS.Timeout[] = [];
+
+        const run = () => {
+            setState(0);
+            timeouts.push(setTimeout(() => setState(1), 1000));
+            timeouts.push(setTimeout(() => setState(2), 2500));
+            timeouts.push(setTimeout(() => setState(3), 3000));
+            timeouts.push(setTimeout(run, 6000));
+        };
+        run();
+        return () => timeouts.forEach(clearTimeout);
+    }, []);
+
+    return (
+        <div className="relative w-64 h-40 bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 flex flex-col shadow-xl">
+            {/* Browser Window Overlay */}
+            {state === 3 && (
+                <div className="absolute inset-0 bg-white dark:bg-gray-900 z-20 animate-in zoom-in-90 duration-300 flex flex-col">
+                    <div className="h-6 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center px-2 gap-1.5">
+                        <div className="w-2 h-2 rounded-full bg-red-400"></div>
+                        <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
+                        <div className="w-2 h-2 rounded-full bg-green-400"></div>
+                        <div className="ml-2 flex-1 h-3 bg-white dark:bg-gray-700 rounded text-[6px] text-gray-400 flex items-center px-1">minilink.bio/me</div>
+                    </div>
+                    <div className="flex-1 p-4 flex flex-col items-center justify-center bg-gray-50 dark:bg-[#0a0a0f]">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 mb-2 shadow-lg animate-bounce"></div>
+                        <div className="h-2 w-20 bg-gray-200 dark:bg-gray-800 rounded-full"></div>
+                    </div>
+                </div>
+            )}
+
+            {/* Chat Interface */}
+            <div className="h-8 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 flex items-center px-3 justify-between">
+                <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-600 flex items-center justify-center"><MessageCircle size={12} /></div>
+                    <div className="h-2 w-16 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
+                </div>
+            </div>
+            <div className="flex-1 p-3 space-y-3 bg-gray-50 dark:bg-gray-900/50">
+                {/* Message Bubble */}
+                <div className={`flex justify-end transition-all duration-300 ${state >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+                    <div className="bg-blue-500 text-white text-[10px] py-2 px-3 rounded-2xl rounded-tr-sm shadow-md max-w-[80%]">
+                        <p className="mb-1">Check my new profile! 🔥</p>
+                        <div className={`bg-blue-600/50 rounded p-1.5 flex items-center gap-1.5 cursor-pointer hover:bg-blue-600 transition-colors ${state === 2 ? 'ring-2 ring-white/50' : ''}`}>
+                            <Link2 size={10} />
+                            <span className="font-mono opacity-90">minilink.bio/me</span>
+                            <MousePointer2 className={`w-4 h-4 text-white absolute bottom-[-10px] right-[-10px] transition-opacity duration-300 ${state === 2 ? 'opacity-100' : 'opacity-0'}`} />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function AnimatedAnalyticsFeature() {
+    const [clicks, setClicks] = useState(124);
+    const [activeLink, setActiveLink] = useState(-1);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setActiveLink(0);
+            setTimeout(() => {
+                setClicks(c => c + 1);
+                setActiveLink(-1);
+            }, 1000); // Click duration
+        }, 3000);
+        return () => clearInterval(interval);
+    }, []);
+
+    return (
+        <div className="w-full h-full p-6 flex gap-4 absolute inset-0">
+            {/* Dashboard Mockup (Left) */}
+            <div className="flex-1 bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/10 flex flex-col justify-between shadow-2xl">
+                <div>
+                    <div className="text-white/50 text-xs font-medium uppercase tracking-wider mb-1">Total Clicks</div>
+                    <div className="text-3xl font-bold text-white transition-all duration-300 scale-105">{clicks.toLocaleString()}</div>
+                </div>
+                <div className="h-16 flex items-end gap-1">
+                    {[40, 60, 45, 70, 50].map((h, i) => (
+                        <div key={i} className="flex-1 bg-white/20 rounded-t-sm" style={{ height: `${h}%` }}></div>
+                    ))}
+                    <div className="flex-1 bg-white rounded-t-sm transition-all duration-300 shadow-[0_0_15px_rgba(255,255,255,0.5)]" style={{ height: `${(clicks % 10) * 10 + 20}%` }}></div>
+                </div>
+            </div>
+
+            {/* Link List Mockup (Right) */}
+            <div className="w-32 flex flex-col gap-2 opacity-90 py-4">
+                <div className="text-white/40 text-[10px] mb-1 font-medium">Top Sources</div>
+                <div className={`p-2 rounded-lg bg-white/5 border border-white/5 flex items-center gap-2 transition-all duration-300 ${activeLink === 0 ? 'bg-white/20 scale-105 border-white/30 shadow-lg' : ''}`}>
+                    <Linkedin className="w-4 h-4 text-[#0077b5]" />
+                    <div className="h-1.5 w-12 bg-white/20 rounded-full"></div>
+                    {activeLink === 0 && <MousePointer2 className="w-4 h-4 text-white absolute right-1 top-4 filter drop-shadow-md" />}
+                </div>
+                <div className="p-2 rounded-lg bg-white/5 border border-white/5 flex items-center gap-2 opacity-60">
+                    <Youtube className="w-4 h-4 text-red-500" />
+                    <div className="h-1.5 w-10 bg-white/20 rounded-full"></div>
+                </div>
+                <div className="p-2 rounded-lg bg-white/5 border border-white/5 flex items-center gap-2 opacity-60">
+                    <Globe className="w-4 h-4 text-emerald-500" />
+                    <div className="h-1.5 w-14 bg-white/20 rounded-full"></div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function AnimatedSecurityFeature() {
+    return (
+        <div className="relative w-full h-full flex items-center justify-center overflow-hidden rounded-2xl bg-[#0d1117] group">
+            {/* Code Background */}
+            <div className="absolute inset-0 p-4 font-mono text-[10px] text-emerald-500/30 leading-relaxed pointer-events-none select-none">
+                {Array(8).fill(0).map((_, i) => (
+                    <div key={i} className="whitespace-nowrap opacity-50">
+                        <span className="text-purple-400">const</span> <span className="text-blue-400">secure</span> = <span className="text-yellow-300">true</span>;
+                        <br />
+                        <span className="text-emerald-400">verify</span>(hash_{i});
+                    </div>
+                ))}
+            </div>
+
+            {/* Badge */}
+            <div className="relative z-10 flex flex-col items-center gap-2 transform group-hover:scale-110 transition-transform duration-500">
+                <div className="w-16 h-16 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl flex items-center justify-center shadow-2xl ring-1 ring-emerald-500/20">
+                    <Lock className="w-8 h-8 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
+                </div>
+                <div className="px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center gap-1.5 backdrop-blur-md">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                    <span className="text-emerald-400 text-xs font-medium">Open Source</span>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+// Animated Counter Component
+function CountUp({ end, suffix = '', duration = 2000 }: { end: number, suffix?: string, duration?: number }) {
+    const [count, setCount] = useState(0);
+
+    useEffect(() => {
+        let start = 0;
+        const increment = end / (duration / 16);
+        const timer = setInterval(() => {
+            start += increment;
+            if (start >= end) {
+                setCount(end);
+                clearInterval(timer);
+            } else {
+                setCount(Math.floor(start));
+            }
+        }, 16);
+        return () => clearInterval(timer);
+    }, [end, duration]);
+
+    return <span>{count}{suffix}</span>;
+}
+
 export default function HomePage() {
     const { isSignedIn, isLoaded } = useUser();
     const [isDark, setIsDark] = useState(false);
@@ -798,10 +1065,6 @@ export default function HomePage() {
 
                 <div className="max-w-7xl mx-auto relative">
                     <div className="text-center mb-16">
-                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-violet-500/10 to-pink-500/10 text-violet-700 dark:text-violet-300 text-sm font-medium mb-4 border border-violet-500/20">
-                            <Zap className="w-4 h-4" />
-                            <span>Features</span>
-                        </div>
                         <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-gray-900 dark:text-white">
                             Everything You Need
                         </h2>
@@ -817,6 +1080,9 @@ export default function HomePage() {
                             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 brightness-100 contrast-150"></div>
                             <div className="absolute -right-20 -top-20 w-80 h-80 bg-violet-400/30 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
 
+                            {/* Animated Background */}
+                            <AnimatedAnalyticsFeature />
+
                             <div className="relative z-10">
                                 <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center mb-8 group-hover:rotate-6 transition-transform">
                                     <BarChart3 className="w-8 h-8 text-white" />
@@ -827,7 +1093,7 @@ export default function HomePage() {
                                 </p>
                                 <div className="grid grid-cols-3 gap-8 border-t border-white/10 pt-8">
                                     <div className="text-center group-hover:translate-y-[-5px] transition-transform duration-300 delay-0">
-                                        <div className="text-3xl font-bold text-white mb-1">10K+</div>
+                                        <div className="text-3xl font-bold text-white mb-1"><CountUp end={10000} suffix="+" /></div>
                                         <div className="text-violet-200 text-sm font-medium">Daily Clicks</div>
                                     </div>
                                     <div className="text-center group-hover:translate-y-[-5px] transition-transform duration-300 delay-75">
@@ -842,45 +1108,51 @@ export default function HomePage() {
                             </div>
                         </div>
 
-                        {/* Small Card 1 */}
-                        <div className="group relative p-8 rounded-[2.5rem] bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 overflow-hidden cursor-pointer hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-500 opacity-0 group-hover:opacity-100"></div>
-                            <div className="relative z-10">
-                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all shadow-lg shadow-blue-500/20">
-                                    <Link2 className="w-7 h-7 text-white" />
+                        {/* Unlimited Links */}
+                        <div className="group relative p-8 rounded-[2.5rem] bg-gradient-to-br from-blue-500 to-cyan-500 overflow-hidden cursor-pointer hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1">
+                            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 brightness-100 contrast-150"></div>
+                            <div className="relative z-10 flex flex-col h-full">
+                                <div className="mb-auto flex justify-center py-6">
+                                    <AnimatedLinksFeature />
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Unlimited Links</h3>
-                                <p className="text-gray-500 dark:text-gray-400 leading-relaxed">
-                                    Add as many links as you want. Drag and drop to reorder in seconds.
-                                </p>
+                                <div>
+                                    <h3 className="text-xl font-bold text-white mb-2">Unlimited Links</h3>
+                                    <p className="text-blue-100 text-sm leading-relaxed">
+                                        Add as many links as you want. Drag and drop to reorder in seconds.
+                                    </p>
+                                </div>
                             </div>
                         </div>
 
-                        {/* Small Card 2 */}
+                        {/* Custom Themes */}
                         <div className="group relative p-8 rounded-[2.5rem] bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 overflow-hidden cursor-pointer hover:shadow-xl hover:shadow-pink-500/10 transition-all duration-300 hover:-translate-y-1">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-pink-500/10 to-rose-500/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-500 opacity-0 group-hover:opacity-100"></div>
-                            <div className="relative z-10">
-                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:-rotate-6 transition-all shadow-lg shadow-pink-500/20">
-                                    <Palette className="w-7 h-7 text-white" />
+                            <div className="relative z-10 flex flex-col h-full">
+                                <div className="mb-auto flex justify-center py-4">
+                                    <AnimatedThemesFeature />
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">6+ Themes</h3>
-                                <p className="text-gray-500 dark:text-gray-400 leading-relaxed">
-                                    From minimal to neon cyberpunk. Express your unique style instantly.
-                                </p>
+                                <div>
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">6+ Themes</h3>
+                                    <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
+                                        From minimal to neon cyberpunk. Express your unique style instantly.
+                                    </p>
+                                </div>
                             </div>
                         </div>
 
-                        {/* Small Card 3 */}
+                        {/* Lightning Fast */}
                         <div className="group relative p-8 rounded-[2.5rem] bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 overflow-hidden cursor-pointer hover:shadow-xl hover:shadow-amber-500/10 transition-all duration-300 hover:-translate-y-1">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-amber-500/10 to-orange-500/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-500 opacity-0 group-hover:opacity-100"></div>
-                            <div className="relative z-10">
-                                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all shadow-lg shadow-amber-500/20">
-                                    <Zap className="w-7 h-7 text-white" />
+                            <div className="relative z-10 flex flex-col h-full">
+                                <div className="mb-auto flex justify-center py-4">
+                                    <AnimatedFastFeature />
                                 </div>
-                                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Lightning Fast</h3>
-                                <p className="text-gray-500 dark:text-gray-400 leading-relaxed">
-                                    Edge-optimized infrastructure. Loads instantly from anywhere in the world.
-                                </p>
+                                <div>
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Lightning Fast</h3>
+                                    <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
+                                        Loads instantly. Optimized for speed and performance.
+                                    </p>
+                                </div>
                             </div>
                         </div>
 
@@ -888,16 +1160,11 @@ export default function HomePage() {
                         <div className="lg:col-span-2 group relative p-8 rounded-[2.5rem] bg-gray-900 dark:bg-gray-800 overflow-hidden cursor-pointer hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-500 hover:-translate-y-1">
                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(124,58,237,0.2),transparent_50%)] group-hover:opacity-100 transition-opacity"></div>
                             <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(236,72,153,0.2),transparent_50%)] group-hover:opacity-100 transition-opacity"></div>
-                            <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center gap-8">
+                            <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
+                                <div className="shrink-0">
+                                    <AnimatedSecurityFeature />
+                                </div>
                                 <div className="flex-1">
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center">
-                                            <Shield className="w-6 h-6 text-white" />
-                                        </div>
-                                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center">
-                                            <Globe className="w-6 h-6 text-white" />
-                                        </div>
-                                    </div>
                                     <h3 className="text-xl font-bold text-white mb-2">Secure, Private & Open Source</h3>
                                     <p className="text-gray-400">
                                         Your data is protected with enterprise-grade security. Fully open source — contribute, customize, or self-host.
