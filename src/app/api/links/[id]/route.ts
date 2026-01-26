@@ -1,84 +1,75 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
+import { auth } from '@clerk/nextjs';
 import { prisma } from '@/lib/prisma';
 
-// GET single link
-export async function GET(
-    request: NextRequest,
+export async function PUT(
+    req: Request,
     { params }: { params: { id: string } }
 ) {
     try {
-        const session = await auth();
-
-        if (!session?.user?.id) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        const { userId } = auth();
+        if (!userId) {
+            return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const link = await prisma.link.findUnique({
-            where: { id: params.id, userId: session.user.id },
+        const body = await req.json();
+
+        // Ensure the link exists and belongs to the user
+        // Using updateMany is a safe way to ensure ownership without an extra fetch
+        // But to return the updated object, we use update with a check or findFirst
+
+        // First check ownership
+        const existingLink = await prisma.link.findUnique({
+            where: { id: params.id }
         });
 
-        if (!link) {
-            return NextResponse.json({ error: 'Link not found' }, { status: 404 });
+        if (!existingLink || existingLink.userId !== userId) {
+            return new NextResponse("Link not found", { status: 404 });
         }
-
-        return NextResponse.json(link);
-    } catch (error) {
-        console.error('Error fetching link:', error);
-        return NextResponse.json({ error: 'Failed to fetch link' }, { status: 500 });
-    }
-}
-
-// PUT update link
-export async function PUT(
-    request: NextRequest,
-    { params }: { params: { id: string } }
-) {
-    try {
-        const session = await auth();
-
-        if (!session?.user?.id) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
-        const { title, url, icon, isActive } = await request.json();
 
         const link = await prisma.link.update({
-            where: { id: params.id, userId: session.user.id },
+            where: {
+                id: params.id,
+            },
             data: {
-                ...(title !== undefined && { title }),
-                ...(url !== undefined && { url }),
-                ...(icon !== undefined && { icon }),
-                ...(isActive !== undefined && { isActive }),
+                ...body,
             },
         });
 
         return NextResponse.json(link);
     } catch (error) {
-        console.error('Error updating link:', error);
-        return NextResponse.json({ error: 'Failed to update link' }, { status: 500 });
+        console.error('[LINK_ID_PUT]', error);
+        return new NextResponse("Internal Error", { status: 500 });
     }
 }
 
-// DELETE link
 export async function DELETE(
-    request: NextRequest,
+    req: Request,
     { params }: { params: { id: string } }
 ) {
     try {
-        const session = await auth();
+        const { userId } = auth();
+        if (!userId) {
+            return new NextResponse("Unauthorized", { status: 401 });
+        }
 
-        if (!session?.user?.id) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        const existingLink = await prisma.link.findUnique({
+            where: { id: params.id }
+        });
+
+        if (!existingLink || existingLink.userId !== userId) {
+            return new NextResponse("Link not found", { status: 404 });
         }
 
         await prisma.link.delete({
-            where: { id: params.id, userId: session.user.id },
+            where: {
+                id: params.id,
+            },
         });
 
         return NextResponse.json({ success: true });
     } catch (error) {
-        console.error('Error deleting link:', error);
-        return NextResponse.json({ error: 'Failed to delete link' }, { status: 500 });
+        console.error('[LINK_ID_DELETE]', error);
+        return new NextResponse("Internal Error", { status: 500 });
     }
 }

@@ -1,96 +1,99 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs';
 import { prisma } from '@/lib/prisma';
 
-// GET all links for current user
 export async function GET() {
     try {
         const { userId } = auth();
-
         if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return new NextResponse("Unauthorized", { status: 401 });
         }
 
         const links = await prisma.link.findMany({
-            where: { userId: userId },
+            where: { userId },
             orderBy: { order: 'asc' },
         });
 
         return NextResponse.json(links);
     } catch (error) {
-        console.error('Error fetching links:', error);
-        return NextResponse.json({ error: 'Failed to fetch links' }, { status: 500 });
+        console.error('[LINKS_GET]', error);
+        return new NextResponse("Internal Error", { status: 500 });
     }
 }
 
-// POST create new link
-export async function POST(request: NextRequest) {
+export async function POST(req: Request) {
     try {
         const { userId } = auth();
-
         if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const { title, url, icon } = await request.json();
+        const body = await req.json();
+        const { title, url, icon } = body;
 
         if (!title || !url) {
-            return NextResponse.json({ error: 'Title and URL are required' }, { status: 400 });
+            return new NextResponse("Missing required fields", { status: 400 });
         }
 
-        // Get the highest order number
+        // Get last order to append to the end
         const lastLink = await prisma.link.findFirst({
-            where: { userId: userId },
+            where: { userId },
             orderBy: { order: 'desc' },
         });
 
-        const newOrder = (lastLink?.order ?? -1) + 1;
+        const newOrder = lastLink ? lastLink.order + 1 : 0;
 
         const link = await prisma.link.create({
             data: {
+                userId,
                 title,
                 url,
-                icon: icon || null,
+                icon,
                 order: newOrder,
-                userId: userId,
+                isActive: true, // Default active
             },
         });
 
-        return NextResponse.json(link, { status: 201 });
+        return NextResponse.json(link);
     } catch (error) {
-        console.error('Error creating link:', error);
-        return NextResponse.json({ error: 'Failed to create link' }, { status: 500 });
+        console.error('[LINKS_POST]', error);
+        return new NextResponse("Internal Error", { status: 500 });
     }
 }
 
-// PATCH update link order (bulk)
-export async function PATCH(request: NextRequest) {
+export async function PATCH(req: Request) {
     try {
         const { userId } = auth();
-
         if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            return new NextResponse("Unauthorized", { status: 401 });
         }
 
-        const { links } = await request.json();
+        const body = await req.json();
+        const { links } = body;
 
-        if (!Array.isArray(links)) {
-            return NextResponse.json({ error: 'Links array required' }, { status: 400 });
+        if (!links || !Array.isArray(links)) {
+            return new NextResponse("Invalid data", { status: 400 });
         }
 
         // Update order for each link
+        // Use Promise.all for parallel execution, but verify ownership
         await Promise.all(
-            links.map((link: { id: string; order: number }) =>
-                prisma.link.update({
-                    where: { id: link.id, userId: userId },
-                    data: { order: link.order },
+            links.map((item: { id: string; order: number }) =>
+                prisma.link.updateMany({
+                    where: {
+                        id: item.id,
+                        userId: userId, // Security: ensure user owns the link
+                    },
+                    data: {
+                        order: item.order,
+                    },
                 })
             )
         );
 
         return NextResponse.json({ success: true });
     } catch (error) {
-        console.error('Error updating link order:', error);
-        return NextResponse.json({ error: 'Failed to update order' }, { status: 500 });
+        console.error('[LINKS_REORDER]', error);
+        return new NextResponse("Internal Error", { status: 500 });
     }
 }

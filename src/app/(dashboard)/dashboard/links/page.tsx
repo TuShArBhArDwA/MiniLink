@@ -30,7 +30,7 @@ import {
     useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import IconPicker from '@/components/dashboard/icon-picker';
+import IconPicker, { getIconComponent } from '@/components/dashboard/icon-picker';
 
 interface Link {
     id: string;
@@ -49,7 +49,11 @@ export default function LinksPage() {
     const [newLink, setNewLink] = useState({ title: '', url: '', icon: '' });
 
     const sensors = useSensors(
-        useSensor(PointerSensor),
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
         useSensor(KeyboardSensor, {
             coordinateGetter: sortableKeyboardCoordinates,
         })
@@ -298,6 +302,8 @@ function SortableLinkItem({ link, onDelete, onToggle, onUpdate }: SortableLinkIt
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.5 : 1,
+        zIndex: isDragging ? 50 : 0,
+        position: isDragging ? 'relative' as const : undefined,
     };
 
     const handleSave = async () => {
@@ -317,83 +323,115 @@ function SortableLinkItem({ link, onDelete, onToggle, onUpdate }: SortableLinkIt
         }
     };
 
+    const IconComponent = getIconComponent(link.icon);
+    const isCustomUrl = link.icon?.startsWith('http') || false;
+
     return (
         <div
             ref={setNodeRef}
             style={style}
-            className={`card p-4 flex items-center gap-4 ${!link.isActive ? 'opacity-60' : ''}`}
+            className={`group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex items-center gap-4 hover:shadow-md hover:border-violet-500/50 transition-all duration-300 ${!link.isActive ? 'opacity-60 bg-gray-50 dark:bg-gray-900/50' : ''}`}
         >
+            {/* Drag Handle */}
             <button
                 {...attributes}
                 {...listeners}
-                className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600"
+                className="p-2 cursor-grab active:cursor-grabbing text-gray-400 hover:text-violet-500 hover:bg-violet-50 dark:hover:bg-violet-900/20 rounded-lg transition-colors"
+                title="Drag to reorder"
             >
                 <GripVertical className="w-5 h-5" />
             </button>
 
-            <div className="flex-1 min-w-0">
-                {isEditing ? (
-                    <div className="flex items-center gap-2">
-                        <input
-                            type="text"
-                            className="input-field py-1 px-2 text-sm"
-                            value={editData.title}
-                            onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-                        />
-                        <input
-                            type="url"
-                            className="input-field py-1 px-2 text-sm"
-                            value={editData.url}
-                            onChange={(e) => setEditData({ ...editData, url: e.target.value })}
-                        />
-                        <button onClick={handleSave} className="p-1 text-green-600 hover:text-green-700">
-                            <Check className="w-4 h-4" />
-                        </button>
-                        <button onClick={() => setIsEditing(false)} className="p-1 text-gray-400 hover:text-gray-600">
-                            <X className="w-4 h-4" />
-                        </button>
-                    </div>
+            {/* Icon Preview */}
+            <div className="shrink-0 w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
+                {isCustomUrl ? (
+                    <img src={link.icon!} alt={link.title} className="w-6 h-6 object-cover rounded-md" />
                 ) : (
-                    <>
-                        <p className="font-medium text-gray-900 dark:text-white truncate">
-                            {link.title}
-                        </p>
-                        <p className="text-sm text-gray-500 truncate">{link.url}</p>
-                    </>
+                    <IconComponent className="w-5 h-5" />
                 )}
             </div>
 
-            <div className="flex items-center gap-1 text-sm text-gray-500">
-                <span>{link.clicks} clicks</span>
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+                {isEditing ? (
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
+                        <div className="flex-1 w-full space-y-2 sm:space-y-0 sm:flex sm:gap-2">
+                            <input
+                                type="text"
+                                className="input-field py-1.5 px-3 text-sm w-full sm:w-1/3"
+                                placeholder="Title"
+                                value={editData.title}
+                                onChange={(e) => setEditData({ ...editData, title: e.target.value })}
+                            />
+                            <input
+                                type="url"
+                                className="input-field py-1.5 px-3 text-sm w-full sm:w-2/3"
+                                placeholder="URL"
+                                value={editData.url}
+                                onChange={(e) => setEditData({ ...editData, url: e.target.value })}
+                            />
+                        </div>
+                        <div className="flex items-center gap-1 mt-2 sm:mt-0">
+                            <button onClick={handleSave} className="p-1.5 bg-green-100 text-green-700 rounded-md hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50 transition-colors">
+                                <Check className="w-4 h-4" />
+                            </button>
+                            <button onClick={() => setIsEditing(false)} className="p-1.5 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors">
+                                <X className="w-4 h-4" />
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="flex flex-col">
+                        <p className="font-semibold text-gray-900 dark:text-white truncate text-base">
+                            {link.title}
+                        </p>
+                        <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-violet-500 truncate hover:underline flex items-center gap-1">
+                            {link.url}
+                            <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </a>
+                    </div>
+                )}
             </div>
 
-            <div className="flex items-center gap-2">
+            {/* Stats Badge */}
+            {!isEditing && (
+                <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-xs font-medium text-gray-600 dark:text-gray-400">
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>{link.clicks}</span>
+                </div>
+            )}
+
+            {/* Actions */}
+            <div className="flex items-center gap-1">
                 <button
-                    onClick={() => setIsEditing(true)}
-                    className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    type="button"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setIsEditing(true);
+                    }}
+                    className="p-2 text-gray-400 hover:text-violet-500 hover:bg-violet-50 dark:hover:bg-violet-900/20 rounded-lg transition-colors"
                     title="Edit"
                 >
                     <Edit3 className="w-4 h-4" />
                 </button>
                 <button
-                    onClick={() => onToggle(link.id, !link.isActive)}
-                    className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    type="button"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onToggle(link.id, !link.isActive);
+                    }}
+                    className={`p-2 rounded-lg transition-colors ${link.isActive ? 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300' : 'text-gray-400 hover:text-green-500'}`}
                     title={link.isActive ? 'Hide' : 'Show'}
                 >
                     {link.isActive ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                 </button>
-                <a
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                    title="Open link"
-                >
-                    <ExternalLink className="w-4 h-4" />
-                </a>
                 <button
-                    onClick={() => onDelete(link.id)}
-                    className="p-2 text-gray-400 hover:text-red-500"
+                    type="button"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(link.id);
+                    }}
+                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                     title="Delete"
                 >
                     <Trash2 className="w-4 h-4" />
