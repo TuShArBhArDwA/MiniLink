@@ -613,55 +613,61 @@ function AnimatedAnalyticsFeature() {
 
     return (
         <div className="w-full h-full flex flex-row gap-4 absolute inset-0 p-6">
-            <div className="flex-1 bg-gray-900 rounded-xl border border-white/10 p-3 flex flex-col items-center relative overflow-hidden shadow-2xl">
+            {/* Left Side: Mockup Linktree */}
+            <div className="flex-1 bg-gray-100 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-white/10 p-3 flex flex-col items-center relative overflow-hidden shadow-2xl">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-violet-500 to-indigo-500 mb-3 shadow-lg"></div>
                 <div className="w-full space-y-2 opacity-80">
-                    <div className={`h-8 w-full bg-white/5 border border-white/10 rounded-lg flex items-center px-2 gap-2 transition-all duration-300 origin-center ${activeAction >= 1 && activeAction <= 2 ? 'bg-white/20 scale-110 shadow-lg border-white/30' : ''}`}>
+                    <div className={`h-8 w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg flex items-center px-2 gap-2 transition-all duration-300 origin-center ${activeAction >= 1 && activeAction <= 2 ? 'bg-blue-50 dark:bg-white/20 scale-110 shadow-lg border-blue-200 dark:border-white/30' : ''}`}>
                         <div className="w-4 h-4 rounded-full bg-[#0077b5] flex items-center justify-center"><Linkedin size={8} className="text-white" /></div>
-                        <div className="h-1.5 w-12 bg-white/20 rounded-full"></div>
+                        <div className="h-1.5 w-12 bg-gray-200 dark:bg-white/20 rounded-full"></div>
                     </div>
-                    <div className="h-8 w-full bg-white/5 border border-white/10 rounded-lg flex items-center px-2 gap-2">
+                    <div className="h-8 w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg flex items-center px-2 gap-2">
                         <div className="w-4 h-4 rounded-full bg-black flex items-center justify-center"><Github size={8} className="text-white" /></div>
-                        <div className="h-1.5 w-10 bg-white/20 rounded-full"></div>
+                        <div className="h-1.5 w-10 bg-gray-200 dark:bg-white/20 rounded-full"></div>
                     </div>
                 </div>
+                {/* Cursor */}
                 <MousePointer2
-                    className={`w-6 h-6 text-white absolute transition-all duration-1000 ease-in-out drop-shadow-md z-20 ${activeAction === 0 ? 'top-[80%] right-[10%]' : 'top-[62px] left-[50%]'
+                    className={`w-6 h-6 text-gray-800 dark:text-white absolute transition-all duration-1000 ease-in-out drop-shadow-md z-20 ${activeAction === 0 ? 'top-[80%] right-[10%]' : 'top-[62px] left-[50%]'
                         } ${activeAction === 2 ? 'scale-90' : 'scale-100'}`}
                 />
             </div>
 
-            <div className="flex-1 bg-white/10 backdrop-blur-md rounded-xl p-3 border border-white/10 flex flex-col justify-between shadow-2xl relative">
+            {/* Right Side: Dashboard */}
+            <div className="flex-1 bg-gray-50 dark:bg-white/10 backdrop-blur-md rounded-xl p-3 border border-gray-200 dark:border-white/10 flex flex-col justify-between shadow-2xl relative">
                 <div>
-                    <div className="text-white/50 text-[10px] font-medium uppercase tracking-wider mb-1">Total Clicks</div>
-                    <div className={`text-3xl font-bold text-white transition-all duration-300 ${activeAction === 3 ? 'scale-110 text-green-400' : ''}`}>{clicks.toLocaleString()}</div>
+                    <div className="text-gray-500 dark:text-white/50 text-[10px] font-medium uppercase tracking-wider mb-1">Total Clicks</div>
+                    <div className={`text-3xl font-bold text-gray-900 dark:text-white transition-all duration-300 ${activeAction === 3 ? 'scale-110 text-green-500 dark:text-green-400' : ''}`}>{clicks.toLocaleString()}</div>
                 </div>
 
+                {/* Graph Area */}
                 <div className="relative h-16 w-full mt-2">
                     <svg className="w-full h-full overflow-visible" viewBox="0 0 100 40" preserveAspectRatio="none">
+                        {/* Area Gradient */}
                         <defs>
                             <linearGradient id="graphGradient" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="white" stopOpacity="0.3" />
-                                <stop offset="100%" stopColor="white" stopOpacity="0" />
+                                <stop offset="0%" stopColor="currentColor" className="text-green-500 dark:text-white" stopOpacity="0.3" />
+                                <stop offset="100%" stopColor="currentColor" className="text-green-500 dark:text-white" stopOpacity="0" />
                             </linearGradient>
                         </defs>
                         <path
                             d={activeAction === 3 ? endPath : startPath}
                             fill="url(#graphGradient)"
-                            className="transition-all duration-500 ease-out"
+                            className="transition-all duration-500 ease-out text-green-500 dark:text-white"
                         />
                         <path
                             d={activeAction === 3 ? lineEndPath : lineStartPath}
                             fill="none"
-                            stroke="white"
+                            stroke="currentColor"
                             strokeWidth="2"
                             strokeLinecap="round"
-                            className={`transition-all duration-500 ease-out ${activeAction === 3 ? 'stroke-green-400 drop-shadow-[0_0_8px_rgba(74,222,128,0.5)]' : 'stroke-white/80'}`}
+                            className={`transition-all duration-500 ease-out ${activeAction === 3 ? 'text-green-500 dark:text-green-400 drop-shadow-[0_0_8px_rgba(74,222,128,0.5)]' : 'text-gray-400 dark:text-white/80'}`}
                         />
                     </svg>
                 </div>
 
-                <div className={`absolute top-1/2 -left-4 w-4 h-[2px] bg-gradient-to-r from-transparent to-white/50 transition-opacity duration-300 ${activeAction === 3 ? 'opacity-100' : 'opacity-0'}`}></div>
+                {/* Arrow indicating data flow */}
+                <div className={`absolute top-1/2 -left-4 w-4 h-[2px] bg-gradient-to-r from-transparent to-gray-400 dark:to-white/50 transition-opacity duration-300 ${activeAction === 3 ? 'opacity-100' : 'opacity-0'}`}></div>
             </div>
         </div>
     );
@@ -1142,7 +1148,7 @@ export default function HomePage() {
                     {/* Bento Grid Layout */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {/* Large Feature Card */}
-                        <div className="lg:col-span-2 group relative p-8 rounded-[2.5rem] bg-gradient-to-br from-violet-600 to-indigo-700 overflow-hidden cursor-pointer hover:shadow-2xl hover:shadow-violet-500/30 transition-all duration-500 hover:-translate-y-1 h-96">
+                        <div className="lg:col-span-2 group relative p-8 rounded-[2.5rem] bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 overflow-hidden cursor-pointer hover:shadow-2xl hover:shadow-violet-500/10 transition-all duration-500 hover:-translate-y-1 h-96">
                             {/* Full Height Animation Container */}
                             <div className="absolute inset-0 z-0">
                                 <AnimatedAnalyticsFeature />
@@ -1150,23 +1156,23 @@ export default function HomePage() {
 
                             {/* Overlay Title (Floating top left) */}
                             <div className="absolute top-8 left-8 z-10 pointer-events-none">
-                                <h3 className="text-3xl font-bold text-white mb-2 drop-shadow-lg">Real-Time Analytics</h3>
-                                <p className="text-violet-100/80 text-sm max-w-sm backdrop-blur-sm rounded-lg">
+                                <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Real-Time Analytics</h3>
+                                <p className="text-gray-500 dark:text-gray-400 text-sm max-w-sm">
                                     Track every click live.
                                 </p>
                             </div>
                         </div>
 
                         {/* Unlimited Links */}
-                        <div className="group relative p-8 rounded-[2.5rem] bg-gradient-to-br from-blue-500 to-cyan-500 overflow-hidden cursor-pointer hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1 h-96">
-                            <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 brightness-100 contrast-150"></div>
+                        <div className="group relative p-8 rounded-[2.5rem] bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 overflow-hidden cursor-pointer hover:shadow-xl hover:shadow-blue-500/10 transition-all duration-300 hover:-translate-y-1 h-96">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-500 opacity-0 group-hover:opacity-100"></div>
                             <div className="relative z-10 flex flex-col h-full">
                                 <div className="mb-auto flex justify-center py-6">
                                     <AnimatedLinksFeature />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold text-white mb-2">Unlimited Links</h3>
-                                    <p className="text-blue-100 text-sm leading-relaxed">
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Unlimited Links</h3>
+                                    <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
                                         Add as many links as you want. Drag and drop to reorder in seconds.
                                     </p>
                                 </div>
@@ -1206,20 +1212,19 @@ export default function HomePage() {
                         </div>
 
                         {/* Wide Card */}
-                        <div className="lg:col-span-2 group relative p-8 rounded-[2.5rem] bg-gray-900 dark:bg-gray-800 overflow-hidden cursor-pointer hover:shadow-2xl hover:shadow-purple-500/10 transition-all duration-500 hover:-translate-y-1">
-                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(124,58,237,0.2),transparent_50%)] group-hover:opacity-100 transition-opacity"></div>
-                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(236,72,153,0.2),transparent_50%)] group-hover:opacity-100 transition-opacity"></div>
+                        <div className="lg:col-span-2 group relative p-8 rounded-[2.5rem] bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 overflow-hidden cursor-pointer hover:shadow-2xl hover:shadow-emerald-500/10 transition-all duration-500 hover:-translate-y-1">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-500 opacity-0 group-hover:opacity-100"></div>
                             <div className="relative z-10 flex flex-col md:flex-row items-center gap-10">
                                 <div className="shrink-0">
                                     <AnimatedSecurityFeature />
                                 </div>
                                 <div className="flex-1">
-                                    <h3 className="text-xl font-bold text-white mb-2">Secure, Private & Open Source</h3>
-                                    <p className="text-gray-400">
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Secure, Private & Open Source</h3>
+                                    <p className="text-gray-500 dark:text-gray-400">
                                         Your data is protected with enterprise-grade security. Fully open source — contribute, customize, or self-host.
                                     </p>
                                 </div>
-                                <Link href="https://github.com/TuShArBhArDwA/MiniLink" target="_blank" className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors">
+                                <Link href="https://github.com/TuShArBhArDwA/MiniLink" target="_blank" className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-black rounded-xl hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors">
                                     <Github className="w-5 h-5" />
                                     <span>View on GitHub</span>
                                 </Link>
