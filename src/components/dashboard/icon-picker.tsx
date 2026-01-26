@@ -111,8 +111,8 @@ export function getIconComponent(iconName: string | null) {
     const preset = PRESET_ICONS.find(i => i.name === iconName);
     if (preset) return preset.icon;
 
-    // If it's a URL, return null (will use img tag)
-    if (iconName.startsWith('http')) return null;
+    // If it's a URL, return Link2 (will use img tag)
+    if (iconName.startsWith('http')) return Link2;
 
     return Link2;
 }
