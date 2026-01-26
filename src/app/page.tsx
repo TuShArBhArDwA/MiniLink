@@ -612,7 +612,7 @@ function AnimatedAnalyticsFeature() {
     const lineEndPath = "M0,30 C20,35 40,10 60,25 C80,35 90,5 100,10";
 
     return (
-        <div className="w-full h-full flex flex-row gap-4 absolute inset-0 p-6">
+        <div className="w-full h-full flex flex-col md:flex-row gap-4 absolute inset-0 p-6">
             {/* Left Side: Mockup Linktree */}
             <div className="flex-1 bg-gray-100 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-white/10 p-3 flex flex-col items-center relative overflow-hidden shadow-2xl">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-violet-500 to-indigo-500 mb-3 shadow-lg"></div>
@@ -966,9 +966,9 @@ export default function HomePage() {
 
 
             {/* Live Demo Section */}
-            <section className="py-24 relative">
+            <section className="py-12 sm:py-24 relative overflow-hidden">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="text-center max-w-3xl mx-auto mb-16">
+                    <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
                         <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl mb-4">
                             See It In Action
                         </h2>
@@ -977,150 +977,94 @@ export default function HomePage() {
                         </p>
                     </div>
 
-                    <div className="relative">
-                        {/* Desktop View */}
-                        <div className="hidden lg:block">
-                            <div className="flex items-center justify-center gap-12">
-                                {/* Laptop Mockup */}
-                                <div>
-                                    <LaptopDemo isDark={isDark} />
-                                </div>
-
-                                {/* iPhone Mockup */}
-                                <div className="relative mt-8">
-                                    {/* Live Preview Label */}
-                                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-violet-600 to-pink-600 rounded-full shadow-lg">
-                                        <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
-                                        <span className="text-xs font-semibold text-white whitespace-nowrap">Live Preview</span>
-                                    </div>
-                                    {/* iPhone Frame */}
-                                    <div className="relative w-[280px] h-[570px] bg-gray-900 rounded-[50px] p-3 shadow-2xl border-4 border-gray-800">
-                                        {/* Dynamic Island */}
-                                        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-full z-10"></div>
-                                        {/* Screen */}
-                                        <div className="w-full h-full rounded-[38px] bg-gradient-to-br from-violet-600 via-purple-600 to-pink-600 overflow-hidden">
-                                            {/* Profile Content */}
-                                            <div className="w-full h-full bg-white dark:bg-gray-900 mt-1 rounded-t-[38px] p-6 pt-12">
-                                                <div className="flex flex-col items-center text-center">
-                                                    {/* Avatar with actual photo */}
-                                                    <div className="w-20 h-20 rounded-full mb-3 ring-4 ring-white dark:ring-gray-800 shadow-xl overflow-hidden">
-                                                        <img src="/me.jpeg" alt="Tushar Bhardwaj" className="w-full h-full object-cover" />
-                                                    </div>
-                                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Tushar Bhardwaj</h3>
-                                                    <p className="text-gray-500 dark:text-gray-400 text-[10px] mt-0.5 px-2 leading-relaxed">Ex - SWE Intern Microsoft | Top 0.1% Club Topmate | Sharing Tech & Career Insights with 23K+ Linkedin</p>
-
-                                                    {/* Interactive Links with animations */}
-                                                    <div className="w-full mt-5 space-y-2.5">
-                                                        {/* Portfolio */}
-                                                        <a
-                                                            href="https://tushar-bhardwaj.vercel.app/"
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:border-blue-300 dark:hover:border-blue-600 hover:scale-[1.03] hover:shadow-lg transition-all duration-300 cursor-pointer group"
-                                                            style={{ animationDelay: '0.1s' }}
-                                                        >
-                                                            <svg className="w-5 h-5 text-blue-500 group-hover:rotate-12 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
-                                                            <span className="group-hover:translate-x-1 transition-transform">Portfolio</span>
-                                                            <svg className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                                                        </a>
-                                                        {/* LinkedIn */}
-                                                        <a
-                                                            href="https://www.linkedin.com/in/bhardwajtushar2004/"
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:border-blue-400 dark:hover:border-blue-500 hover:scale-[1.03] hover:shadow-lg transition-all duration-300 cursor-pointer group"
-                                                            style={{ animationDelay: '0.2s' }}
-                                                        >
-                                                            <svg className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
-                                                            <span className="group-hover:translate-x-1 transition-transform">LinkedIn</span>
-                                                            <svg className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                                                        </a>
-                                                        {/* Twitter/X */}
-                                                        <a
-                                                            href="https://x.com/Tusharab2004"
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-gray-400 dark:hover:border-gray-500 hover:scale-[1.03] hover:shadow-lg transition-all duration-300 cursor-pointer group"
-                                                            style={{ animationDelay: '0.3s' }}
-                                                        >
-                                                            <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
-                                                            <span className="group-hover:translate-x-1 transition-transform">Twitter / X</span>
-                                                            <svg className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                                                        </a>
-                                                        {/* GitHub */}
-                                                        <a
-                                                            href="https://github.com/TuShArBhArDwA"
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-purple-400 dark:hover:border-purple-500 hover:scale-[1.03] hover:shadow-lg transition-all duration-300 cursor-pointer group"
-                                                            style={{ animationDelay: '0.4s' }}
-                                                        >
-                                                            <svg className="w-5 h-5 group-hover:rotate-[360deg] transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" /></svg>
-                                                            <span className="group-hover:translate-x-1 transition-transform">GitHub</span>
-                                                            <svg className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                                                        </a>
-                                                        {/* Sponsor */}
-                                                        <a
-                                                            href="https://github.com/sponsors/TuShArBhArDwA"
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-pink-50 dark:hover:bg-pink-900/30 hover:border-pink-300 dark:hover:border-pink-600 hover:scale-[1.03] hover:shadow-lg transition-all duration-300 cursor-pointer group"
-                                                            style={{ animationDelay: '0.5s' }}
-                                                        >
-                                                            <svg className="w-5 h-5 text-pink-500 group-hover:animate-pulse" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>
-                                                            <span className="group-hover:translate-x-1 transition-transform">Sponsor Me</span>
-                                                            <svg className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                                                        </a>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {/* Home Indicator */}
-                                        <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1 bg-gray-600 rounded-full"></div>
-                                    </div>
-                                </div>
+                    <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-20">
+                        {/* Laptop Mockup (Creation Flow) */}
+                        <div className="w-full max-w-[600px] flex justify-center">
+                            {/* Scaled wrapper to fit mobile screens */}
+                            <div className="transform scale-[0.5] xs:scale-[0.6] sm:scale-[0.8] md:scale-90 lg:scale-100 origin-center -my-24 sm:-my-12 lg:my-0 transition-transform duration-500">
+                                <LaptopDemo isDark={isDark} />
                             </div>
                         </div>
 
-                        {/* Mobile View - Only Phone */}
-                        <div className="lg:hidden flex justify-center">
-                            {/* iPhone Mockup */}
-                            <div className="relative">
-                                <div className="relative w-[300px] h-[610px] bg-gray-900 rounded-[55px] p-3 shadow-2xl border-4 border-gray-800">
-                                    {/* Dynamic Island */}
-                                    <div className="absolute top-4 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-full z-10"></div>
-                                    {/* Screen */}
-                                    <div className="w-full h-full rounded-[42px] bg-gradient-to-br from-violet-600 via-purple-600 to-pink-600 overflow-hidden">
-                                        <div className="w-full h-full bg-white dark:bg-gray-900 mt-1 rounded-t-[42px] p-6 pt-14">
-                                            <div className="flex flex-col items-center text-center">
-                                                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-violet-400 via-purple-400 to-pink-400 mb-3 ring-4 ring-white dark:ring-gray-800 shadow-xl"></div>
-                                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">@creator</h3>
-                                                <p className="text-gray-500 dark:text-gray-400 text-xs mt-0.5">Full Stack Developer</p>
+                        {/* iPhone Mockup (Result) */}
+                        <div className="relative mt-8 lg:mt-0 transform scale-[0.85] sm:scale-100 transition-transform duration-500">
+                            {/* Live Preview Label */}
+                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-violet-600 to-pink-600 rounded-full shadow-lg z-20">
+                                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                                <span className="text-xs font-semibold text-white whitespace-nowrap">Live Preview</span>
+                            </div>
+                            {/* iPhone Frame */}
+                            <div className="relative w-[280px] h-[570px] bg-gray-900 rounded-[50px] p-3 shadow-2xl border-4 border-gray-800 mx-auto">
+                                {/* Dynamic Island */}
+                                <div className="absolute top-4 left-1/2 -translate-x-1/2 w-28 h-7 bg-black rounded-full z-10"></div>
+                                {/* Screen */}
+                                <div className="w-full h-full rounded-[38px] bg-gradient-to-br from-violet-600 via-purple-600 to-pink-600 overflow-hidden">
+                                    {/* Profile Content */}
+                                    <div className="w-full h-full bg-white dark:bg-gray-900 mt-1 rounded-t-[38px] p-6 pt-12">
+                                        <div className="flex flex-col items-center text-center">
+                                            {/* Avatar with actual photo */}
+                                            <div className="w-20 h-20 rounded-full mb-3 ring-4 ring-white dark:ring-gray-800 shadow-xl overflow-hidden">
+                                                <img src="/me.jpeg" alt="Tushar Bhardwaj" className="w-full h-full object-cover" />
+                                            </div>
+                                            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Tushar Bhardwaj</h3>
+                                            <p className="text-gray-500 dark:text-gray-400 text-[10px] mt-0.5 px-2 leading-relaxed">Ex - SWE Intern Microsoft | Top 0.1% Club Topmate | Sharing Tech & Career Insights with 23K+ Linkedin</p>
 
-                                                <div className="w-full mt-5 space-y-2.5">
-                                                    <a href="https://linktr.ee/codewithtusharbhardwaj" target="_blank" rel="noopener noreferrer" className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:scale-[1.02] transition-all group">
-                                                        <svg className="w-5 h-5 text-blue-500 group-hover:rotate-12 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
-                                                        <span>Portfolio</span>
-                                                    </a>
-                                                    <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-red-50 dark:hover:bg-red-900/30 hover:scale-[1.02] transition-all group">
-                                                        <svg className="w-5 h-5 text-red-500 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" /></svg>
-                                                        <span>YouTube</span>
-                                                    </a>
-                                                    <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-[1.02] transition-all group">
-                                                        <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
-                                                        <span>Twitter / X</span>
-                                                    </a>
-                                                    <a href="https://github.com/TuShArBhArDwA" target="_blank" rel="noopener noreferrer" className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 hover:scale-[1.02] transition-all group">
-                                                        <svg className="w-5 h-5 group-hover:rotate-[360deg] transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" /></svg>
-                                                        <span>GitHub</span>
-                                                    </a>
-                                                </div>
+                                            {/* Interactive Links with animations */}
+                                            <div className="w-full mt-5 space-y-2.5">
+                                                {/* Portfolio */}
+                                                <a
+                                                    href="https://tushar-bhardwaj.vercel.app/"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:border-blue-300 dark:hover:border-blue-600 hover:scale-[1.03] hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                                                    style={{ animationDelay: '0.1s' }}
+                                                >
+                                                    <svg className="w-5 h-5 text-blue-500 group-hover:rotate-12 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg>
+                                                    <span className="group-hover:translate-x-1 transition-transform">Portfolio</span>
+                                                    <ExternalLink className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-blue-500" />
+                                                </a>
+                                                {/* LinkedIn */}
+                                                <a
+                                                    href="https://www.linkedin.com/in/bhardwajtushar2004/"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:border-blue-400 dark:hover:border-blue-500 hover:scale-[1.03] hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                                                    style={{ animationDelay: '0.2s' }}
+                                                >
+                                                    <svg className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>
+                                                    <span className="group-hover:translate-x-1 transition-transform">LinkedIn</span>
+                                                    <ExternalLink className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-blue-600" />
+                                                </a>
+                                                {/* Twitter/X */}
+                                                <a
+                                                    href="https://x.com/Tusharab2004"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-gray-400 dark:hover:border-gray-500 hover:scale-[1.03] hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                                                    style={{ animationDelay: '0.3s' }}
+                                                >
+                                                    <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+                                                    <span className="group-hover:translate-x-1 transition-transform">Twitter / X</span>
+                                                    <ExternalLink className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                </a>
+                                                {/* GitHub */}
+                                                <a
+                                                    href="https://github.com/TuShArBhArDwA"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-full py-3 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl text-sm font-medium text-gray-800 dark:text-gray-200 flex items-center gap-3 border border-gray-100 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700 hover:border-purple-400 dark:hover:border-purple-500 hover:scale-[1.03] hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                                                    style={{ animationDelay: '0.4s' }}
+                                                >
+                                                    <svg className="w-5 h-5 group-hover:rotate-[360deg] transition-transform duration-500" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd" /></svg>
+                                                    <span className="group-hover:translate-x-1 transition-transform">GitHub</span>
+                                                    <ExternalLink className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity text-purple-500" />
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
-                                    {/* Home Indicator */}
-                                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1 bg-gray-600 rounded-full"></div>
                                 </div>
+                                {/* Home Indicator */}
+                                <div className="absolute bottom-2 left-1/2 -translate-x-1/2 w-32 h-1 bg-gray-600 rounded-full"></div>
                             </div>
                         </div>
                     </div>

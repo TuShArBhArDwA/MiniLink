@@ -158,7 +158,7 @@ export default async function DashboardPage() {
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div>
                             <p className="text-sm text-white/80 mb-1">Your MiniLink URL</p>
-                            <p className="text-xl font-bold">{profileUrl}</p>
+                            <p className="text-xl font-bold break-all">{profileUrl}</p>
                         </div>
                         <div className="flex items-center gap-3">
                             <CopyButton text={profileUrl} />
