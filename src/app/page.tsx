@@ -922,10 +922,10 @@ export default function HomePage() {
 
                             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
                                 <Link
-                                    href="/sign-up"
+                                    href={isSignedIn ? "/dashboard" : "/sign-up"}
                                     className="group inline-flex items-center gap-2 px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-violet-600 to-pink-600 rounded-2xl hover:shadow-xl hover:shadow-violet-500/30 hover:-translate-y-1 transition-all duration-300"
                                 >
-                                    Create Your MiniLink
+                                    {isSignedIn ? "Go to Dashboard" : "Create Your MiniLink"}
                                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                 </Link>
                                 <Link
@@ -1290,10 +1290,10 @@ export default function HomePage() {
 
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                                 <Link
-                                    href="/sign-up"
+                                    href={isSignedIn ? "/dashboard" : "/sign-up"}
                                     className="group inline-flex items-center gap-3 px-8 py-4 text-lg font-semibold text-violet-600 bg-white rounded-2xl hover:shadow-2xl hover:shadow-white/20 hover:-translate-y-1 transition-all duration-300"
                                 >
-                                    Get Started Free
+                                    {isSignedIn ? "Go to Dashboard" : "Get Started Free"}
                                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                 </Link>
                             </div>
