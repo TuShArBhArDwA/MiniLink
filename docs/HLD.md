@@ -2,109 +2,70 @@
 
 ## 1. System Overview
 
-MiniLink is a full-stack link-in-bio platform that allows users to create personalized pages containing their important links. Each user gets a unique URL (e.g., `minilink.app/username`) that they can share across social media platforms.
+MiniLink is a full-stack link-in-bio platform that allows users to create stunning, personalized landing pages. It features real-time analytics, unlimited link management, and custom themes, all backed by a high-performance architecture.
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                              MINILINK ARCHITECTURE                          │
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    User((User)) -->|Browser| Cloudflare[Vercel Edge Network]
+    
+    subgraph "Frontend Layer (Next.js 14)"
+        Cloudflare --> Static[Static Pages (ISR)]
+        Cloudflare --> Server[Server Components (RSC)]
+    end
 
-                                    ┌──────────────┐
-                                    │    Users     │
-                                    │  (Browser)   │
-                                    └──────┬───────┘
-                                           │
-                                           ▼
-                              ┌────────────────────────┐
-                              │    Vercel Edge CDN     │
-                              │  (Global Distribution) │
-                              └────────────┬───────────┘
-                                           │
-                    ┌──────────────────────┼──────────────────────┐
-                    │                      │                      │
-                    ▼                      ▼                      ▼
-           ┌───────────────┐      ┌───────────────┐      ┌───────────────┐
-           │ Static Pages  │      │  API Routes   │      │ Public Pages  │
-           │  (ISR Cached) │      │   (Dynamic)   │      │  (SSR + ISR)  │
-           └───────────────┘      └───────┬───────┘      └───────────────┘
-                                          │
-                              ┌───────────┴───────────┐
-                              │                       │
-                              ▼                       ▼
-                    ┌─────────────────┐     ┌─────────────────┐
-                    │    Supabase     │     │   Cloudinary    │
-                    │   (PostgreSQL)  │     │    (Images)     │
-                    └─────────────────┘     └─────────────────┘
+    subgraph "Backend Layer (Serverless)"
+        Server --> API[API Routes]
+        API --> Auth[Clerk Auth]
+    end
+
+    subgraph "Data Layer"
+        API --> DB[(Supabase PostgreSQL)]
+        API --> Images[Cloudinary CDN]
+    end
+
+    Static -->|Hydration| Client[Client Components]
+    Client -->|Interactions| API
 ```
 
 ## 2. Core Components
 
-### 2.1 Frontend (Next.js 14)
-- **App Router** - Modern React Server Components
-- **Tailwind CSS** - Utility-first styling
-- **Lucide Icons** - Consistent iconography
-- **dnd-kit** - Drag and drop functionality
+### 2.1 Frontend
+- **Next.js 14 App Router**: Leveraging React Server Components for performance.
+- **Tailwind CSS**: Rapid, utility-first styling with custom themes.
+- **Framer Motion**: Smooth, high-fidelity animations (Laptop preview, Analytics graph).
+- **dnd-kit**: Accessible drag-and-drop for link reordering.
 
-### 2.2 Backend (Next.js API Routes)
-- **Server Actions** - Form handling
-- **API Routes** - RESTful endpoints
-- **Middleware** - Route protection
+### 2.2 Backend
+- **Next.js API Routes**: Serverless functions handling business logic.
+- **Prisma ORM**: Type-safe database interactions.
+- **Clerk**: Managed authentication (Social login, MFA, Session management).
 
-### 2.3 Database (Supabase PostgreSQL)
-- **Prisma ORM** - Type-safe database access
-- **Connection Pooling** - Serverless optimization
-- **Row-Level Security** - Data protection
+### 2.3 Data Storage
+- **PostgreSQL (Supabase/Neon)**: Relational data for users, links, and analytics events.
+- **Cloudinary**: Optimized image storage and delivery.
 
-### 2.4 Authentication (Clerk)
-- **Managed Auth** - Handles login, sessions, and security
-- **Multi-Factor Auth** - Built-in security
-- **User Management** - Dashboard for user control
+## 3. Key Workflows
 
-## 3. Data Flow
+### 3.1 Link Management
+1. User logs in (Clerk).
+2. Dashboard fetches links via `GET /api/links`.
+3. User adds/edits link -> `POST/PUT` request.
+4. Updates persist to PostgreSQL via Prisma.
+5. Reordering triggers `PATCH` to update `order` fields in bulk.
 
-### 3.1 User Registration Flow
-```
-User → Clerk Sign Up → Clerk Redirect → MiniLink Dashboard → Lazy Sync to Database
-```
+### 3.2 Public Profile Access
+1. Visitor navigates to `minilink.app/[username]`.
+2. Next.js fetches user profile & links (ISR/SSR).
+3. Page renders with user's selected theme.
+4. **Analytics**: Link clicks trigger asynchronous `POST` to track engagement.
 
-### 3.2 Public Profile View Flow
-```
-Visitor → /username → SSR Fetch → Prisma Query → Record PageView → Render Profile
-```
+## 4. Security & Scalability
 
-### 3.3 Link Click Tracking Flow
-```
-Visitor → Click Link → POST /api/track → Increment Counter → Redirect to URL
-```
-
-## 4. Scalability Considerations
-
-| Component | Strategy |
-|-----------|----------|
-| **Database** | Connection pooling via Supabase, indexed queries |
-| **Caching** | ISR for public profiles, edge caching |
-| **Images** | Cloudinary CDN with automatic optimization |
-| **Auth** | Offloaded to Clerk (scales independently) |
-| **API** | Edge functions, serverless auto-scaling |
-
-## 5. Security Measures
-
-- **Authentication** - Clerk (SOC2 Compliant)
-- **Authorization** - Clerk Middleware
-- **Data Validation** - Zod schemas
-- **SQL Injection** - Prisma parameterized queries
-- **XSS Prevention** - React automatic escaping
-- **CSRF Protection** - Built-in framework protections
-
-## 6. Third-Party Integrations
-
-| Service | Purpose |
-|---------|---------|
-| **Supabase** | PostgreSQL database hosting |
-| **Cloudinary** | Image upload and CDN |
-| **Vercel** | Hosting and deployment |
-| **Clerk** | Authentication & User Management |
+- **Auth**: Fully managed by Clerk (SOC2). No sensitive passwords stored locally.
+- **Edge Caching**: Public profiles cached at the edge for sub-second load times.
+- **Database**: Connection pooling enabled for serverless scaling.
+- **Validation**: Zod schemas ensure data integrity on all API inputs.
 
 ---
 
-Made With 💙 By [Tushar Bhardwaj](https://www.linkedin.com/in/bhardwajtushar2004/)
+**MiniLink** - Built for Creators.
