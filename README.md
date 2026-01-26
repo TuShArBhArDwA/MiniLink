@@ -19,16 +19,16 @@
 
 ---
 
-## 🚀 See It In Action
+## See It In Action
 
-### 📱 Live iPhone Preview
+### Live iPhone Preview
 *Experience the premium feel of your link page on mobile.*
 
 <!-- IPHONE PREVIEW ANIMATION PLACEHOLDER -->
 <!-- Replace the link below with your 'iPhone Preview' animation/video -->
 ![iPhone Preview](https://via.placeholder.com/300x600?text=iPhone+Preview+Animation)
 
-### ⚡ Easy Creation Flow
+### Easy Creation Flow
 *Watch how simple it is to build your page.*
 
 <!-- CREATION FLOW ANIMATION PLACEHOLDER -->
@@ -37,7 +37,7 @@
 
 ---
 
-## ✨ Features
+## Features
 
 | Feature | Description |
 |---------|-------------|
@@ -50,7 +50,7 @@
 
 ---
 
-## 🎥 All Features Walkthrough
+## All Features Walkthrough
 *A complete tour of everything MiniLink offers.*
 
 <!-- ALL FEATURES ANIMATION PLACEHOLDER -->
@@ -59,7 +59,7 @@
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Framework:** Next.js 14 (App Router)
 - **Styling:** Tailwind CSS + Framer Motion (Animations)
@@ -69,7 +69,7 @@
 
 ---
 
-## ⚡ Quick Start
+## Quick Start
 
 ### 1. Clone & Install
 ```bash
@@ -95,7 +95,7 @@ Open [http://localhost:3000](http://localhost:3000) for the magic! 🌟
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 Detailed design docs for developers:
 - [High-Level Design (HLD)](docs/HLD.md)
@@ -103,12 +103,27 @@ Detailed design docs for developers:
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Feel free to open issues or pull requests to improve MiniLink.
 
+
 ---
 
-<div align="center">
-  Made with 💙 by Tushar Bhardwaj
-</div>
+## Sponsor
+
+If you find this helpful, consider supporting me:
+
+- **Sponsor Me:** [Buy Me a Coffee!](https://github.com/sponsors/TuShArBhArDwA)
+
+---
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## Connect with me
+
+If you’d like to connect, feel free to reach out — [Click here](https://linktr.ee/codewithtusharbhardwaj)
