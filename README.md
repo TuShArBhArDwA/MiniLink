@@ -33,12 +33,11 @@
 
 ---
 
-## All Features Walkthrough
+## MiniLink Demo
 
-<img width="1262" height="915" alt="image" src="https://github.com/user-attachments/assets/64a93f8b-84d5-4925-be40-5177b5d730b6" />
+https://github.com/TuShArBhArDwA/MiniLink/blob/main/assets/Walkthrough.mp4
 
-
-*A complete tour of everything MiniLink offers.*
+*A quick walkthrough showing how to create a MiniLink, customize it, and track clicks in real time.*
 
 ---
 
