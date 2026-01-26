@@ -6,6 +6,10 @@
   
   Create a stunning, personalized link page in seconds. Share your world with a single URL.
   
+  <!-- COLLAPSING LINKS ANIMATION PLACEHOLDER -->
+  <!-- Replace the image src below with your recorded collapsing links animation -->
+  <img src="https://via.placeholder.com/600x200?text=Collapsing+Links+Animation" alt="Collapsing Links Animation" width="100%" />
+
   [![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
   [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
   [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
@@ -17,16 +21,19 @@
 
 ## 🚀 See It In Action
 
-### 💻 Laptop Preview & Collapsing Animation
-*Watch the magic happen: Social icons collapse into a single powerful link, previewed live on a sleek laptop mockup.*
+### 📱 Live iPhone Preview
+*Experience the premium feel of your link page on mobile.*
 
-![Laptop Preview Animation](https://github.com/TuShArBhArDwA/MiniLink/assets/demo-laptop.gif)
-*(User Note: Please replace this link with your actual recorded GIF)*
+<!-- IPHONE PREVIEW ANIMATION PLACEHOLDER -->
+<!-- Replace the link below with your 'iPhone Preview' animation/video -->
+![iPhone Preview](https://via.placeholder.com/300x600?text=iPhone+Preview+Animation)
 
-### 📱 iPhone Preview
-*Perfectly responsive on mobile devices.*
+### ⚡ Easy Creation Flow
+*Watch how simple it is to build your page.*
 
-![iPhone Preview Animation](https://github.com/TuShArBhArDwA/MiniLink/assets/demo-phone.gif)
+<!-- CREATION FLOW ANIMATION PLACEHOLDER -->
+<!-- Replace the link below with your 'Creation Flow' animation/video -->
+![Creation Flow](https://via.placeholder.com/800x400?text=See+it+in+action+Animation)
 
 ---
 
@@ -40,6 +47,15 @@
 | **Lightning Fast** | Optimized for speed with edge caching and instant transitions. |
 | **Secure & Open** | Built with enterprise-grade security (Clerk Auth) and fully open source. |
 | **Fully Responsive** | Looks stunning on every screen, from big monitors to mobile phones. |
+
+---
+
+## 🎥 All Features Walkthrough
+*A complete tour of everything MiniLink offers.*
+
+<!-- ALL FEATURES ANIMATION PLACEHOLDER -->
+<!-- Replace the link below with your 'All Features' animation/video -->
+![All Features Walkthrough](https://via.placeholder.com/800x450?text=All+Features+Walkthrough+Animation)
 
 ---
 
