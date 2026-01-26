@@ -35,7 +35,11 @@
 
 ## MiniLink Demo
 
-https://github.com/TuShArBhArDwA/MiniLink/blob/main/assets/Walkthrough.mp4
+
+
+https://github.com/user-attachments/assets/35dbd0f1-e2dc-475d-a2c7-b05a51d77500
+
+
 
 *A quick walkthrough showing how to create a MiniLink, customize it, and track clicks in real time.*
 
