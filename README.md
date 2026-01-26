@@ -3,12 +3,12 @@
   # MiniLink
   
   **Your Premium Link-in-Bio Platform**
-  
+  <img width="1905" height="902" alt="image" src="https://github.com/user-attachments/assets/745c1afe-7f5d-40dd-9902-495b6f177fee" />
+
+
+
   Create a stunning, personalized link page in seconds. Share your world with a single URL.
   
-  <!-- COLLAPSING LINKS ANIMATION PLACEHOLDER -->
-  <!-- Replace the image src below with your recorded collapsing links animation -->
-  <img src="https://via.placeholder.com/600x200?text=Collapsing+Links+Animation" alt="Collapsing Links Animation" width="100%" />
 
   [![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
   [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
@@ -17,23 +17,6 @@
   [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 </div>
 
----
-
-## See It In Action
-
-### Live iPhone Preview
-*Experience the premium feel of your link page on mobile.*
-
-<!-- IPHONE PREVIEW ANIMATION PLACEHOLDER -->
-<!-- Replace the link below with your 'iPhone Preview' animation/video -->
-![iPhone Preview](https://via.placeholder.com/300x600?text=iPhone+Preview+Animation)
-
-### Easy Creation Flow
-*Watch how simple it is to build your page.*
-
-<!-- CREATION FLOW ANIMATION PLACEHOLDER -->
-<!-- Replace the link below with your 'Creation Flow' animation/video -->
-![Creation Flow](https://via.placeholder.com/800x400?text=See+it+in+action+Animation)
 
 ---
 
@@ -51,11 +34,11 @@
 ---
 
 ## All Features Walkthrough
-*A complete tour of everything MiniLink offers.*
 
-<!-- ALL FEATURES ANIMATION PLACEHOLDER -->
-<!-- Replace the link below with your 'All Features' animation/video -->
-![All Features Walkthrough](https://via.placeholder.com/800x450?text=All+Features+Walkthrough+Animation)
+<img width="1262" height="915" alt="image" src="https://github.com/user-attachments/assets/64a93f8b-84d5-4925-be40-5177b5d730b6" />
+
+
+*A complete tour of everything MiniLink offers.*
 
 ---
 
