@@ -112,4 +112,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Connect with me
 
-If you’d like to connect, feel free to reach out — [Click here](https://linktr.ee/codewithtusharbhardwaj)
+If you’d like to connect, feel free to reach out — [Click here](https://minianonlink.vercel.app/tusharbhardwaj)
