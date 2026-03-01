@@ -798,7 +798,7 @@ export default function HomePage() {
         {
             icon: Palette,
             title: 'Custom Themes',
-            shortDesc: '6+ themes',
+            shortDesc: '12+ themes',
             description: 'Express yourself with stunning themes. From minimal to neon cyberpunk, find your perfect aesthetic.',
             color: 'from-pink-500 to-rose-500',
             bgColor: 'bg-pink-500/10',
@@ -1131,7 +1131,7 @@ export default function HomePage() {
                                     <AnimatedThemesFeature />
                                 </div>
                                 <div>
-                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">6+ Themes</h3>
+                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">12+ Themes</h3>
                                     <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
                                         From minimal to neon cyberpunk. Express your unique style instantly.
                                     </p>

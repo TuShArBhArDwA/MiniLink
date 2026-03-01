@@ -60,6 +60,9 @@ interface ProfilePreviewProps {
         bio: string;
         avatar: string;
         theme: string;
+        customThemeBg?: string;
+        customThemeCard?: string;
+        customThemeText?: string;
         links: any[];
     };
     device?: 'mobile' | 'desktop';
@@ -76,9 +79,19 @@ export default function ProfilePreview({ data, device = 'mobile' }: ProfilePrevi
         }
     }, []);
 
+    const customStyles = data.theme === 'custom' ? {
+        '--theme-bg': data.customThemeBg || '#05010d',
+        '--theme-card': data.customThemeCard || 'rgba(20, 15, 35, 0.7)',
+        '--theme-text': data.customThemeText || '#ffffff',
+        '--theme-link-bg': 'color-mix(in srgb, var(--theme-card) 50%, transparent)',
+        '--theme-link-border': 'color-mix(in srgb, var(--theme-text) 20%, transparent)',
+        '--theme-link-hover': 'color-mix(in srgb, var(--theme-card) 80%, transparent)',
+        background: 'var(--theme-bg)'
+    } as React.CSSProperties : { background: 'var(--theme-bg)' };
+
     // The content inside the device screen
     const screenContent = (
-        <div className={`w-full h-full overflow-y-auto hide-scrollbar ${themeClass}`} style={{ background: 'var(--theme-bg)' }}>
+        <div className={`w-full h-full overflow-y-auto hide-scrollbar ${themeClass}`} style={customStyles}>
             <div className={`px-4 py-12 flex flex-col min-h-full ${!isMobile ? 'items-center max-w-sm mx-auto' : ''}`}>
 
                 {/* Header */}

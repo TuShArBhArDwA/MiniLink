@@ -26,7 +26,9 @@
 |---------|-------------|
 | **Unlimited Links** | Add as many links as you want with drag-and-drop reordering. Now with visual icon previews. |
 | **Real-Time Analytics** | Track views and clicks live. Features a **dynamic glowing graph** that updates in real-time. |
-| **6+ Custom Themes** | From minimal glassmorphism to neon cyberpunk — styled to impress. |
+| **12+ Premium Themes** | Select from beautiful presets (Ocean, Neon, Monochrome, Earthy, etc.) or use the **Custom Theme Builder** to pick your exact gradient, text, and glassmorphism card colors natively. |
+| **Smart Profile Generation** | Users get a beautiful waiting page with an urgent CTA if they visit an unclaimed `/username` URL. |
+| **Viral Branding Badge** | Built-in sleek floating footer on user profiles that directs their traffic back to your sign-up page. |
 | **Lightning Fast** | Optimized for speed with edge caching and instant transitions. |
 | **Secure & Open** | Built with enterprise-grade security (Clerk Auth) and fully open source. |
 | **Fully Responsive** | Looks stunning on every screen, from big monitors to mobile phones. |

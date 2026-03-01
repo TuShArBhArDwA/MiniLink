@@ -158,17 +158,17 @@
   --theme-bg: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
   --theme-card: rgba(255, 255, 255, 0.9);
   --theme-text: #1a1a2e;
-  --theme-link-bg: #ffffff;
-  --theme-link-border: #e5e7eb;
-  --theme-link-hover: #f3f4f6;
+  --theme-link-bg: rgba(255, 255, 255, 0.7);
+  --theme-link-border: rgba(0, 0, 0, 0.05);
+  --theme-link-hover: rgba(255, 255, 255, 0.9);
 }
 
 .theme-dark {
   --theme-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  --theme-card: rgba(30, 30, 50, 0.9);
+  --theme-card: rgba(30, 30, 50, 0.6);
   --theme-text: #ffffff;
-  --theme-link-bg: rgba(255, 255, 255, 0.1);
-  --theme-link-border: rgba(255, 255, 255, 0.2);
+  --theme-link-bg: rgba(255, 255, 255, 0.05);
+  --theme-link-border: rgba(255, 255, 255, 0.1);
   --theme-link-hover: rgba(255, 255, 255, 0.15);
 }
 
@@ -176,36 +176,90 @@
   --theme-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --theme-card: rgba(255, 255, 255, 0.15);
   --theme-text: #ffffff;
-  --theme-link-bg: rgba(255, 255, 255, 0.2);
-  --theme-link-border: rgba(255, 255, 255, 0.3);
-  --theme-link-hover: rgba(255, 255, 255, 0.3);
+  --theme-link-bg: rgba(255, 255, 255, 0.1);
+  --theme-link-border: rgba(255, 255, 255, 0.2);
+  --theme-link-hover: rgba(255, 255, 255, 0.25);
 }
 
 .theme-glass {
   --theme-bg: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
   --theme-card: rgba(255, 255, 255, 0.25);
   --theme-text: #1a1a2e;
-  --theme-link-bg: rgba(255, 255, 255, 0.4);
-  --theme-link-border: rgba(255, 255, 255, 0.5);
-  --theme-link-hover: rgba(255, 255, 255, 0.6);
+  --theme-link-bg: rgba(255, 255, 255, 0.3);
+  --theme-link-border: rgba(255, 255, 255, 0.4);
+  --theme-link-hover: rgba(255, 255, 255, 0.5);
 }
 
 .theme-neon {
   --theme-bg: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-  --theme-card: rgba(15, 12, 41, 0.8);
+  --theme-card: rgba(15, 12, 41, 0.5);
   --theme-text: #00ff88;
-  --theme-link-bg: rgba(0, 255, 136, 0.1);
-  --theme-link-border: rgba(0, 255, 136, 0.5);
-  --theme-link-hover: rgba(0, 255, 136, 0.2);
+  --theme-link-bg: rgba(0, 255, 136, 0.05);
+  --theme-link-border: rgba(0, 255, 136, 0.2);
+  --theme-link-hover: rgba(0, 255, 136, 0.15);
 }
 
 .theme-minimal {
   --theme-bg: #ffffff;
   --theme-card: #ffffff;
   --theme-text: #000000;
-  --theme-link-bg: #ffffff;
-  --theme-link-border: #000000;
-  --theme-link-hover: #f5f5f5;
+  --theme-link-bg: rgba(0, 0, 0, 0.02);
+  --theme-link-border: rgba(0, 0, 0, 0.1);
+  --theme-link-hover: rgba(0, 0, 0, 0.05);
+}
+
+.theme-ocean {
+  --theme-bg: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+  --theme-card: rgba(15, 32, 39, 0.5);
+  --theme-text: #ffffff;
+  --theme-link-bg: rgba(255, 255, 255, 0.05);
+  --theme-link-border: rgba(255, 255, 255, 0.15);
+  --theme-link-hover: rgba(255, 255, 255, 0.1);
+}
+
+.theme-sunset {
+  --theme-bg: linear-gradient(135deg, #ff7e5f 0%, #feb47b 100%);
+  --theme-card: rgba(255, 255, 255, 0.15);
+  --theme-text: #4a0e00;
+  --theme-link-bg: rgba(255, 255, 255, 0.4);
+  --theme-link-border: rgba(255, 255, 255, 0.5);
+  --theme-link-hover: rgba(255, 255, 255, 0.6);
+}
+
+.theme-mint {
+  --theme-bg: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  --theme-card: rgba(17, 153, 142, 0.2);
+  --theme-text: #1a4f3b;
+  --theme-link-bg: rgba(255, 255, 255, 0.3);
+  --theme-link-border: rgba(255, 255, 255, 0.4);
+  --theme-link-hover: rgba(255, 255, 255, 0.5);
+}
+
+.theme-monochrome {
+  --theme-bg: #111111;
+  --theme-card: rgba(30, 30, 30, 0.8);
+  --theme-text: #ffffff;
+  --theme-link-bg: rgba(255, 255, 255, 0.02);
+  --theme-link-border: rgba(255, 255, 255, 0.15);
+  --theme-link-hover: rgba(255, 255, 255, 0.08);
+}
+
+.theme-cyber {
+  --theme-bg: linear-gradient(135deg, #120e1f 0%, #05010d 100%);
+  --theme-card: rgba(20, 15, 35, 0.7);
+  --theme-text: #ff00ff;
+  --theme-link-bg: rgba(0, 255, 255, 0.05);
+  --theme-link-border: rgba(0, 255, 255, 0.3);
+  --theme-link-hover: rgba(0, 255, 255, 0.15);
+}
+
+.theme-earthy {
+  --theme-bg: linear-gradient(135deg, #fdfbf7 0%, #e2d9c8 100%);
+  --theme-card: rgba(255, 255, 255, 0.6);
+  --theme-text: #413d33;
+  --theme-link-bg: rgba(255, 255, 255, 0.6);
+  --theme-link-border: rgba(65, 61, 51, 0.1);
+  --theme-link-hover: rgba(255, 255, 255, 0.9);
 }
 
 /* Custom Animations */

@@ -71,7 +71,7 @@ export async function PUT(request: NextRequest) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { name, bio, avatar, theme, username } = await request.json();
+        const { name, bio, avatar, theme, username, customThemeBg, customThemeCard, customThemeText } = await request.json();
 
         // If username is being changed, check uniqueness
         if (username) {
@@ -98,6 +98,9 @@ export async function PUT(request: NextRequest) {
                 ...(avatar !== undefined && { avatar }),
                 ...(theme !== undefined && { theme }),
                 ...(username !== undefined && { username }),
+                ...(customThemeBg !== undefined && { customThemeBg }),
+                ...(customThemeCard !== undefined && { customThemeCard }),
+                ...(customThemeText !== undefined && { customThemeText }),
             },
         });
 

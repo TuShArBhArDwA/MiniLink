@@ -12,10 +12,17 @@ import ProfilePreview from '@/components/dashboard/profile-preview';
 const THEMES = [
     { id: 'default', name: 'Clean', preview: 'bg-gradient-to-br from-gray-100 to-gray-200' },
     { id: 'dark', name: 'Dark', preview: 'bg-gradient-to-br from-gray-900 to-gray-800' },
-    { id: 'gradient', name: 'Gradient', preview: 'bg-gradient-to-br from-purple-500 to-pink-500' },
+    { id: 'ocean', name: 'Ocean', preview: 'bg-gradient-to-br from-slate-900 via-cyan-900 to-sky-900' },
+    { id: 'sunset', name: 'Sunset', preview: 'bg-gradient-to-br from-orange-400 to-pink-500' },
+    { id: 'mint', name: 'Mint', preview: 'bg-gradient-to-br from-teal-400 to-emerald-500' },
+    { id: 'gradient', name: 'Lavender', preview: 'bg-gradient-to-br from-purple-500 to-pink-500' },
     { id: 'glass', name: 'Glass', preview: 'bg-gradient-to-br from-cyan-400 to-blue-500' },
     { id: 'neon', name: 'Neon', preview: 'bg-gradient-to-br from-indigo-900 to-purple-900' },
-    { id: 'minimal', name: 'Minimal', preview: 'bg-white border-2 border-gray-900' },
+    { id: 'minimal', name: 'Minimal', preview: 'bg-white border border-gray-200' },
+    { id: 'monochrome', name: 'Monochrome', preview: 'bg-zinc-950 border border-zinc-800' },
+    { id: 'cyber', name: 'Cyber', preview: 'bg-gradient-to-br from-fuchsia-900 to-blue-900' },
+    { id: 'earthy', name: 'Earthy', preview: 'bg-gradient-to-br from-amber-100 to-stone-200' },
+    { id: 'custom', name: 'Custom', preview: 'bg-gradient-to-br from-gray-100 to-gray-200 border-2 border-dashed border-gray-400 dark:border-gray-600' },
 ];
 
 export default function AppearancePage() {
@@ -29,6 +36,9 @@ export default function AppearancePage() {
         bio: '',
         avatar: '',
         theme: 'default',
+        customThemeBg: '#05010d',
+        customThemeCard: 'rgba(20, 15, 35, 0.7)',
+        customThemeText: '#ffffff',
         links: [] as any[],
     });
 
@@ -53,6 +63,9 @@ export default function AppearancePage() {
                 bio: profileData.bio || '',
                 avatar: profileData.avatar || '',
                 theme: profileData.theme || 'default',
+                customThemeBg: profileData.customThemeBg || '#05010d',
+                customThemeCard: profileData.customThemeCard || 'rgba(20, 15, 35, 0.7)',
+                customThemeText: profileData.customThemeText || '#ffffff',
                 links: Array.isArray(linksData) ? linksData.filter((l: any) => l.isActive) : [],
             });
         } catch (error) {
@@ -75,6 +88,9 @@ export default function AppearancePage() {
                     bio: profile.bio,
                     avatar: profile.avatar,
                     theme: profile.theme,
+                    customThemeBg: profile.customThemeBg,
+                    customThemeCard: profile.customThemeCard,
+                    customThemeText: profile.customThemeText,
                 }),
             });
 
@@ -239,6 +255,60 @@ export default function AppearancePage() {
                                 </button>
                             ))}
                         </div>
+
+                        {profile.theme === 'custom' && (
+                            <div className="mt-6 p-5 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/50 space-y-4 animate-fade-in-up">
+                                <div>
+                                    <h3 className="text-sm font-semibold mb-1">Custom Colors</h3>
+                                    <p className="text-xs text-gray-500 mb-4">Pick your perfect palette. Your profile will automatically adapt to maintain perfect contract and glass effects.</p>
+                                </div>
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                                    <div className="flex flex-col items-center p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+                                        <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Background</label>
+                                        <div className="relative group">
+                                            <input
+                                                type="color"
+                                                className="w-14 h-14 rounded-full cursor-pointer overflow-hidden p-0 border-0 bg-transparent"
+                                                value={profile.customThemeBg.startsWith('#') ? profile.customThemeBg.substring(0, 7) : '#05010d'}
+                                                onChange={(e) => setProfile({ ...profile, customThemeBg: e.target.value })}
+                                            />
+                                            <div className="absolute inset-0 rounded-full ring-2 ring-black/5 dark:ring-white/10 pointer-events-none group-hover:ring-primary-500 transition-colors"></div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col items-center p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+                                        <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Card Fill</label>
+                                        <div className="relative group">
+                                            <input
+                                                type="color"
+                                                className="w-14 h-14 rounded-full cursor-pointer overflow-hidden p-0 border-0 bg-transparent"
+                                                value={profile.customThemeCard.startsWith('#') ? profile.customThemeCard.substring(0, 7) : '#201633'}
+                                                onChange={(e) => {
+                                                    // Convert hex to semi-transparent rbga for the card glass effect
+                                                    const hex = e.target.value;
+                                                    const r = parseInt(hex.slice(1, 3), 16);
+                                                    const g = parseInt(hex.slice(3, 5), 16);
+                                                    const b = parseInt(hex.slice(5, 7), 16);
+                                                    setProfile({ ...profile, customThemeCard: `rgba(${r}, ${g}, ${b}, 0.7)` });
+                                                }}
+                                            />
+                                            <div className="absolute inset-0 rounded-full ring-2 ring-black/5 dark:ring-white/10 pointer-events-none group-hover:ring-primary-500 transition-colors"></div>
+                                        </div>
+                                    </div>
+                                    <div className="flex flex-col items-center p-3 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700">
+                                        <label className="block text-xs font-semibold text-gray-600 dark:text-gray-300 mb-2">Text & Accents</label>
+                                        <div className="relative group">
+                                            <input
+                                                type="color"
+                                                className="w-14 h-14 rounded-full cursor-pointer overflow-hidden p-0 border-0 bg-transparent"
+                                                value={profile.customThemeText.startsWith('#') ? profile.customThemeText.substring(0, 7) : '#ffffff'}
+                                                onChange={(e) => setProfile({ ...profile, customThemeText: e.target.value })}
+                                            />
+                                            <div className="absolute inset-0 rounded-full ring-2 ring-black/5 dark:ring-white/10 pointer-events-none group-hover:ring-primary-500 transition-colors"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Save Button */}
