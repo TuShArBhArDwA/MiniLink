@@ -17,7 +17,7 @@ interface Props {
 export async function generateMetadata({ params }: Props) {
     const user = await prisma.user.findUnique({
         where: { username: params.username },
-        select: { name: true, bio: true, username: true },
+        select: { name: true, bio: true, username: true, avatar: true },
     });
 
     if (!user) {
@@ -33,6 +33,9 @@ export async function generateMetadata({ params }: Props) {
         openGraph: {
             title: `${user.name || user.username} | MiniLink`,
             description: user.bio || `Check out ${user.name || user.username}'s links`,
+        },
+        icons: {
+            icon: user.avatar || '/favicon.ico',
         },
     };
 }
