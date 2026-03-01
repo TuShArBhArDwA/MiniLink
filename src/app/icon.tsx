@@ -13,19 +13,32 @@ export default function Icon() {
         (
             <div
                 style={{
-                    fontSize: 24,
                     background: 'linear-gradient(to bottom right, #8b5cf6, #ec4899)',
                     width: '100%',
                     height: '100%',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    borderRadius: '8px',
-                    color: 'white',
-                    fontWeight: 900,
+                    borderRadius: '10px',
                 }}
             >
-                M
+                <svg
+                    width="22"
+                    height="22"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    style={{
+                        display: 'block',
+                    }}
+                >
+                    <path d="M9 17H7A5 5 0 0 1 7 7H9" />
+                    <path d="M15 7H17A5 5 0 0 1 17 17H15" />
+                    <line x1="8" y1="12" x2="16" y2="12" />
+                </svg>
             </div>
         ),
         {
