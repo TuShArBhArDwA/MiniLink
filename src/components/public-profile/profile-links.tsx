@@ -1,12 +1,6 @@
 'use client';
 
 import {
-    Instagram,
-    Youtube,
-    Twitter,
-    Github,
-    Linkedin,
-    Facebook,
     Globe,
     Mail,
     MessageCircle,
@@ -19,21 +13,38 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import LinkButton from '@/components/link-button';
+import {
+    XIcon,
+    InstagramIcon,
+    YoutubeIcon,
+    LinkedinIcon,
+    GithubIcon,
+    FacebookIcon,
+    WhatsappIcon,
+    TelegramIcon,
+    SpotifyIcon,
+    TwitchIcon,
+    KofiIcon,
+    MediumIcon,
+    TopmateIcon
+} from '@/components/icons';
 
 const iconMap: Record<string, any> = {
     website: Globe,
-    instagram: Instagram,
-    youtube: Youtube,
-    twitter: Twitter,
-    github: Github,
-    linkedin: Linkedin,
-    facebook: Facebook,
+    instagram: InstagramIcon,
+    youtube: YoutubeIcon,
+    twitter: XIcon,
+    github: GithubIcon,
+    linkedin: LinkedinIcon,
+    facebook: FacebookIcon,
+    medium: MediumIcon,
+    topmate: TopmateIcon,
+    whatsapp: WhatsappIcon,
+    telegram: TelegramIcon,
+    spotify: SpotifyIcon,
+    twitch: TwitchIcon,
+    kofi: KofiIcon,
     email: Mail,
-    whatsapp: MessageCircle,
-    telegram: Send,
-    spotify: Music2,
-    twitch: Twitch,
-    kofi: Coffee,
     shop: ShoppingBag,
     link: Link2,
 };
@@ -46,7 +57,7 @@ export default function ProfileLinks({ links }: Props) {
     return (
         <div className="space-y-3">
             {links.map((link, index) => {
-                const IconComponent = link.icon ? iconMap[link.icon] : Link2;
+                const IconComponent = (link.icon && iconMap[link.icon]) ? iconMap[link.icon] : Link2;
                 const isCustomIcon = link.icon?.startsWith('http');
 
                 return (

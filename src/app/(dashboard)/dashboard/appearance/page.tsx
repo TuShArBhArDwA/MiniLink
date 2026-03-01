@@ -165,14 +165,7 @@ export default function AppearancePage() {
 
                             <div className="flex-1">
                                 <label className="block text-sm font-medium mb-2">Avatar</label>
-                                <div className="flex gap-3">
-                                    <input
-                                        type="url"
-                                        className="input-field flex-1"
-                                        placeholder="https://..."
-                                        value={profile.avatar}
-                                        onChange={(e) => setProfile({ ...profile, avatar: e.target.value })}
-                                    />
+                                <div className="flex flex-col items-start gap-3">
                                     <CldUploadButton
                                         uploadPreset="minilink_preset"
                                         onUpload={(result: any) => {
@@ -180,15 +173,15 @@ export default function AppearancePage() {
                                                 setProfile((prev) => ({ ...prev, avatar: result.info.secure_url }));
                                             }
                                         }}
-                                        className="px-4 py-2 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium transition-colors flex items-center gap-2"
+                                        className="px-6 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-semibold shadow-lg shadow-violet-500/20 transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2"
                                     >
                                         <Upload className="w-4 h-4" />
-                                        <span>Upload</span>
+                                        <span>Upload Image</span>
                                     </CldUploadButton>
+                                    <p className="text-xs text-gray-500">
+                                        PNG, JPG or GIF up to 5MB
+                                    </p>
                                 </div>
-                                <p className="text-xs text-gray-500 mt-1">
-                                    Upload an image or paste a direct URL
-                                </p>
                             </div>
                         </div>
 

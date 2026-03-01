@@ -21,6 +21,8 @@ import {
     useSensor,
     useSensors,
     DragEndEvent,
+    DragStartEvent,
+    DragOverlay,
 } from '@dnd-kit/core';
 import {
     arrayMove,
@@ -47,6 +49,7 @@ export default function LinksPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
     const [newLink, setNewLink] = useState({ title: '', url: '', icon: '' });
+    const [activeId, setActiveId] = useState<string | null>(null);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -121,8 +124,13 @@ export default function LinksPage() {
         }
     };
 
+    const handleDragStart = (event: DragStartEvent) => {
+        setActiveId(event.active.id as string);
+    };
+
     const handleDragEnd = async (event: DragEndEvent) => {
         const { active, over } = event;
+        setActiveId(null);
 
         if (over && active.id !== over.id) {
             const oldIndex = links.findIndex(link => link.id === active.id);
@@ -250,6 +258,7 @@ export default function LinksPage() {
                 <DndContext
                     sensors={sensors}
                     collisionDetection={closestCenter}
+                    onDragStart={handleDragStart}
                     onDragEnd={handleDragEnd}
                 >
                     <SortableContext
@@ -270,10 +279,201 @@ export default function LinksPage() {
                             ))}
                         </div>
                     </SortableContext>
+
+                    <DragOverlay adjustScale={true}>
+                        {activeId ? (
+                            <div className="w-full">
+                                <LinkItem
+                                    link={links.find(l => l.id === activeId)!}
+                                    isOverlay
+                                />
+                            </div>
+                        ) : null}
+                    </DragOverlay>
                 </DndContext>
             )}
 
 
+        </div>
+    );
+}
+
+interface LinkItemProps {
+    link: Link;
+    isOverlay?: boolean;
+    dragHandleProps?: any;
+    isEditing?: boolean;
+    editData?: any;
+    onEditDataChange?: (data: any) => void;
+    onSave?: () => void;
+    onCancel?: () => void;
+    onDelete?: (id: string) => void;
+    onToggle?: (id: string, isActive: boolean) => void;
+    onStartEdit?: () => void;
+}
+
+function LinkItem({
+    link,
+    isOverlay,
+    dragHandleProps,
+    isEditing,
+    editData,
+    onEditDataChange,
+    onSave,
+    onCancel,
+    onDelete,
+    onToggle,
+    onStartEdit
+}: LinkItemProps) {
+    const IconComponent = getIconComponent(link.icon);
+    const isCustomUrl = link.icon?.startsWith('http') || false;
+
+    return (
+        <div
+            className={`group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex items-center gap-4 transition-all duration-300 ${!link.isActive && !isOverlay ? 'opacity-60 bg-gray-50 dark:bg-gray-900/50' : ''
+                } ${isOverlay
+                    ? 'shadow-2xl border-violet-500 ring-2 ring-violet-500/20 rotate-[1deg] scale-[1.02] cursor-grabbing z-50'
+                    : 'hover:shadow-md hover:border-violet-500/50'
+                }`}
+        >
+            {/* Drag Handle */}
+            <button
+                {...dragHandleProps}
+                className={`p-2 text-gray-400 hover:text-violet-500 hover:bg-violet-50 dark:hover:bg-violet-900/20 rounded-lg transition-colors ${isOverlay ? 'cursor-grabbing text-violet-500' : 'cursor-grab'
+                    }`}
+                title="Drag to reorder"
+            >
+                <GripVertical className="w-5 h-5" />
+            </button>
+
+            {/* Content Area */}
+            <div className="flex-1 min-w-0">
+                {isEditing ? (
+                    <div className="space-y-4 w-full animate-fade-in">
+                        <div className="grid sm:grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <label className="text-[11px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider ml-1">
+                                    Link Title
+                                </label>
+                                <input
+                                    type="text"
+                                    className="input-field py-2 px-3 text-sm w-full"
+                                    placeholder="Title"
+                                    value={editData.title}
+                                    onChange={(e) => onEditDataChange?.({ ...editData, title: e.target.value })}
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <label className="text-[11px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider ml-1">
+                                    Direct URL
+                                </label>
+                                <input
+                                    type="url"
+                                    className="input-field py-2 px-3 text-sm w-full"
+                                    placeholder="URL"
+                                    value={editData.url}
+                                    onChange={(e) => onEditDataChange?.({ ...editData, url: e.target.value })}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-1.5">
+                            <label className="text-[11px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider ml-1">
+                                Icon & Branding
+                            </label>
+                            <IconPicker
+                                value={editData.icon}
+                                onChange={(icon) => onEditDataChange?.({ ...editData, icon })}
+                            />
+                        </div>
+
+                        <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-100 dark:border-white/5">
+                            <button
+                                onClick={onCancel}
+                                className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={onSave}
+                                className="flex items-center gap-2 px-6 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg text-sm font-semibold shadow-lg shadow-violet-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                            >
+                                <Check className="w-4 h-4" />
+                                <span>Save Changes</span>
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="flex items-center gap-4">
+                        {/* Icon Preview */}
+                        <div className="shrink-0 w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
+                            {isCustomUrl ? (
+                                <img src={link.icon!} alt={link.title} className="w-6 h-6 object-cover rounded-md" />
+                            ) : (
+                                <IconComponent className="w-5 h-5" />
+                            )}
+                        </div>
+
+                        <div className="flex-1 min-w-0 flex flex-col">
+                            <p className="font-semibold text-gray-900 dark:text-white truncate text-base">
+                                {link.title}
+                            </p>
+                            <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-violet-500 truncate hover:underline flex items-center gap-1">
+                                {link.url}
+                                <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </a>
+                        </div>
+
+                        {/* Stats Badge */}
+                        <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-xs font-medium text-gray-600 dark:text-gray-400">
+                            <Eye className="w-3.5 h-3.5" />
+                            <span>{link.clicks}</span>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* Actions */}
+            {!isEditing && !isOverlay && (
+                <div className="flex items-center gap-2">
+                    <button
+                        type="button"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onStartEdit?.();
+                        }}
+                        className="p-2 text-gray-400 hover:text-violet-500 hover:bg-violet-50 dark:hover:bg-violet-900/20 border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800/50 rounded-lg transition-all hover:border-violet-300 dark:hover:border-violet-500/30 shadow-sm"
+                        title="Edit"
+                    >
+                        <Edit3 className="w-4 h-4" />
+                    </button>
+                    <button
+                        type="button"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onToggle?.(link.id, !link.isActive);
+                        }}
+                        className={`p-2 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800/50 transition-all shadow-sm ${link.isActive
+                            ? 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+                            : 'text-gray-400 hover:text-green-500 hover:border-green-300 dark:hover:border-green-500/30'
+                            }`}
+                        title={link.isActive ? 'Hide' : 'Show'}
+                    >
+                        {link.isActive ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                    </button>
+                    <button
+                        type="button"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onDelete?.(link.id);
+                        }}
+                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800/50 rounded-lg transition-all hover:border-red-300 dark:hover:border-red-500/30 shadow-sm"
+                        title="Delete"
+                    >
+                        <Trash2 className="w-4 h-4" />
+                    </button>
+                </div>
+            )}
         </div>
     );
 }
@@ -287,7 +487,7 @@ interface SortableLinkItemProps {
 
 function SortableLinkItem({ link, onDelete, onToggle, onUpdate }: SortableLinkItemProps) {
     const [isEditing, setIsEditing] = useState(false);
-    const [editData, setEditData] = useState({ title: link.title, url: link.url });
+    const [editData, setEditData] = useState({ title: link.title, url: link.url, icon: link.icon || '' });
 
     const {
         attributes,
@@ -301,9 +501,9 @@ function SortableLinkItem({ link, onDelete, onToggle, onUpdate }: SortableLinkIt
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
-        opacity: isDragging ? 0.5 : 1,
-        zIndex: isDragging ? 50 : 0,
-        position: isDragging ? 'relative' as const : undefined,
+        opacity: isDragging ? 0.3 : 1, // Dim the original item significantly
+        position: 'relative' as const,
+        zIndex: isDragging ? 0 : 1,
     };
 
     const handleSave = async () => {
@@ -323,120 +523,20 @@ function SortableLinkItem({ link, onDelete, onToggle, onUpdate }: SortableLinkIt
         }
     };
 
-    const IconComponent = getIconComponent(link.icon);
-    const isCustomUrl = link.icon?.startsWith('http') || false;
-
     return (
-        <div
-            ref={setNodeRef}
-            style={style}
-            className={`group bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4 flex items-center gap-4 hover:shadow-md hover:border-violet-500/50 transition-all duration-300 ${!link.isActive ? 'opacity-60 bg-gray-50 dark:bg-gray-900/50' : ''}`}
-        >
-            {/* Drag Handle */}
-            <button
-                {...attributes}
-                {...listeners}
-                className="p-2 cursor-grab active:cursor-grabbing text-gray-400 hover:text-violet-500 hover:bg-violet-50 dark:hover:bg-violet-900/20 rounded-lg transition-colors"
-                title="Drag to reorder"
-            >
-                <GripVertical className="w-5 h-5" />
-            </button>
-
-            {/* Icon Preview */}
-            <div className="shrink-0 w-10 h-10 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700">
-                {isCustomUrl ? (
-                    <img src={link.icon!} alt={link.title} className="w-6 h-6 object-cover rounded-md" />
-                ) : (
-                    <IconComponent className="w-5 h-5" />
-                )}
-            </div>
-
-            {/* Content */}
-            <div className="flex-1 min-w-0">
-                {isEditing ? (
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full">
-                        <div className="flex-1 w-full space-y-2 sm:space-y-0 sm:flex sm:gap-2">
-                            <input
-                                type="text"
-                                className="input-field py-1.5 px-3 text-sm w-full sm:w-1/3"
-                                placeholder="Title"
-                                value={editData.title}
-                                onChange={(e) => setEditData({ ...editData, title: e.target.value })}
-                            />
-                            <input
-                                type="url"
-                                className="input-field py-1.5 px-3 text-sm w-full sm:w-2/3"
-                                placeholder="URL"
-                                value={editData.url}
-                                onChange={(e) => setEditData({ ...editData, url: e.target.value })}
-                            />
-                        </div>
-                        <div className="flex items-center gap-1 mt-2 sm:mt-0">
-                            <button onClick={handleSave} className="p-1.5 bg-green-100 text-green-700 rounded-md hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50 transition-colors">
-                                <Check className="w-4 h-4" />
-                            </button>
-                            <button onClick={() => setIsEditing(false)} className="p-1.5 bg-gray-100 text-gray-600 rounded-md hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 transition-colors">
-                                <X className="w-4 h-4" />
-                            </button>
-                        </div>
-                    </div>
-                ) : (
-                    <div className="flex flex-col">
-                        <p className="font-semibold text-gray-900 dark:text-white truncate text-base">
-                            {link.title}
-                        </p>
-                        <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-violet-500 truncate hover:underline flex items-center gap-1">
-                            {link.url}
-                            <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </a>
-                    </div>
-                )}
-            </div>
-
-            {/* Stats Badge */}
-            {!isEditing && (
-                <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-xs font-medium text-gray-600 dark:text-gray-400">
-                    <Eye className="w-3.5 h-3.5" />
-                    <span>{link.clicks}</span>
-                </div>
-            )}
-
-            {/* Actions */}
-            <div className="flex items-center gap-1">
-                <button
-                    type="button"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setIsEditing(true);
-                    }}
-                    className="p-2 text-gray-400 hover:text-violet-500 hover:bg-violet-50 dark:hover:bg-violet-900/20 rounded-lg transition-colors"
-                    title="Edit"
-                >
-                    <Edit3 className="w-4 h-4" />
-                </button>
-                <button
-                    type="button"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onToggle(link.id, !link.isActive);
-                    }}
-                    className={`p-2 rounded-lg transition-colors ${link.isActive ? 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300' : 'text-gray-400 hover:text-green-500'}`}
-                    title={link.isActive ? 'Hide' : 'Show'}
-                >
-                    {link.isActive ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-                </button>
-                <button
-                    type="button"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onDelete(link.id);
-                    }}
-                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
-                    title="Delete"
-                >
-                    <Trash2 className="w-4 h-4" />
-                </button>
-            </div>
+        <div ref={setNodeRef} style={style}>
+            <LinkItem
+                link={link}
+                dragHandleProps={{ ...attributes, ...listeners }}
+                isEditing={isEditing}
+                editData={editData}
+                onEditDataChange={setEditData}
+                onSave={handleSave}
+                onCancel={() => setIsEditing(false)}
+                onDelete={onDelete}
+                onToggle={onToggle}
+                onStartEdit={() => setIsEditing(true)}
+            />
         </div>
     );
 }

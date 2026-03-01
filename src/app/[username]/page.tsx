@@ -7,6 +7,7 @@ import { Link2 } from 'lucide-react';
 import LinkButton from '@/components/link-button';
 import ProfileLinks from '@/components/public-profile/profile-links';
 import PromoFooter from '@/components/public-profile/promo-footer';
+import UnclaimedProfile from '@/components/public-profile/unclaimed-profile';
 
 interface Props {
     params: { username: string };
@@ -19,7 +20,10 @@ export async function generateMetadata({ params }: Props) {
     });
 
     if (!user) {
-        return { title: 'User not found' };
+        return {
+            title: `Claim /${params.username} | MiniLink`,
+            description: `The username /${params.username} is available! Claim it now on MiniLink to build your perfect profile.`,
+        };
     }
 
     return {
@@ -44,7 +48,7 @@ export default async function ProfilePage({ params }: Props) {
     });
 
     if (!user) {
-        notFound();
+        return <UnclaimedProfile username={params.username} />;
     }
 
     // Record page view

@@ -1,23 +1,56 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Link2 } from 'lucide-react';
 import Image from 'next/image';
 import PromoFooter from '@/components/public-profile/promo-footer';
 import LinkButton from '@/components/link-button';
 
 // Icon map for preview (simplified version of the main one)
 import {
-    Instagram, Youtube, Twitter, Github, Linkedin, Facebook,
-    Globe, Mail, MessageCircle, Send, Music2, Twitch,
-    Coffee, ShoppingBag
+    Link2,
+    Globe,
+    Mail,
+    MessageCircle,
+    Send,
+    Music2,
+    Twitch,
+    Coffee,
+    ShoppingBag
 } from 'lucide-react';
+import {
+    XIcon,
+    InstagramIcon,
+    YoutubeIcon,
+    LinkedinIcon,
+    GithubIcon,
+    FacebookIcon,
+    WhatsappIcon,
+    TelegramIcon,
+    SpotifyIcon,
+    TwitchIcon,
+    KofiIcon,
+    MediumIcon,
+    TopmateIcon
+} from '@/components/icons';
 
 const iconMap: Record<string, any> = {
-    website: Globe, instagram: Instagram, youtube: Youtube, twitter: Twitter,
-    github: Github, linkedin: Linkedin, facebook: Facebook, email: Mail,
-    whatsapp: MessageCircle, telegram: Send, spotify: Music2, twitch: Twitch,
-    kofi: Coffee, shop: ShoppingBag, link: Link2,
+    website: Globe,
+    instagram: InstagramIcon,
+    youtube: YoutubeIcon,
+    twitter: XIcon,
+    github: GithubIcon,
+    linkedin: LinkedinIcon,
+    facebook: FacebookIcon,
+    medium: MediumIcon,
+    topmate: TopmateIcon,
+    whatsapp: WhatsappIcon,
+    telegram: TelegramIcon,
+    spotify: SpotifyIcon,
+    twitch: TwitchIcon,
+    kofi: KofiIcon,
+    email: Mail,
+    shop: ShoppingBag,
+    link: Link2,
 };
 
 interface ProfilePreviewProps {
@@ -87,7 +120,7 @@ export default function ProfilePreview({ data, device = 'mobile' }: ProfilePrevi
                 {/* Links */}
                 <div className="space-y-3 flex-1 w-full">
                     {data.links?.map((link) => {
-                        const IconComponent = link.icon ? iconMap[link.icon] : Link2;
+                        const IconComponent = (link.icon && iconMap[link.icon]) ? iconMap[link.icon] : Link2;
                         const isCustomIcon = link.icon?.startsWith('http');
 
                         return (

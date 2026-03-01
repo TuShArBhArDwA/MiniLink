@@ -18,7 +18,7 @@ export function SiteFooter() {
                     <p className="text-gray-600 dark:text-gray-400 text-sm">
                         Made With 💙 By{' '}
                         <a
-                            href="https://tushar-bhardwaj.vercel.app/"
+                            href="https://buymeacoffee.com/tusharbhardwaj"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="font-semibold text-violet-600 dark:text-violet-400 hover:underline"
