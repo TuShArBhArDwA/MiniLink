@@ -11,6 +11,7 @@ import {
     Copy,
     Check
 } from 'lucide-react';
+import { cookies } from 'next/headers';
 import CopyButton from '@/components/dashboard/copy-button';
 
 export default async function DashboardPage() {
@@ -75,11 +76,30 @@ export default async function DashboardPage() {
 
             } else {
                 // Completely new user
+                const cookieStore = cookies();
+                const claimedUsername = cookieStore.get('minilink_claim')?.value;
+                let finalUsername = clerkUser.username || email.split('@')[0];
+
+                if (claimedUsername) {
+                    // Quick check to ensure the claimed username wasn't taken in the meantime
+                    const taken = await prisma.user.findFirst({
+                        where: {
+                            username: {
+                                equals: claimedUsername,
+                                mode: 'insensitive'
+                            }
+                        }
+                    });
+                    if (!taken) {
+                        finalUsername = claimedUsername;
+                    }
+                }
+
                 dbUser = await prisma.user.create({
                     data: {
                         id: userId,
                         email: email,
-                        username: clerkUser.username || email.split('@')[0],
+                        username: finalUsername,
                         name: `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim(),
                         avatar: clerkUser.imageUrl,
                     }

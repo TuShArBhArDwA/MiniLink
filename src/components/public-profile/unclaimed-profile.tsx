@@ -1,11 +1,19 @@
+'use client';
+
 import Link from 'next/link';
 import { RocketIcon, Link as LinkIcon, Sparkles } from 'lucide-react';
+import Cookies from 'js-cookie';
 
 interface UnclaimedProfileProps {
     username: string;
 }
 
 export default function UnclaimedProfile({ username }: UnclaimedProfileProps) {
+    const handleClaim = () => {
+        // Set a cookie that expires in 1 hour (1/24 of a day)
+        Cookies.set('minilink_claim', username, { expires: 1 / 24, path: '/' });
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col pt-20 px-4">
             <div className="max-w-md w-full mx-auto relative group">
@@ -42,6 +50,7 @@ export default function UnclaimedProfile({ username }: UnclaimedProfileProps) {
                     <Link
                         href={`/sign-up`}
                         className="w-full relative group/btn"
+                        onClick={handleClaim}
                     >
                         <div className="absolute -inset-0.5 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-xl blur opacity-60 group-hover/btn:opacity-100 transition duration-200"></div>
                         <button className="relative w-full flex items-center justify-center gap-2 bg-black dark:bg-white text-white dark:text-black px-8 py-4 rounded-xl font-bold text-lg hover:scale-[1.02] transition-transform shadow-xl">
