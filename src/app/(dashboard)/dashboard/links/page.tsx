@@ -423,6 +423,7 @@ function LinkItem({
                         {/* Icon Preview */}
                         <div className="shrink-0 w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gray-50 dark:bg-gray-900/50 flex items-center justify-center text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700/50 shadow-inner group-hover:border-primary-200 dark:group-hover:border-primary-800/50 group-hover:bg-primary-50/50 dark:group-hover:bg-primary-900/10 transition-colors">
                             {isCustomUrl ? (
+                                /* eslint-disable-next-line @next/next/no-img-element */
                                 <img src={link.icon!} alt={link.title} className="w-7 h-7 sm:w-8 sm:h-8 object-cover rounded-lg shadow-sm" />
                             ) : (
                                 <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 group-hover:text-primary-500 transition-colors" />

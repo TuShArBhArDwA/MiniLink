@@ -52,7 +52,7 @@ export default function AnalyticsCharts({ data }: AnalyticsChartsProps) {
                     </svg>
                 </div>
                 <p className="font-medium text-gray-900 dark:text-white">Awaiting Traffic</p>
-                <p className="text-sm">We'll show your charts once you get some visitors.</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">We&apos;ll show your charts once you get some visitors.</p>
             </div>
         );
     }

@@ -89,6 +89,7 @@ export default function IconPicker({ value, onChange }: IconPickerProps) {
                 <div className="flex items-center gap-3">
                     {isCustom ? (
                         <div className="relative w-12 h-12 rounded-xl border border-violet-500/50 bg-violet-50 dark:bg-violet-500/10 p-1.5 ring-2 ring-violet-500/10 overflow-hidden group">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img src={value} alt="Custom icon" className="w-full h-full object-contain" />
                             <button
                                 onClick={() => onChange('')}

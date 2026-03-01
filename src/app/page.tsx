@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useUser } from "@clerk/nextjs";
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
     ArrowRight,
@@ -475,18 +476,19 @@ function AnimatedLinksFeature() {
     );
 }
 
+const THEMES = [
+    { name: 'Violet', color: 'bg-violet-500', gradient: 'from-violet-500 to-purple-600' },
+    { name: 'Pink', color: 'bg-pink-500', gradient: 'from-pink-500 to-rose-500' },
+    { name: 'Amber', color: 'bg-amber-500', gradient: 'from-amber-500 to-orange-500' },
+    { name: 'Teal', color: 'bg-teal-500', gradient: 'from-emerald-500 to-teal-500' }
+];
+
 function AnimatedThemesFeature() {
     const [activeTheme, setActiveTheme] = useState(0);
-    const themes = [
-        { name: 'Violet', color: 'bg-violet-500', gradient: 'from-violet-500 to-purple-600' },
-        { name: 'Pink', color: 'bg-pink-500', gradient: 'from-pink-500 to-rose-500' },
-        { name: 'Amber', color: 'bg-amber-500', gradient: 'from-amber-500 to-orange-500' },
-        { name: 'Teal', color: 'bg-teal-500', gradient: 'from-emerald-500 to-teal-500' }
-    ];
 
     useEffect(() => {
         const interval = setInterval(() => {
-            setActiveTheme(prev => (prev + 1) % themes.length);
+            setActiveTheme(prev => (prev + 1) % THEMES.length);
         }, 2500);
         return () => clearInterval(interval);
     }, []);
@@ -495,7 +497,7 @@ function AnimatedThemesFeature() {
         <div className="flex gap-4 items-center">
             {/* Theme Selector Sidebar */}
             <div className="flex flex-col gap-3 p-3 bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700">
-                {themes.map((t, i) => (
+                {THEMES.map((t, i) => (
                     <div
                         key={i}
                         className={`w-8 h-8 rounded-full ${t.color} cursor-pointer transition-all duration-300 ${activeTheme === i ? 'ring-2 ring-offset-2 ring-gray-400 scale-110' : 'opacity-40'}`}
@@ -504,7 +506,7 @@ function AnimatedThemesFeature() {
             </div>
 
             {/* Phone Mockup Preview */}
-            <div className={`w-32 h-56 rounded-[2rem] bg-gradient-to-br ${themes[activeTheme].gradient} transition-all duration-700 shadow-2xl overflow-hidden relative border-[6px] border-white dark:border-gray-800 ring-1 ring-black/5`}>
+            <div className={`w-32 h-56 rounded-[2rem] bg-gradient-to-br ${THEMES[activeTheme].gradient} transition-all duration-700 shadow-2xl overflow-hidden relative border-[6px] border-white dark:border-gray-800 ring-1 ring-black/5`}>
                 <div className="absolute top-0 inset-x-0 h-4 bg-black/10 mx-8 rounded-b-xl backdrop-blur-sm z-10"></div>
                 <div className="flex flex-col items-center gap-3 pt-8 pb-4 px-3">
                     <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md shadow-inner mb-1"></div>
@@ -1003,8 +1005,8 @@ export default function HomePage() {
                                     <div className="w-full h-full bg-white dark:bg-gray-900 mt-1 rounded-t-[38px] p-6 pt-12">
                                         <div className="flex flex-col items-center text-center">
                                             {/* Avatar with actual photo */}
-                                            <div className="w-20 h-20 rounded-full mb-3 ring-4 ring-white dark:ring-gray-800 shadow-xl overflow-hidden">
-                                                <img src="/me.jpeg" alt="Tushar Bhardwaj" className="w-full h-full object-cover" />
+                                            <div className="w-20 h-20 rounded-full mb-3 ring-4 ring-white dark:ring-gray-800 shadow-xl overflow-hidden relative">
+                                                <Image src="/me.jpeg" alt="Tushar Bhardwaj" fill className="object-cover" sizes="80px" />
                                             </div>
                                             <h3 className="text-lg font-bold text-gray-900 dark:text-white">Tushar Bhardwaj</h3>
                                             <p className="text-gray-500 dark:text-gray-400 text-[10px] mt-0.5 px-2 leading-relaxed">Ex - SWE Intern Microsoft | Top 0.1% Club Topmate | Sharing Tech & Career Insights with 23K+ Linkedin</p>
