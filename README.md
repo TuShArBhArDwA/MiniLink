@@ -3,7 +3,7 @@
   # MiniLink
   
   **Your Premium Link-in-Bio Platform**
-  <img width="1905" height="902" alt="image" src="https://github.com/user-attachments/assets/745c1afe-7f5d-40dd-9902-495b6f177fee" />
+<img width="1908" height="935" alt="image" src="https://github.com/user-attachments/assets/46ea552e-b813-4874-9944-8231fcc37fe4" />
 
 
 
