@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser, useClerk } from '@clerk/nextjs';
-import { Loader2, AlertTriangle, Copy, Check } from 'lucide-react';
+import { Loader2, AlertTriangle, Copy, Check, CheckCircle2, XCircle } from 'lucide-react';
 import { useToast } from '@/components/ui/toaster';
 
 export default function SettingsPage() {
@@ -18,11 +18,53 @@ export default function SettingsPage() {
     const [originalUsername, setOriginalUsername] = useState('');
     const [error, setError] = useState('');
 
+    // Live checking state
+    const [isChecking, setIsChecking] = useState(false);
+    const [availability, setAvailability] = useState<'idle' | 'available' | 'taken'>('idle');
+
     useEffect(() => {
         if (user) {
             fetchProfile();
         }
     }, [user]);
+
+    // Debounced username check
+    useEffect(() => {
+        if (username === originalUsername) {
+            setAvailability('idle');
+            return;
+        }
+
+        if (username.length < 3) {
+            setAvailability('idle');
+            return;
+        }
+
+        if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+            setAvailability('idle');
+            return;
+        }
+
+        const checkUsername = async () => {
+            setIsChecking(true);
+            try {
+                const res = await fetch(`/api/user/check-username?username=${encodeURIComponent(username)}`);
+                const data = await res.json();
+                setAvailability(data.available ? 'available' : 'taken');
+            } catch (err) {
+                console.error('Failed to check username:', err);
+                setAvailability('idle');
+            } finally {
+                setIsChecking(false);
+            }
+        };
+
+        const timeoutId = setTimeout(() => {
+            checkUsername();
+        }, 500); // 500ms debounce
+
+        return () => clearTimeout(timeoutId);
+    }, [username, originalUsername]);
 
     const fetchProfile = async () => {
         try {
@@ -53,6 +95,10 @@ export default function SettingsPage() {
             return;
         }
 
+        if (availability === 'taken') {
+            return;
+        }
+
         setIsSaving(true);
         setError('');
 
@@ -71,6 +117,7 @@ export default function SettingsPage() {
             }
 
             setOriginalUsername(username);
+            setAvailability('idle');
             router.refresh();
 
             addToast({
@@ -142,32 +189,66 @@ export default function SettingsPage() {
                 <div className="mb-4">
                     <label className="block text-sm font-medium mb-2">Username</label>
                     <div className="flex gap-3">
-                        <div className="flex-1 flex items-center">
-                            <span className="px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-r-0 border-gray-200 dark:border-gray-700 rounded-l-xl text-gray-500 text-sm">
+                        <div className="flex-1 flex items-center relative group">
+                            <span className="px-4 py-3 bg-gray-100 dark:bg-gray-800 border border-r-0 border-gray-200 dark:border-gray-700 rounded-l-xl text-gray-500 text-sm z-10 transition-colors group-focus-within:border-primary-500">
                                 {displayDomain}/
                             </span>
-                            <input
-                                type="text"
-                                className="flex-1 input-field rounded-l-none"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value.toLowerCase())}
-                                placeholder="username"
-                            />
+                            <div className="relative flex-1">
+                                <input
+                                    type="text"
+                                    className={`w-full input-field rounded-l-none pl-3 pr-10 border-l-0 ${availability === 'taken'
+                                            ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+                                            : availability === 'available'
+                                                ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20'
+                                                : ''
+                                        }`}
+                                    value={username}
+                                    onChange={(e) => {
+                                        setUsername(e.target.value.toLowerCase());
+                                        if (error) setError('');
+                                    }}
+                                    placeholder="username"
+                                />
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center">
+                                    {isChecking && <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />}
+                                    {!isChecking && availability === 'available' && <CheckCircle2 className="w-5 h-5 text-green-500" />}
+                                    {!isChecking && availability === 'taken' && <XCircle className="w-5 h-5 text-red-500" />}
+                                </div>
+                            </div>
                         </div>
                         <button
                             onClick={handleSaveUsername}
-                            disabled={isSaving || username === originalUsername}
-                            className="btn-primary disabled:opacity-50"
+                            disabled={isSaving || isChecking || availability === 'taken' || username === originalUsername || username.length < 3 || !/^[a-zA-Z0-9_]+$/.test(username)}
+                            className="btn-primary disabled:opacity-50 min-w-[80px]"
                         >
                             {isSaving ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
+                                <Loader2 className="w-4 h-4 animate-spin mx-auto" />
                             ) : (
                                 'Save'
                             )}
                         </button>
                     </div>
+
+                    {/* Feedback Messages */}
                     {error && (
-                        <p className="text-red-500 text-sm mt-2">{error}</p>
+                        <p className="text-red-500 text-sm mt-2 flex items-center gap-1.5 animate-in slide-in-from-top-1 fade-in">
+                            <AlertTriangle className="w-4 h-4" /> {error}
+                        </p>
+                    )}
+                    {!error && availability === 'taken' && (
+                        <p className="text-red-500 text-sm mt-2 flex items-center gap-1.5 animate-in slide-in-from-top-1 fade-in">
+                            <XCircle className="w-4 h-4" /> This username is already taken.
+                        </p>
+                    )}
+                    {!error && availability === 'available' && username !== originalUsername && (
+                        <p className="text-green-500 text-sm mt-2 flex items-center gap-1.5 animate-in slide-in-from-top-1 fade-in">
+                            <CheckCircle2 className="w-4 h-4" /> Username is available!
+                        </p>
+                    )}
+                    {!error && availability === 'idle' && username.length > 0 && username.length < 3 && username !== originalUsername && (
+                        <p className="text-gray-500 text-sm mt-2">
+                            Username must be at least 3 characters.
+                        </p>
                     )}
                 </div>
 
