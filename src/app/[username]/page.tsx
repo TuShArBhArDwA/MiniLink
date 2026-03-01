@@ -8,6 +8,7 @@ import LinkButton from '@/components/link-button';
 import ProfileLinks from '@/components/public-profile/profile-links';
 import PromoFooter from '@/components/public-profile/promo-footer';
 import UnclaimedProfile from '@/components/public-profile/unclaimed-profile';
+import ProfileAvatar from '@/components/public-profile/profile-avatar';
 
 interface Props {
     params: { username: string };
@@ -80,49 +81,40 @@ export default async function ProfilePage({ params }: Props) {
         <div className={`min-h-screen ${themeClass}`} style={customStyles}>
             <div className="max-w-lg mx-auto px-4 py-12">
                 {/* Profile Header */}
-                <div
-                    className="text-center mb-10 p-8 rounded-[2.5rem] backdrop-blur-xl animate-fade-in-up relative overflow-hidden group"
-                    style={{
-                        background: 'color-mix(in srgb, var(--theme-card) 85%, transparent)',
-                        color: 'var(--theme-text)',
-                        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
-                        border: '1px solid rgba(255,255,255,0.1)'
-                    }}
-                >
-                    {/* Subtle Top Glow */}
-                    <div className="absolute -top-24 -left-24 w-48 h-48 bg-white/10 rounded-full blur-3xl pointer-events-none group-hover:bg-white/20 transition-all duration-700"></div>
-
-                    {/* Avatar */}
-                    <div className="relative w-28 h-28 mx-auto mb-6">
-                        <div className="absolute inset-0 bg-gradient-to-tr from-violet-500 to-fuchsia-500 rounded-full blur-md opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div className="relative w-full h-full rounded-full overflow-hidden ring-4 ring-white/20 shadow-xl bg-white dark:bg-gray-900 z-10">
-                            {user.avatar ? (
-                                <Image
-                                    src={user.avatar}
-                                    alt={user.name || user.username || 'User'}
-                                    width={112}
-                                    height={112}
-                                    className="w-full h-full object-cover"
-                                />
-                            ) : (
-                                <div className="w-full h-full bg-gradient-to-br from-primary-400 to-accent-400 flex items-center justify-center">
-                                    <span className="text-4xl font-bold text-white">
-                                        {(user.name || user.username || 'U')[0].toUpperCase()}
-                                    </span>
-                                </div>
-                            )}
-                        </div>
+                <div className="relative mb-12 animate-fade-in-up">
+                    {/* Background Glass Card */}
+                    <div
+                        className="absolute inset-x-0 top-12 bottom-0 rounded-[3rem] backdrop-blur-2xl transition-all duration-500 hover:shadow-2xl"
+                        style={{
+                            background: 'color-mix(in srgb, var(--theme-card) 60%, transparent)',
+                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.1)',
+                        }}
+                    >
+                        {/* Ambient Glows Inside Card */}
+                        <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/20 rounded-full blur-3xl pointer-events-none mix-blend-overlay"></div>
+                        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-black/5 rounded-full blur-3xl pointer-events-none"></div>
                     </div>
 
-                    {/* Name & Bio */}
-                    <h1 className="text-3xl font-extrabold mb-2 tracking-tight">
-                        {user.name || `@${user.username}`}
-                    </h1>
-                    {user.bio && (
-                        <p className="text-sm sm:text-base opacity-80 max-w-sm mx-auto leading-relaxed font-medium">
-                            {user.bio}
-                        </p>
-                    )}
+                    <div className="relative pt-4 px-6 pb-10 text-center z-10">
+                        {/* Avatar */}
+                        <ProfileAvatar user={user} />
+
+                        {/* Name & Bio */}
+                        <h1
+                            className="text-3xl font-extrabold mb-3 tracking-tight"
+                            style={{ color: 'var(--theme-text)', textShadow: '0 2px 10px rgba(0,0,0,0.1)' }}
+                        >
+                            {user.name || `@${user.username}`}
+                        </h1>
+                        {user.bio && (
+                            <p
+                                className="text-base sm:text-lg max-w-sm mx-auto leading-relaxed font-medium"
+                                style={{ color: 'color-mix(in srgb, var(--theme-text) 85%, transparent)' }}
+                            >
+                                {user.bio}
+                            </p>
+                        )}
+                    </div>
                 </div>
 
                 {/* Links */}

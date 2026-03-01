@@ -55,7 +55,7 @@ interface Props {
 
 export default function ProfileLinks({ links }: Props) {
     return (
-        <div className="space-y-3">
+        <div className="space-y-4 relative">
             {links.map((link, index) => {
                 const IconComponent = (link.icon && iconMap[link.icon]) ? iconMap[link.icon] : Link2;
                 const isCustomIcon = link.icon?.startsWith('http');
@@ -63,7 +63,7 @@ export default function ProfileLinks({ links }: Props) {
                 return (
                     <div
                         key={link.id}
-                        className="opacity-0 animate-fade-in-up"
+                        className="opacity-0 animate-fade-in-up relative hover:z-50"
                         style={{ animationDelay: `${index * 100}ms` }}
                     >
                         <LinkButton
