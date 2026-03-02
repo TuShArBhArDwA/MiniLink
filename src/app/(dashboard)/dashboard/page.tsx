@@ -32,6 +32,9 @@ export default async function DashboardPage() {
         where: { id: userId },
     });
 
+    const cookieStore = cookies();
+    const claimedUsername = cookieStore.get('minilink_claim')?.value;
+
     if (!dbUser) {
         const email = clerkUser.emailAddresses[0]?.emailAddress;
         if (email) {
@@ -81,8 +84,7 @@ export default async function DashboardPage() {
 
             } else {
                 // Completely new user
-                const cookieStore = cookies();
-                const claimedUsername = cookieStore.get('minilink_claim')?.value;
+                // Completely new user
                 let finalUsername = clerkUser.username || email.split('@')[0];
 
                 if (claimedUsername) {
@@ -112,6 +114,25 @@ export default async function DashboardPage() {
             }
         }
     }
+
+    // Process claim cookie for existing users who might want to change their username via the claim flow
+    if (dbUser && claimedUsername && dbUser.username !== claimedUsername) {
+        const taken = await prisma.user.findFirst({
+            where: {
+                username: {
+                    equals: claimedUsername,
+                    mode: 'insensitive'
+                }
+            }
+        });
+        if (!taken) {
+            dbUser = await prisma.user.update({
+                where: { id: dbUser.id },
+                data: { username: claimedUsername }
+            });
+        }
+    }
+
 
     const [user, links, totalViews, totalClicks] = await Promise.all([
         prisma.user.findUnique({
