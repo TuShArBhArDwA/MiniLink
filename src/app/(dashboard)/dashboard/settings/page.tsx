@@ -155,7 +155,7 @@ export default function SettingsPage() {
 
     const displayDomain = process.env.NEXT_PUBLIC_APP_URL
         ? process.env.NEXT_PUBLIC_APP_URL.replace(/^https?:\/\//, '')
-        : 'minilink.app';
+        : 'minianonlink.vercel.app';
 
     const handleCopy = async () => {
         await navigator.clipboard.writeText(profileUrl);

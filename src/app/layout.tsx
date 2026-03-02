@@ -8,18 +8,18 @@ import Providers from '@/components/providers';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-    title: 'MiniLink - Your Link-in-Bio Platform',
+    title: 'MiniLink | Link in Bio',
     description: 'Create your personalized link-in-bio page in seconds. Share all your important links with one simple URL.',
     keywords: ['linktree', 'link in bio', 'social media', 'profile', 'links'],
     authors: [{ name: 'Tushar Bhardwaj' }],
     openGraph: {
-        title: 'MiniLink - Your Link-in-Bio Platform',
+        title: 'MiniLink | Link in Bio',
         description: 'Create your personalized link-in-bio page in seconds.',
         type: 'website',
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'MiniLink - Your Link-in-Bio Platform',
+        title: 'MiniLink | Link in Bio',
         description: 'Create your personalized link-in-bio page in seconds.',
     },
 };

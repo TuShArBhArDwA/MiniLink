@@ -8,12 +8,9 @@ export async function GET(request: NextRequest) {
     try {
         const { userId } = auth();
 
-        if (!userId) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-        }
-
         const searchParams = request.nextUrl.searchParams;
         const targetUsername = searchParams.get('username');
+        const strict = searchParams.get('strict') === 'true';
 
         if (!targetUsername) {
             return NextResponse.json({ error: 'Username is required' }, { status: 400 });
@@ -29,8 +26,9 @@ export async function GET(request: NextRequest) {
             },
         });
 
-        // If no one owns it, or the current user owns it, it is "available" to them
-        const isAvailable = !existingUser || existingUser.id === userId;
+        // If no one owns it, it's available. 
+        // If someone owns it, it's only available if strict=false and the current user is the owner.
+        const isAvailable = !existingUser || (!strict && existingUser.id === userId);
 
         return NextResponse.json({ available: isAvailable });
     } catch (error) {

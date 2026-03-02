@@ -1,7 +1,14 @@
 import { redirect } from 'next/navigation';
 import { currentUser } from "@clerk/nextjs";
+import { Metadata } from 'next';
 import DashboardNav from '@/components/dashboard/dashboard-nav';
 import { SiteFooter } from '@/components/site-footer';
+
+export async function generateMetadata(): Promise<Metadata> {
+    return {
+        title: 'MiniLink | Dashboard',
+    };
+}
 
 export default async function DashboardLayout({
     children,

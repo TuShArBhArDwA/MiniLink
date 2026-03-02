@@ -9,6 +9,7 @@ import ProfileLinks from '@/components/public-profile/profile-links';
 import PromoFooter from '@/components/public-profile/promo-footer';
 import UnclaimedProfile from '@/components/public-profile/unclaimed-profile';
 import ProfileAvatar from '@/components/public-profile/profile-avatar';
+import ProfileActions from '@/components/public-profile/profile-actions';
 
 interface Props {
     params: { username: string };
@@ -82,6 +83,15 @@ export default async function ProfilePage({ params }: Props) {
 
     return (
         <div className={`min-h-screen ${themeClass}`} style={customStyles}>
+            <ProfileActions user={{
+                name: user.name,
+                username: user.username,
+                avatar: user.avatar,
+                theme: user.theme,
+                customThemeBg: user.customThemeBg,
+                customThemeCard: user.customThemeCard,
+                customThemeText: user.customThemeText
+            }} />
             <div className="max-w-lg mx-auto px-4 py-12">
                 {/* Profile Header */}
                 <div className="relative mb-12 animate-fade-in-up">
@@ -124,7 +134,7 @@ export default async function ProfilePage({ params }: Props) {
                 <ProfileLinks links={user.links} />
 
                 {/* Footer - Promotional */}
-                <PromoFooter />
+                <PromoFooter name={user.name || `@${user.username}`} />
             </div>
         </div>
     );

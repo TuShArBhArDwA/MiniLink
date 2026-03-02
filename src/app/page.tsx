@@ -546,7 +546,7 @@ function AnimatedFastFeature() {
                     <div className="w-2 h-2 rounded-full bg-red-400"></div>
                     <div className="w-2 h-2 rounded-full bg-yellow-400"></div>
                     <div className="w-2 h-2 rounded-full bg-green-400"></div>
-                    <div className="ml-2 flex-1 h-3 bg-white dark:bg-gray-700 rounded text-[6px] text-gray-400 flex items-center px-1">minilink.bio/me</div>
+                    <div className="ml-2 flex-1 h-3 bg-white dark:bg-gray-700 rounded text-[6px] text-gray-400 flex items-center px-1">minianonlink.vercel.app/me</div>
                 </div>
                 <div className="flex-1 p-4 flex flex-col items-center pt-6 bg-gray-50 dark:bg-[#0a0a0f] space-y-3">
                     <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 shadow-lg"></div>
@@ -578,7 +578,7 @@ function AnimatedFastFeature() {
                         <p className="mb-1">Check my new profile! 🔥</p>
                         <div className={`bg-blue-600/50 rounded p-1.5 flex items-center gap-1.5 cursor-pointer hover:bg-blue-600 transition-colors ${state === 2 ? 'ring-2 ring-white/50' : ''}`}>
                             <Link2 size={10} />
-                            <span className="font-mono opacity-90">minilink.bio/me</span>
+                            <span className="font-mono opacity-90">minianonlink.vercel.app/me</span>
                             <MousePointer2 className={`w-4 h-4 text-white absolute bottom-[-10px] right-[-10px] transition-opacity duration-300 ${state === 2 ? 'opacity-100' : 'opacity-0'}`} />
                         </div>
                     </div>

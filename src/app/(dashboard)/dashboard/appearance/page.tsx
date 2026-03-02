@@ -32,6 +32,7 @@ export default function AppearancePage() {
     const [isSaving, setIsSaving] = useState(false);
     const [previewDevice, setPreviewDevice] = useState<'mobile' | 'desktop'>('mobile');
     const [profile, setProfile] = useState({
+        username: '',
         name: '',
         bio: '',
         avatar: '',
@@ -59,6 +60,7 @@ export default function AppearancePage() {
             const linksData = await linksRes.json();
 
             setProfile({
+                username: profileData.username || '',
                 name: profileData.name || '',
                 bio: profileData.bio || '',
                 avatar: profileData.avatar || '',
@@ -142,7 +144,7 @@ export default function AppearancePage() {
     }
 
     return (
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="mb-8">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                     Appearance
@@ -152,9 +154,9 @@ export default function AppearancePage() {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
                 {/* Left Column - Editor */}
-                <div className="lg:col-span-7 space-y-8">
+                <div className="lg:col-span-6 space-y-8">
                     {/* Profile Section */}
                     <div className="relative overflow-hidden bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-gray-200 dark:border-gray-800/50 rounded-2xl p-6 lg:p-8 shadow-sm">
                         <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
@@ -349,7 +351,7 @@ export default function AppearancePage() {
                 </div>
 
                 {/* Right Column - Preview */}
-                <div className="hidden lg:block lg:col-span-5">
+                <div className="hidden lg:block lg:col-span-6">
                     <div className="sticky top-6">
                         <div className="flex items-center justify-between mb-6 bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-gray-200 dark:border-gray-800/50 rounded-2xl p-2 shadow-sm">
                             <div className="flex items-center gap-2 pl-4">
@@ -391,10 +393,7 @@ export default function AppearancePage() {
 
                         <ProfilePreview
                             device={previewDevice}
-                            data={{
-                                ...profile,
-                                username: user?.username || '',
-                            }}
+                            data={profile}
                         />
                     </div>
                 </div>

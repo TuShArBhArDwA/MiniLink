@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import PromoFooter from '@/components/public-profile/promo-footer';
 import LinkButton from '@/components/link-button';
+import ProfileActions from '@/components/public-profile/profile-actions';
 
 // Icon map for preview (simplified version of the main one)
 import {
@@ -71,11 +72,17 @@ interface ProfilePreviewProps {
 export default function ProfilePreview({ data, device = 'mobile' }: ProfilePreviewProps) {
     const themeClass = `theme-${data.theme || 'default'}`;
     const isMobile = device === 'mobile';
-    const [domain, setDomain] = useState('minilink.app');
+    const [domain, setDomain] = useState('minianonlink.vercel.app');
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            setDomain(window.location.host);
+            // Only use window.location.host if it's NOT the local dev environment,
+            // otherwise stick to the official branded domain for the clean "wow" factor.
+            const host = window.location.host;
+            if (host.includes('minilink') || host.includes('vercel.app')) {
+                setDomain(host);
+            }
         }
     }, []);
 
@@ -91,7 +98,20 @@ export default function ProfilePreview({ data, device = 'mobile' }: ProfilePrevi
 
     // The content inside the device screen
     const screenContent = (
-        <div className={`w-full h-full overflow-y-auto hide-scrollbar ${themeClass}`} style={customStyles}>
+        <div className={`w-full h-full ${isModalOpen ? 'overflow-hidden' : 'overflow-y-auto'} hide-scrollbar relative ${themeClass}`} style={customStyles}>
+            <ProfileActions
+                user={{
+                    name: data.name,
+                    username: data.username,
+                    avatar: data.avatar,
+                    theme: data.theme,
+                    customThemeBg: data.customThemeBg || null,
+                    customThemeCard: data.customThemeCard || null,
+                    customThemeText: data.customThemeText || null,
+                }}
+                isInline={true}
+                onOpenChange={setIsModalOpen}
+            />
             <div className={`px-4 py-12 flex flex-col min-h-full ${!isMobile ? 'items-center max-w-sm mx-auto' : ''}`}>
 
                 {/* Header */}
@@ -168,10 +188,9 @@ export default function ProfilePreview({ data, device = 'mobile' }: ProfilePrevi
                     )}
                 </div>
 
-                {/* Footer */}
                 <div className="mt-8 text-center">
                     <div className="scale-90 origin-bottom">
-                        <PromoFooter />
+                        <PromoFooter name={data.name} />
                     </div>
                 </div>
             </div>
