@@ -33,7 +33,7 @@ export default function JoinModal({ isOpen, onClose, isInline = false }: JoinMod
             }, 2000);
             return () => clearInterval(interval);
         }
-    }, [isOpen]);
+    }, [isOpen, words.length]);
 
     // Availability check with debounce
     useEffect(() => {
