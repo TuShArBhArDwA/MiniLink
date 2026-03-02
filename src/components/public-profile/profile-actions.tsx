@@ -52,10 +52,10 @@ export default function ProfileActions({ user, isInline = false, onOpenChange }:
             <div className={`${isInline ? 'absolute top-4 left-4' : 'fixed top-6 left-6'} z-50`}>
                 <button
                     onClick={() => setIsJoinOpen(true)}
-                    className="w-10 h-10 rounded-xl bg-white/10 dark:bg-black/20 backdrop-blur-md border border-white/20 dark:border-white/10 flex items-center justify-center text-gray-900 dark:text-white hover:bg-white/20 dark:hover:bg-black/40 hover:scale-110 hover:shadow-violet-500/20 transition-all shadow-lg active:scale-95 group"
+                    className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all shadow-lg active:scale-95 group"
                     aria-label="Join MiniLink"
                 >
-                    <span className="text-xl font-black bg-gradient-to-r from-violet-500 to-pink-500 dark:from-violet-400 dark:to-pink-400 bg-clip-text text-transparent drop-shadow-sm">M</span>
+                    <span className="text-xl font-black bg-gradient-to-r from-violet-600 to-pink-600 bg-clip-text text-transparent">M</span>
                 </button>
             </div>
 
@@ -63,10 +63,10 @@ export default function ProfileActions({ user, isInline = false, onOpenChange }:
             <div className={`${isInline ? 'absolute top-4 right-4' : 'fixed top-6 right-6'} z-50`}>
                 <button
                     onClick={() => setIsShareOpen(true)}
-                    className="w-10 h-10 rounded-xl bg-white/10 dark:bg-black/20 backdrop-blur-md border border-white/20 dark:border-white/10 flex items-center justify-center text-gray-800 dark:text-white hover:bg-white/20 dark:hover:bg-black/40 hover:scale-110 hover:shadow-violet-500/20 transition-all shadow-lg active:scale-95 group"
+                    className="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center hover:scale-110 hover:shadow-xl transition-all shadow-lg active:scale-95 group"
                     aria-label="Share Profile"
                 >
-                    <Share2 className="w-5 h-5 text-gray-800 dark:text-white group-hover:rotate-12 transition-transform drop-shadow-sm" />
+                    <Share2 className="w-5 h-5 text-gray-800 group-hover:rotate-12 transition-transform" />
                 </button>
             </div>
 

@@ -149,7 +149,7 @@ export default function JoinModal({ isOpen, onClose, isInline = false }: JoinMod
 
                         {isAvailable === false && (
                             <p className="text-red-400 text-sm font-bold animate-in fade-in slide-in-from-top-1 px-2">
-                                Whoops! This username is already taken.
+                                Whoops! This username is already taken. Try another.
                             </p>
                         )}
                         {isAvailable === true && (
