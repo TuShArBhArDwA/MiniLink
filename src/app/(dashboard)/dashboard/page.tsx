@@ -13,6 +13,11 @@ import {
 } from 'lucide-react';
 import { cookies } from 'next/headers';
 import CopyButton from '@/components/dashboard/copy-button';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'Dashboard | MiniLink',
+};
 
 export default async function DashboardPage() {
     const { userId } = auth();

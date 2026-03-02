@@ -8,19 +8,43 @@ import Providers from '@/components/providers';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-    title: 'MiniLink | Link in Bio',
-    description: 'Create your personalized link-in-bio page in seconds. Share all your important links with one simple URL.',
-    keywords: ['linktree', 'link in bio', 'social media', 'profile', 'links'],
-    authors: [{ name: 'Tushar Bhardwaj' }],
+    title: 'MiniLink - Build Your Free Link in Bio',
+    description: 'MiniLink is the ultimate link-in-bio tool for creators, influencers, and businesses. Share all your content, social profiles, and products with a single, highly customizable URL.',
+    keywords: ['linktree alternative', 'link in bio', 'social media links', 'creator tools', 'portfolio link', 'custom bio link'],
+    authors: [{ name: 'Tushar Bhardwaj', url: 'https://tushar-bhardwaj.vercel.app' }],
+    metadataBase: new URL('https://minianonlink.vercel.app'),
     openGraph: {
-        title: 'MiniLink | Link in Bio',
-        description: 'Create your personalized link-in-bio page in seconds.',
+        title: 'MiniLink - Build Your Free Link in Bio',
+        description: 'Share all your links, content, and products with one powerful, customizable bio link. Fast, secure, and 100% free.',
+        url: 'https://minianonlink.vercel.app',
+        siteName: 'MiniLink',
+        images: [
+            {
+                url: '/og-image.png', // Assuming we might add an og-image later, or it uses a default
+                width: 1200,
+                height: 630,
+                alt: 'MiniLink - Your fully customizable Link in Bio',
+            },
+        ],
         type: 'website',
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'MiniLink | Link in Bio',
-        description: 'Create your personalized link-in-bio page in seconds.',
+        title: 'MiniLink - Build Your Free Link in Bio',
+        description: 'Create your personalized link-in-bio page in seconds. Open-source, fast, and completely free.',
+        creator: '@Tusharab2004',
+        images: ['/og-image.png'],
+    },
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true,
+            'max-video-preview': -1,
+            'max-image-preview': 'large',
+            'max-snippet': -1,
+        },
     },
 };
 

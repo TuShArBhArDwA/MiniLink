@@ -82,7 +82,7 @@ export default async function ProfilePage({ params }: Props) {
     } as React.CSSProperties : { background: 'var(--theme-bg)' };
 
     return (
-        <div className={`min-h-screen ${themeClass}`} style={customStyles}>
+        <div className={`min-h-screen overflow-x-hidden ${themeClass}`} style={customStyles}>
             <ProfileActions user={{
                 name: user.name,
                 username: user.username,

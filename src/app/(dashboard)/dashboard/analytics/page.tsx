@@ -3,6 +3,11 @@ import { prisma } from '@/lib/prisma';
 import { Eye, MousePointer, TrendingUp, BarChart3, ExternalLink } from 'lucide-react';
 import AnalyticsCharts from '@/components/dashboard/analytics-charts';
 import AnalyticsTimeFilter from '@/components/dashboard/analytics-time-filter';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'Analytics | MiniLink',
+};
 
 export default async function AnalyticsPage({
     searchParams,
