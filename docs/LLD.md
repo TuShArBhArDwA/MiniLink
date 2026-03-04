@@ -63,6 +63,11 @@ All routes are protected (require Clerk Auth).
 ### Public Profile (`/[username]`)
 - **`UserLink`**: Styled button component based on active theme.
 - **`ThemeWrapper`**: Injects theme-specific CSS variables (colors, fonts, backgrounds).
+- **`TestimonialsPreview`** *(admin-only)*: Auto-rotating testimonial card (5s interval, fade transition). Static data, no API calls. Includes dot indicators and CTA link to external testimonial wall.
+- **`CreatorBadge`** *(admin-only)*: Inline `BadgeCheck` icon with purple glow, rendered next to the admin's name.
+- **`ProfileAvatar` (crown overlay)** *(admin-only)*: Golden crown icon on the top-left corner of the avatar with pulsing glow.
+
+> Admin identification: `user.id === process.env.NEXT_PUBLIC_ADMIN_USER_ID` (server-side check).
 
 ## 4. Key Algorithms
 
@@ -83,7 +88,13 @@ src/
 │   └── [username]/     # Public UI
 ├── components/
 │   ├── ui/             # Shadcn/Radix Primitives
-│   └── dashboard/      # Feature-specific components
+│   ├── dashboard/      # Feature-specific components
+│   └── public-profile/ # Profile page components
+│       ├── profile-avatar.tsx
+│       ├── profile-links.tsx
+│       ├── profile-actions.tsx
+│       ├── testimonials-preview.tsx  # Admin-only
+│       └── creator-badge.tsx         # Admin-only
 └── lib/
     ├── prisma.ts       # DB Client
     └── utils.ts        # CN helper

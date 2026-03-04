@@ -32,6 +32,7 @@
 | **Lightning Fast** | Optimized for speed with edge caching and instant transitions. |
 | **Secure & Open** | Built with enterprise-grade security (Clerk Auth) and fully open source. |
 | **Fully Responsive** | Looks stunning on every screen, from big monitors to mobile phones. |
+| **Social Proof & Premium Badge** | Admin profile features a rotating testimonial widget, a crown on the avatar, and a verified badge next to the name — making the creator's profile look premium. |
 
 ---
 
@@ -72,6 +73,7 @@ Create `.env.local`:
 DATABASE_URL="postgresql://..."
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=...
 CLERK_SECRET_KEY=...
+NEXT_PUBLIC_ADMIN_USER_ID=your_clerk_user_id  # Enables creator badge & testimonials
 ```
 
 ### 3. Run It

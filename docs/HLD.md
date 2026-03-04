@@ -59,12 +59,19 @@ graph TD
 3. Page renders with user's selected theme.
 4. **Analytics**: Link clicks trigger asynchronous `POST` to track engagement.
 
+### 3.3 Admin Social Proof (Testimonials & Premium Badge)
+1. Server compares the profile's Clerk User ID against `NEXT_PUBLIC_ADMIN_USER_ID`.
+2. If matched, renders: **Crown overlay** on avatar, **Verified badge** next to name, and **Rotating testimonial card** with a CTA link.
+3. Visible to all visitors of the admin profile; other users' profiles remain unaffected.
+4. No database queries — testimonials are static, and the admin check is a simple string comparison.
+
 ## 4. Security & Scalability
 
 - **Auth**: Fully managed by Clerk (SOC2). No sensitive passwords stored locally.
 - **Edge Caching**: Public profiles cached at the edge for sub-second load times.
 - **Database**: Connection pooling enabled for serverless scaling.
 - **Validation**: Zod schemas ensure data integrity on all API inputs.
+- **Admin-only Features**: Gated behind `NEXT_PUBLIC_ADMIN_USER_ID` environment variable; no elevated DB permissions needed.
 
 ---
 

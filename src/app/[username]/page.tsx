@@ -10,6 +10,8 @@ import PromoFooter from '@/components/public-profile/promo-footer';
 import UnclaimedProfile from '@/components/public-profile/unclaimed-profile';
 import ProfileAvatar from '@/components/public-profile/profile-avatar';
 import ProfileActions from '@/components/public-profile/profile-actions';
+import TestimonialsPreview from '@/components/public-profile/testimonials-preview';
+import CreatorBadge from '@/components/public-profile/creator-badge';
 
 interface Props {
     params: { username: string };
@@ -69,6 +71,7 @@ export default async function ProfilePage({ params }: Props) {
         },
     });
 
+    const isAdmin = user.id === process.env.NEXT_PUBLIC_ADMIN_USER_ID;
     const themeClass = `theme-${user.theme || 'default'}`;
 
     const customStyles = user.theme === 'custom' ? {
@@ -110,7 +113,7 @@ export default async function ProfilePage({ params }: Props) {
 
                     <div className="relative pt-4 px-6 pb-10 text-center z-10">
                         {/* Avatar */}
-                        <ProfileAvatar user={user} />
+                        <ProfileAvatar user={user} isAdmin={isAdmin} />
 
                         {/* Name & Bio */}
                         <h1
@@ -118,6 +121,7 @@ export default async function ProfilePage({ params }: Props) {
                             style={{ color: 'var(--theme-text)', textShadow: '0 2px 10px rgba(0,0,0,0.1)' }}
                         >
                             {user.name || `@${user.username}`}
+                            {isAdmin && <CreatorBadge />}
                         </h1>
                         {user.bio && (
                             <p
@@ -129,6 +133,9 @@ export default async function ProfilePage({ params }: Props) {
                         )}
                     </div>
                 </div>
+
+                {/* Testimonials – admin only */}
+                {isAdmin && <TestimonialsPreview />}
 
                 {/* Links */}
                 <ProfileLinks links={user.links} />

@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import Image from 'next/image';
-import { X, Maximize2 } from 'lucide-react';
+import { X, Maximize2, Crown } from 'lucide-react';
 
 interface ProfileAvatarProps {
     user: {
@@ -10,9 +10,10 @@ interface ProfileAvatarProps {
         username: string | null;
         avatar: string | null;
     };
+    isAdmin?: boolean;
 }
 
-export default function ProfileAvatar({ user }: ProfileAvatarProps) {
+export default function ProfileAvatar({ user, isAdmin = false }: ProfileAvatarProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
 
@@ -73,6 +74,17 @@ export default function ProfileAvatar({ user }: ProfileAvatarProps) {
                         <Maximize2 className="w-6 h-6 text-white/80" />
                     </div>
                 </div>
+
+                {/* Crown Badge for Admin */}
+                {isAdmin && (
+                    <div className="absolute -top-1 -left-1 z-20 pointer-events-none -rotate-[20deg]">
+                        {/* Gold glow */}
+                        <div className="absolute inset-0 bg-yellow-400/40 rounded-full blur-md animate-pulse" />
+                        <div className="relative w-9 h-9 rounded-full bg-gradient-to-br from-yellow-300 via-amber-400 to-yellow-500 flex items-center justify-center shadow-lg shadow-amber-500/30 border-2 border-yellow-200/50 ring-2 ring-yellow-400/20">
+                            <Crown className="w-4.5 h-4.5 text-yellow-900 drop-shadow-sm" strokeWidth={2.5} />
+                        </div>
+                    </div>
+                )}
 
                 {/* Click Label */}
                 <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500 pointer-events-none">
