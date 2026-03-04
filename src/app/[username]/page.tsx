@@ -138,6 +138,16 @@ export default async function ProfilePage({ params }: Props) {
                 {isAdmin && <TestimonialsPreview />}
 
                 {/* Links */}
+                {isAdmin && (
+                    <div className="flex items-center justify-center gap-2 mb-4">
+                        <span
+                            className="text-sm font-bold tracking-widest uppercase"
+                            style={{ color: 'color-mix(in srgb, var(--theme-text) 50%, transparent)' }}
+                        >
+                            ✦ My Links
+                        </span>
+                    </div>
+                )}
                 <ProfileLinks links={user.links} />
 
                 {/* Footer - Promotional */}
