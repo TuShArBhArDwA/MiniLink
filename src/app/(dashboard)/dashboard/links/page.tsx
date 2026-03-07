@@ -11,7 +11,10 @@ import {
     EyeOff,
     Edit3,
     Check,
-    X
+    X,
+    FolderOpen,
+    ArrowLeft,
+    FolderMinus
 } from 'lucide-react';
 import {
     DndContext,
@@ -43,6 +46,9 @@ interface Link {
     icon: string | null;
     order: number;
     isActive: boolean;
+    isFolder?: boolean;
+    parentId?: string | null;
+    children?: Link[];
     clicks: number;
 }
 
@@ -50,8 +56,10 @@ export default function LinksPage() {
     const [links, setLinks] = useState<Link[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isAdding, setIsAdding] = useState(false);
+    const [addingType, setAddingType] = useState<'link' | 'folder'>('link');
     const [newLink, setNewLink] = useState({ title: '', url: '', icon: '' });
     const [activeId, setActiveId] = useState<string | null>(null);
+    const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
 
     const sensors = useSensors(
         useSensor(MouseSensor, {
@@ -88,18 +96,22 @@ export default function LinksPage() {
 
     const handleAddLink = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newLink.title || !newLink.url) return;
+        if (!newLink.title) return;
+        if (addingType === 'link' && !newLink.url) return;
 
         try {
             const res = await fetch('/api/links', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newLink),
+                body: JSON.stringify({
+                    ...newLink,
+                    isFolder: addingType === 'folder',
+                    parentId: selectedFolderId
+                }),
             });
 
             if (res.ok) {
-                const link = await res.json();
-                setLinks([...links, link]);
+                fetchLinks(); // Refetch to get updated nested structure
                 setNewLink({ title: '', url: '', icon: '' });
                 setIsAdding(false);
             }
@@ -111,7 +123,7 @@ export default function LinksPage() {
     const handleDeleteLink = async (id: string) => {
         try {
             await fetch(`/api/links/${id}`, { method: 'DELETE' });
-            setLinks(links.filter(link => link.id !== id));
+            fetchLinks(); // Refetch to ensure nested UI matches DB
         } catch (error) {
             console.error('Failed to delete link:', error);
         }
@@ -124,13 +136,32 @@ export default function LinksPage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ isActive }),
             });
-            setLinks(links.map(link =>
-                link.id === id ? { ...link, isActive } : link
-            ));
+            fetchLinks();
         } catch (error) {
             console.error('Failed to toggle link:', error);
         }
     };
+
+    const handleMoveLink = async (linkId: string, targetFolderId: string | null) => {
+        try {
+            await fetch(`/api/links/${linkId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ parentId: targetFolderId }),
+            });
+            fetchLinks();
+        } catch (error) {
+            console.error('Failed to move link:', error);
+        }
+    };
+
+    const currentLinks = selectedFolderId
+        ? links.find(l => l.id === selectedFolderId)?.children || []
+        : links;
+
+    const availableLinks = selectedFolderId
+        ? links.filter(l => !l.isFolder && l.id !== selectedFolderId)
+        : [];
 
     const handleDragStart = (event: DragStartEvent) => {
         setActiveId(event.active.id as string);
@@ -141,15 +172,39 @@ export default function LinksPage() {
         setActiveId(null);
 
         if (over && active.id !== over.id) {
-            const oldIndex = links.findIndex(link => link.id === active.id);
-            const newIndex = links.findIndex(link => link.id === over.id);
+            // Find old and new indices within current view
+            const oldIndex = currentLinks.findIndex(link => link.id === active.id);
+            const newIndex = currentLinks.findIndex(link => link.id === over.id);
 
-            const newLinks = arrayMove(links, oldIndex, newIndex).map((link, index) => ({
+            const newLinks = arrayMove(currentLinks, oldIndex, newIndex).map((link, index) => ({
                 ...link,
                 order: index,
             }));
 
-            setLinks(newLinks);
+            // Optimistically update top level or nested children array based on view
+            setLinks(prev => {
+                if (!selectedFolderId) {
+                    // Update top level
+                    return newLinks.map(n => {
+                        const original = prev.find(p => p.id === n.id);
+                        return { ...original, ...n, children: original?.children || [] };
+                    });
+                } else {
+                    // Update children of the selected folder
+                    return prev.map(parent => {
+                        if (parent.id === selectedFolderId) {
+                            return {
+                                ...parent,
+                                children: newLinks.map(n => {
+                                    const original = parent.children?.find(c => c.id === n.id);
+                                    return { ...original, ...n } as Link;
+                                })
+                            };
+                        }
+                        return parent;
+                    });
+                }
+            });
 
             // Update order in database
             try {
@@ -178,20 +233,51 @@ export default function LinksPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                        Your Links
+                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        {selectedFolderId ? (
+                            <>
+                                <button
+                                    onClick={() => setSelectedFolderId(null)}
+                                    className="hover:bg-gray-100 dark:hover:bg-gray-800 p-1.5 rounded-lg transition-colors text-gray-500"
+                                    title="Back to Top Level"
+                                >
+                                    <ArrowLeft className="w-5 h-5" />
+                                </button>
+                                <span>{links.find(l => l.id === selectedFolderId)?.title || 'Folder'}</span>
+                            </>
+                        ) : 'Your Links'}
                     </h1>
                     <p className="text-gray-600 dark:text-gray-400 text-sm mt-1">
-                        Add, edit, and reorder your links
+                        {selectedFolderId
+                            ? 'Manage links inside this folder'
+                            : 'Add, edit, and reorganize your links and folders'}
                     </p>
                 </div>
-                <button
-                    onClick={() => setIsAdding(true)}
-                    className="flex items-center justify-center gap-2 px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm shadow-primary-500/20 hover:-translate-y-0.5 sm:w-auto w-full"
-                >
-                    <Plus className="w-4 h-4" />
-                    Add Link
-                </button>
+
+                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    {!selectedFolderId && (
+                        <button
+                            onClick={() => {
+                                setIsAdding(true);
+                                setAddingType('folder');
+                            }}
+                            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-xl text-sm font-semibold transition-all w-full sm:w-auto"
+                        >
+                            <Plus className="w-4 h-4" />
+                            Add Folder
+                        </button>
+                    )}
+                    <button
+                        onClick={() => {
+                            setIsAdding(true);
+                            setAddingType('link');
+                        }}
+                        className="flex items-center justify-center gap-2 px-6 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm shadow-primary-500/20 hover:-translate-y-0.5 w-full sm:w-auto"
+                    >
+                        <Plus className="w-4 h-4" />
+                        Add Link
+                    </button>
+                </div>
             </div>
 
             {/* Add Link Form */}
@@ -200,27 +286,31 @@ export default function LinksPage() {
                     <form onSubmit={handleAddLink} className="space-y-5">
                         <div className="grid sm:grid-cols-2 gap-5">
                             <div>
-                                <label className="block text-sm font-semibold text-gray-900 dark:text-gray-300 mb-2">Link Title</label>
+                                <label className="block text-sm font-semibold text-gray-900 dark:text-gray-300 mb-2">
+                                    {addingType === 'folder' ? 'Folder Name' : 'Link Title'}
+                                </label>
                                 <input
                                     type="text"
                                     className="w-full bg-white dark:bg-gray-900 px-4 py-3 text-gray-900 dark:text-white rounded-xl border border-gray-200 dark:border-gray-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all placeholder:text-gray-400"
-                                    placeholder="My Website"
+                                    placeholder={addingType === 'folder' ? 'My Socials' : 'My Website'}
                                     value={newLink.title}
                                     onChange={(e) => setNewLink({ ...newLink, title: e.target.value })}
                                     required
                                 />
                             </div>
-                            <div>
-                                <label className="block text-sm font-semibold text-gray-900 dark:text-gray-300 mb-2">Destination URL</label>
-                                <input
-                                    type="url"
-                                    className="w-full bg-white dark:bg-gray-900 px-4 py-3 text-gray-900 dark:text-white rounded-xl border border-gray-200 dark:border-gray-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all placeholder:text-gray-400"
-                                    placeholder="https://example.com"
-                                    value={newLink.url}
-                                    onChange={(e) => setNewLink({ ...newLink, url: e.target.value })}
-                                    required
-                                />
-                            </div>
+                            {addingType === 'link' && (
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-900 dark:text-gray-300 mb-2">Destination URL</label>
+                                    <input
+                                        type="url"
+                                        className="w-full bg-white dark:bg-gray-900 px-4 py-3 text-gray-900 dark:text-white rounded-xl border border-gray-200 dark:border-gray-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all placeholder:text-gray-400"
+                                        placeholder="https://example.com"
+                                        value={newLink.url}
+                                        onChange={(e) => setNewLink({ ...newLink, url: e.target.value })}
+                                        required
+                                    />
+                                </div>
+                            )}
                         </div>
 
                         <div>
@@ -243,7 +333,7 @@ export default function LinksPage() {
                                 Cancel
                             </button>
                             <button type="submit" className="flex items-center justify-center gap-2 px-8 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-xl text-sm font-semibold transition-all shadow-sm shadow-primary-500/20 hover:-translate-y-0.5">
-                                Add Link
+                                {addingType === 'folder' ? 'Create Folder' : 'Add Link'}
                             </button>
                         </div>
                     </form>
@@ -251,7 +341,7 @@ export default function LinksPage() {
             )}
 
             {/* Links List */}
-            {links.length === 0 ? (
+            {currentLinks.length === 0 ? (
                 <div className="relative overflow-hidden bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-gray-200 dark:border-gray-800/50 rounded-3xl p-12 text-center shadow-sm group">
                     <div className="absolute left-1/2 -top-12 -translate-x-1/2 w-48 h-48 bg-primary-500/10 dark:bg-primary-500/5 rounded-full blur-3xl group-hover:bg-primary-500/20 transition-all duration-700 pointer-events-none" />
 
@@ -277,19 +367,35 @@ export default function LinksPage() {
                     onDragEnd={handleDragEnd}
                 >
                     <SortableContext
-                        items={links.map(link => link.id)}
+                        items={currentLinks.map(link => link.id)}
                         strategy={verticalListSortingStrategy}
                     >
                         <div className="space-y-4">
-                            {links.map((link) => (
+                            {currentLinks.map((link) => (
                                 <SortableLinkItem
                                     key={link.id}
                                     link={link}
                                     onDelete={handleDeleteLink}
                                     onToggle={handleToggleActive}
                                     onUpdate={(updatedLink) => {
-                                        setLinks(links.map(l => l.id === updatedLink.id ? updatedLink : l));
+                                        setLinks(prev => {
+                                            if (!selectedFolderId) {
+                                                return prev.map(l => l.id === updatedLink.id ? updatedLink : l);
+                                            } else {
+                                                return prev.map(p => {
+                                                    if (p.id === selectedFolderId) {
+                                                        return {
+                                                            ...p,
+                                                            children: p.children?.map(c => c.id === updatedLink.id ? updatedLink : c)
+                                                        };
+                                                    }
+                                                    return p;
+                                                });
+                                            }
+                                        });
                                     }}
+                                    onOpenFolder={() => setSelectedFolderId(link.id)}
+                                    onMoveOut={selectedFolderId ? () => handleMoveLink(link.id, null) : undefined}
                                 />
                             ))}
                         </div>
@@ -299,13 +405,61 @@ export default function LinksPage() {
                         {activeId ? (
                             <div className="w-full">
                                 <LinkItem
-                                    link={links.find(l => l.id === activeId)!}
+                                    link={currentLinks.find(l => l.id === activeId)!}
                                     isOverlay
                                 />
                             </div>
                         ) : null}
                     </DragOverlay>
                 </DndContext>
+            )}
+
+            {/* Available Links to Move into Folder */}
+            {selectedFolderId && (
+                <div className="mt-12 pt-8 border-t border-gray-100 dark:border-gray-800/50 animate-fade-in">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 flex items-center gap-2">
+                        <FolderOpen className="w-5 h-5 text-primary-500" />
+                        Add Existing Links
+                    </h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Select from your top-level links to move them into this folder.</p>
+
+                    {availableLinks.length === 0 ? (
+                        <div className="text-center py-8 bg-gray-50 dark:bg-gray-900/20 rounded-2xl border border-gray-200 border-dashed dark:border-gray-800/50">
+                            <p className="text-sm text-gray-500">No top-level links available to move.</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-3">
+                            {availableLinks.map(link => {
+                                const IconComp = getIconComponent(link.icon);
+                                const isCustom = link.icon?.startsWith('http') || false;
+                                return (
+                                    <div key={link.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white/60 dark:bg-gray-900/40 backdrop-blur-xl border border-gray-200 dark:border-gray-800/50 rounded-2xl gap-4 hover:border-primary-500/30 transition-colors">
+                                        <div className="flex items-center gap-4 min-w-0">
+                                            <div className="shrink-0 w-10 h-10 rounded-xl bg-gray-50 dark:bg-gray-800 flex items-center justify-center border border-gray-200 dark:border-gray-700/50">
+                                                {isCustom ? (
+                                                    /* eslint-disable-next-line @next/next/no-img-element */
+                                                    <img src={link.icon!} alt={link.title} className="w-6 h-6 object-cover rounded-md" />
+                                                ) : (
+                                                    <IconComp className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                                                )}
+                                            </div>
+                                            <div className="min-w-0 pr-2">
+                                                <p className="font-semibold text-gray-900 dark:text-white truncate">{link.title}</p>
+                                                {link.url && <p className="text-xs text-gray-500 truncate mt-0.5">{link.url}</p>}
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => handleMoveLink(link.id, selectedFolderId)}
+                                            className="w-full sm:w-auto px-4 py-2 text-sm font-semibold text-primary-600 bg-primary-50 hover:bg-primary-100 dark:text-primary-400 dark:bg-primary-900/20 dark:hover:bg-primary-900/40 rounded-xl transition-all whitespace-nowrap"
+                                        >
+                                            Move Here
+                                        </button>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
             )}
 
 
@@ -325,6 +479,8 @@ interface LinkItemProps {
     onDelete?: (id: string) => void;
     onToggle?: (id: string, isActive: boolean) => void;
     onStartEdit?: () => void;
+    onOpenFolder?: () => void;
+    onMoveOut?: () => void;
 }
 
 function LinkItem({
@@ -338,7 +494,9 @@ function LinkItem({
     onCancel,
     onDelete,
     onToggle,
-    onStartEdit
+    onStartEdit,
+    onOpenFolder,
+    onMoveOut
 }: LinkItemProps) {
     const IconComponent = getIconComponent(link.icon);
     const isCustomUrl = link.icon?.startsWith('http') || false;
@@ -365,31 +523,33 @@ function LinkItem({
             <div className="flex-1 min-w-0 w-full animate-fade-in">
                 {isEditing ? (
                     <div className="space-y-4 w-full">
-                        <div className="grid sm:grid-cols-2 gap-4">
+                        <div className={`grid ${link.isFolder ? 'grid-cols-1' : 'sm:grid-cols-2'} gap-4`}>
                             <div className="space-y-1.5">
                                 <label className="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider ml-1">
-                                    Link Title
+                                    {link.isFolder ? 'Folder Title' : 'Link Title'}
                                 </label>
                                 <input
                                     type="text"
                                     className="w-full bg-white dark:bg-gray-900 px-3 py-2.5 text-gray-900 dark:text-white rounded-xl border border-gray-200 dark:border-gray-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all text-sm"
-                                    placeholder="Title"
+                                    placeholder={link.isFolder ? "Folder Title" : "Title"}
                                     value={editData.title}
                                     onChange={(e) => onEditDataChange?.({ ...editData, title: e.target.value })}
                                 />
                             </div>
-                            <div className="space-y-1.5">
-                                <label className="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider ml-1">
-                                    Direct URL
-                                </label>
-                                <input
-                                    type="url"
-                                    className="w-full bg-white dark:bg-gray-900 px-3 py-2.5 text-gray-900 dark:text-white rounded-xl border border-gray-200 dark:border-gray-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all text-sm"
-                                    placeholder="URL"
-                                    value={editData.url}
-                                    onChange={(e) => onEditDataChange?.({ ...editData, url: e.target.value })}
-                                />
-                            </div>
+                            {!link.isFolder && (
+                                <div className="space-y-1.5">
+                                    <label className="text-[11px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider ml-1">
+                                        Direct URL
+                                    </label>
+                                    <input
+                                        type="url"
+                                        className="w-full bg-white dark:bg-gray-900 px-3 py-2.5 text-gray-900 dark:text-white rounded-xl border border-gray-200 dark:border-gray-700 focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10 outline-none transition-all text-sm"
+                                        placeholder="URL"
+                                        value={editData.url}
+                                        onChange={(e) => onEditDataChange?.({ ...editData, url: e.target.value })}
+                                    />
+                                </div>
+                            )}
                         </div>
 
                         <div className="space-y-1.5">
@@ -434,17 +594,38 @@ function LinkItem({
                             <p className="font-bold text-gray-900 dark:text-white truncate text-base sm:text-lg mb-0.5 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                                 {link.title}
                             </p>
-                            <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-primary-500 truncate hover:underline flex items-center gap-1.5 group/link w-fit">
-                                {link.url}
-                                <ExternalLink className="w-3 h-3 opacity-0 group-hover/link:opacity-100 transition-opacity" />
-                            </a>
+                            {!link.isFolder && link.url && (
+                                <a href={link.url} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-500 hover:text-primary-500 truncate hover:underline flex items-center gap-1.5 group/link w-fit">
+                                    {link.url}
+                                    <ExternalLink className="w-3 h-3 opacity-0 group-hover/link:opacity-100 transition-opacity" />
+                                </a>
+                            )}
+                            {link.isFolder && (
+                                <p className="text-sm text-gray-500 flex items-center gap-1.5">
+                                    Folder • {link.children?.length || 0} link(s)
+                                </p>
+                            )}
                         </div>
 
-                        {/* Stats Badge */}
-                        <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-gray-800/80 rounded-full text-xs font-bold text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700/50">
-                            <Eye className="w-3.5 h-3.5 text-primary-500" />
-                            <span>{link.clicks} clicks</span>
-                        </div>
+                        {/* Separate Open Folder Button / Stats */}
+                        {link.isFolder ? (
+                            <button
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onOpenFolder?.();
+                                }}
+                                className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-primary-600 hover:bg-primary-700 rounded-xl transition-all shadow-sm shadow-primary-500/20 hover:-translate-y-0.5"
+                            >
+                                <FolderOpen className="w-4 h-4" />
+                                Manage Folder
+                            </button>
+                        ) : (
+                            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 dark:bg-gray-800/80 rounded-full text-xs font-bold text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700/50">
+                                <Eye className="w-3.5 h-3.5 text-primary-500" />
+                                <span>{link.clicks} clicks</span>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
@@ -452,6 +633,18 @@ function LinkItem({
             {/* Actions */}
             {!isEditing && !isOverlay && (
                 <div className="flex items-center gap-1.5 sm:gap-2 self-end sm:self-auto shrink-0 w-full justify-end sm:w-auto mt-2 sm:mt-0 pt-3 sm:pt-0 border-t sm:border-0 border-gray-100 dark:border-gray-800/50">
+                    {link.isFolder && (
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onOpenFolder?.();
+                            }}
+                            className="sm:hidden flex-1 sm:flex-none flex justify-center items-center gap-2 px-3 py-2 text-sm font-semibold text-primary-600 bg-primary-50 hover:bg-primary-100 dark:text-primary-400 dark:bg-primary-900/20 dark:hover:bg-primary-900/40 rounded-xl transition-all shadow-sm"
+                        >
+                            Open Folder
+                        </button>
+                    )}
                     <button
                         type="button"
                         onClick={(e) => {
@@ -477,6 +670,19 @@ function LinkItem({
                     >
                         {link.isActive ? <Eye className="w-4 h-4 sm:w-5 sm:h-5" /> : <EyeOff className="w-4 h-4 sm:w-5 sm:h-5" />}
                     </button>
+                    {onMoveOut && (
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onMoveOut();
+                            }}
+                            className="p-2.5 text-gray-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/20 border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800/50 rounded-xl transition-all hover:border-orange-300 dark:hover:border-orange-500/30 shadow-sm"
+                            title="Remove from Folder"
+                        >
+                            <FolderMinus className="w-4 h-4 sm:w-5 sm:h-5" />
+                        </button>
+                    )}
                     <button
                         type="button"
                         onClick={(e) => {
@@ -499,11 +705,20 @@ interface SortableLinkItemProps {
     onDelete: (id: string) => void;
     onToggle: (id: string, isActive: boolean) => void;
     onUpdate: (link: Link) => void;
+    onOpenFolder?: () => void;
+    onMoveOut?: () => void;
 }
 
-function SortableLinkItem({ link, onDelete, onToggle, onUpdate }: SortableLinkItemProps) {
+function SortableLinkItem({
+    link,
+    onDelete,
+    onUpdate,
+    onToggle,
+    onOpenFolder,
+    onMoveOut
+}: SortableLinkItemProps) {
     const [isEditing, setIsEditing] = useState(false);
-    const [editData, setEditData] = useState({ title: link.title, url: link.url, icon: link.icon || '' });
+    const [editData, setEditData] = useState({ title: link.title, url: link.url || '', icon: link.icon || '' });
 
     const {
         attributes,
@@ -552,6 +767,8 @@ function SortableLinkItem({ link, onDelete, onToggle, onUpdate }: SortableLinkIt
                 onDelete={onDelete}
                 onToggle={onToggle}
                 onStartEdit={() => setIsEditing(true)}
+                onOpenFolder={onOpenFolder}
+                onMoveOut={onMoveOut}
             />
         </div>
     );

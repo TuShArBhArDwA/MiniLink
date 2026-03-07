@@ -1,6 +1,6 @@
 import { auth } from '@clerk/nextjs';
 import { prisma } from '@/lib/prisma';
-import { Eye, MousePointer, TrendingUp, BarChart3, ExternalLink } from 'lucide-react';
+import { Eye, MousePointer, TrendingUp, BarChart3, ExternalLink, Link2 } from 'lucide-react';
 import AnalyticsCharts from '@/components/dashboard/analytics-charts';
 import AnalyticsTimeFilter from '@/components/dashboard/analytics-time-filter';
 import { Metadata } from 'next';
@@ -40,16 +40,17 @@ export default async function AnalyticsPage({
         links,
         recentPageViews,
         recentClicks,
+        totalLinksCount,
     ] = await Promise.all([
         prisma.pageView.count({
             where: { userId: userId },
         }),
         prisma.link.aggregate({
-            where: { userId: userId },
+            where: { userId: userId, isFolder: false },
             _sum: { clicks: true },
         }),
         prisma.link.findMany({
-            where: { userId: userId },
+            where: { userId: userId, isFolder: false },
             orderBy: { clicks: 'desc' },
             select: { id: true, title: true, clicks: true, url: true },
         }),
@@ -63,11 +64,14 @@ export default async function AnalyticsPage({
         }),
         prisma.click.findMany({
             where: {
-                link: { userId: userId },
+                link: { userId: userId, isFolder: false },
                 ...(gteDate ? { createdAt: { gte: gteDate } } : {}),
             },
             select: { createdAt: true },
             orderBy: { createdAt: 'asc' },
+        }),
+        prisma.link.count({
+            where: { userId: userId, isFolder: false },
         }),
     ]);
 
@@ -128,25 +132,31 @@ export default async function AnalyticsPage({
         },
         {
             label: 'Total Clicks',
-            value: totalClicks._sum.clicks || 0,
+            value: totalClicks?._sum?.clicks || 0,
             icon: MousePointer,
             color: 'from-purple-500 to-pink-500'
         },
         {
             label: 'CTR',
             value: totalViews > 0
-                ? `${(((totalClicks._sum.clicks || 0) / totalViews) * 100).toFixed(1)}%`
+                ? `${(((totalClicks?._sum?.clicks || 0) / totalViews) * 100).toFixed(1)}%`
                 : '0%',
             icon: TrendingUp,
             color: 'from-green-500 to-emerald-500'
         },
         {
+            label: 'Total Links',
+            value: totalLinksCount,
+            icon: Link2,
+            color: 'from-orange-500 to-red-500'
+        },
+        {
             label: 'Avg. Clicks/Link',
-            value: links.length > 0
-                ? ((totalClicks._sum.clicks || 0) / links.length).toFixed(1)
+            value: totalLinksCount > 0
+                ? ((totalClicks?._sum?.clicks || 0) / totalLinksCount).toFixed(1)
                 : '0',
             icon: BarChart3,
-            color: 'from-orange-500 to-red-500'
+            color: 'from-yellow-500 to-amber-500'
         },
     ];
 
@@ -213,8 +223,8 @@ export default async function AnalyticsPage({
                 ) : (
                     <div className="space-y-3">
                         {links.map((link: { id: string; title: string; clicks: number; url: string | null }, index: number) => {
-                            const percentage = totalClicks._sum.clicks
-                                ? ((link.clicks / (totalClicks._sum.clicks || 1)) * 100).toFixed(1)
+                            const percentage = totalClicks?._sum?.clicks
+                                ? ((link.clicks / (totalClicks?._sum?.clicks || 1)) * 100).toFixed(1)
                                 : '0';
 
                             // Trophies for top 3

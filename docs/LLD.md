@@ -19,9 +19,11 @@
 | `id` | String (PK) | CUID |
 | `userId` | String (FK) | Owner ID |
 | `title` | String | Display text |
-| `url` | String | Destination URL |
-| `icon` | String? | Lucide icon name or custom image URL |
-| `order` | Int | Sorting order |
+| `url` | String? | Destination URL (Optional for folders) |
+| `isFolder` | Boolean | True if item is a folder |
+| `parentId` | String? | ID of parent folder (for nesting) |
+| `icon` | String? | Lucide name, custom URL, or Coding Brand icon |
+| `order` | Int | Sorting order (within folder context) |
 | `isActive` | Boolean | Visibility toggle |
 | `clicks` | Int | Click counter |
 
@@ -36,10 +38,10 @@ All routes are protected (require Clerk Auth).
 | Route | Method | Purpose |
 |-------|--------|---------|
 | `/api/links` | `GET` | Fetch all links for current user (Sorted by order) |
-| `/api/links` | `POST` | Create a new link (Auto-appends to end of list) |
-| `/api/links` | `PATCH` | Bulk reorder links (Receives array of `{id, order}`) |
-| `/api/links/[id]` | `PUT` | Update link details (Title, URL, Icon, Active status) |
-| `/api/links/[id]` | `DELETE` | Permanently remove a link |
+| `/api/links` | `POST` | Create a new link or folder |
+| `/api/links` | `PATCH` | Bulk reorder links (within current folder context) |
+| `/api/links/[id]` | `PUT` | Update details (handles parentId moves) |
+| `/api/links/[id]` | `DELETE` | Removes link/folder (Cascade delete for children) |
 
 ### User Profile
 | Route | Method | Purpose |
@@ -55,13 +57,15 @@ All routes are protected (require Clerk Auth).
 
 ### Dashboard (`/dashboard`)
 - **`LinksPage`**: Main management interface.
-  - `SortableLinkItem`: Individual card with drag handle, icon preview, and actions.
-  - `IconPicker`: Modal/Popover to select Lucide icons or upload custom ones.
-- **`AppearancePage`**: Theme selector with live mobile preview.
-- **`AnalyticsPage`**: Charts (Recharts) showing views/clicks over time.
+  - `SortableLinkItem`: Support for folder types and "Drill-down" navigation.
+  - `FolderView`: Context-aware view showing links inside a specific folder.
+  - `IconPicker`: Popover with Lucide, Custom Upload, and **Premium Coding Icons** (LeetCode, GFG, etc.).
+- **`AppearancePage`**: Theme selector with **High-Fidelity Preview** (renders actual public components).
+- **`AnalyticsPage`**: Charts (Recharts) excluding folder clicks for data purity.
 
 ### Public Profile (`/[username]`)
 - **`UserLink`**: Styled button component based on active theme.
+- **`ProfileLinks`**: Handles nested folder logic with accordion expansions.
 - **`ThemeWrapper`**: Injects theme-specific CSS variables (colors, fonts, backgrounds).
 - **`TestimonialsPreview`** *(admin-only)*: Auto-rotating testimonial card (5s interval, fade transition). Static data, no API calls. Includes dot indicators and CTA link to external testimonial wall.
 - **`CreatorBadge`** *(admin-only)*: Inline `BadgeCheck` icon with purple glow, rendered next to the admin's name.

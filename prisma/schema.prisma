@@ -32,10 +32,14 @@ model User {
 model Link {
   id        String   @id @default(cuid())
   title     String
-  url       String
+  url       String?
   icon      String?
   order     Int
   isActive  Boolean  @default(true)
+  isFolder  Boolean  @default(false)
+  parentId  String?
+  parent    Link?    @relation("FolderLinks", fields: [parentId], references: [id], onDelete: Cascade)
+  children  Link[]   @relation("FolderLinks")
   clicks    Int      @default(0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -33,7 +33,8 @@ graph TD
 - **Next.js 14 App Router**: Leveraging React Server Components for performance.
 - **Tailwind CSS**: Rapid, utility-first styling with custom themes.
 - **Framer Motion**: Smooth, high-fidelity animations (Laptop preview, Analytics graph).
-- **dnd-kit**: Accessible drag-and-drop for link reordering.
+- **dnd-kit**: Accessible drag-and-drop for link reordering (supports nesting).
+- **Custom Coding Icons**: Hand-curated SVG components for platforms like LeetCode, CodeChef, etc. for better branding.
 
 ### 2.2 Backend
 - **Next.js API Routes**: Serverless functions handling business logic.
@@ -51,9 +52,16 @@ graph TD
 2. Dashboard fetches links via `GET /api/links`.
 3. User adds/edits link -> `POST/PUT` request.
 4. Updates persist to PostgreSQL via Prisma.
-5. Reordering triggers `PATCH` to update `order` fields in bulk.
+5. Reordering triggers `PATCH` to update `order` fields in bulk within the current folder context.
 
-### 3.2 Public Profile Access
+### 3.2 Folder Management
+1. User creates a folder via the "Add Folder" toggle.
+2. Dashboard enters "Drill-down" mode when a folder is opened, focusing only on nested links.
+3. Users can move existing top-level links into folders directly from the dashboard.
+4. On the **Public Profile**, folders use smooth accordion expansions to reveal links, maintaining a compact layout.
+5. Empty folders are automatically hidden from the public view to maintain professional appearance.
+
+### 3.3 Public Profile Access
 1. Visitor navigates to `minilink.app/[username]`.
 2. Next.js fetches user profile & links (ISR/SSR).
 3. Page renders with user's selected theme.
@@ -71,6 +79,7 @@ graph TD
 - **Edge Caching**: Public profiles cached at the edge for sub-second load times.
 - **Database**: Connection pooling enabled for serverless scaling.
 - **Validation**: Zod schemas ensure data integrity on all API inputs.
+- **Analytics Integrity**: Folders are excluded from click tracking and total counts to ensure "Avg Clicks/Link" and CTR remain accurate.
 - **Admin-only Features**: Gated behind `NEXT_PUBLIC_ADMIN_USER_ID` environment variable; no elevated DB permissions needed.
 
 ---

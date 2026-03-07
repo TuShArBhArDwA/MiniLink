@@ -24,9 +24,10 @@
 
 | Feature | Description |
 |---------|-------------|
-| **Unlimited Links** | Add as many links as you want with drag-and-drop reordering. Now with visual icon previews. |
-| **Real-Time Analytics** | Track views and clicks live. Features a **dynamic glowing graph** that updates in real-time. |
-| **12+ Premium Themes** | Select from beautiful presets (Ocean, Neon, Monochrome, Earthy, etc.) or use the **Custom Theme Builder** to pick your exact gradient, text, and glassmorphism card colors natively. |
+| **Unlimited Links** | Add as many links as you want with drag-and-drop reordering. Now supports **Link Folders** to group and nest your links for a cleaner layout. |
+| **Coding Platform Icons** | Built-in high-quality SVG icons for **LeetCode, CodeChef, Codeforces, HackerRank, HackerEarth, and GFG**. |
+| **Real-Time Analytics** | Track views and clicks live. Features a **dynamic glowing graph**. Folders are excluded from click tracking to keep your conversion data pure. |
+| **12+ Premium Themes** | Select from beautiful presets or use the **Custom Theme Builder**. Includes an **Accurate Live Preview** that renders exactly like your public profile. |
 | **Smart Profile Generation** | Users get a beautiful waiting page with an urgent CTA if they visit an unclaimed `/username` URL. |
 | **Viral Branding Badge** | Built-in sleek floating footer on user profiles that directs their traffic back to your sign-up page. |
 | **Lightning Fast** | Optimized for speed with edge caching and instant transitions. |

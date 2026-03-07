@@ -12,8 +12,16 @@ export async function GET() {
         }
 
         const links = await prisma.link.findMany({
-            where: { userId },
+            where: {
+                userId,
+                parentId: null, // Only fetch top-level links
+            },
             orderBy: { order: 'asc' },
+            include: {
+                children: {
+                    orderBy: { order: 'asc' },
+                }
+            }
         });
 
         return NextResponse.json(links);
@@ -31,15 +39,22 @@ export async function POST(req: Request) {
         }
 
         const body = await req.json();
-        const { title, url, icon } = body;
+        const { title, url, icon, isFolder, parentId } = body;
 
-        if (!title || !url) {
-            return new NextResponse("Missing required fields", { status: 400 });
+        if (!title) {
+            return new NextResponse("Title is required", { status: 400 });
+        }
+
+        if (!isFolder && !url) {
+            return new NextResponse("URL is required for non-folder links", { status: 400 });
         }
 
         // Get last order to append to the end
         const lastLink = await prisma.link.findFirst({
-            where: { userId },
+            where: {
+                userId,
+                parentId: parentId || null,
+            },
             orderBy: { order: 'desc' },
         });
 
@@ -49,8 +64,10 @@ export async function POST(req: Request) {
             data: {
                 userId,
                 title,
-                url,
+                url: isFolder ? null : url,
                 icon,
+                isFolder: isFolder || false,
+                parentId: parentId || null,
                 order: newOrder,
                 isActive: true, // Default active
             },

@@ -42,13 +42,22 @@ export default function TestimonialsPreview() {
     return (
         <div className="mb-8 opacity-0 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
             {/* Section Header */}
-            <div className="flex items-center justify-center gap-2 mb-4">
-                <span
-                    className="text-sm font-bold tracking-widest uppercase"
-                    style={{ color: 'color-mix(in srgb, var(--theme-text) 50%, transparent)' }}
+            <div className="flex items-center justify-center mb-6">
+                <div
+                    className="flex items-center gap-2 px-3 py-1 rounded-full border shadow-sm backdrop-blur-md transition-all duration-300 hover:scale-105"
+                    style={{
+                        background: 'color-mix(in srgb, var(--theme-card) 30%, transparent)',
+                        borderColor: 'color-mix(in srgb, var(--theme-text) 10%, transparent)'
+                    }}
                 >
-                    ✦ What People Say
-                </span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary-500 animate-pulse" />
+                    <span
+                        className="text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase"
+                        style={{ color: 'color-mix(in srgb, var(--theme-text) 70%, transparent)' }}
+                    >
+                        Testimonials
+                    </span>
+                </div>
             </div>
 
             {/* Testimonial Card */}
@@ -115,16 +124,25 @@ export default function TestimonialsPreview() {
             </div>
 
             {/* CTA Link */}
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-center mt-6">
                 <a
                     href="https://minianonvouch.vercel.app/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-sm font-semibold transition-all duration-300 hover:gap-2.5 group"
-                    style={{ color: 'color-mix(in srgb, var(--theme-text) 60%, transparent)' }}
+                    className="inline-flex items-center gap-2 px-6 py-2 rounded-xl text-sm font-bold transition-all duration-500 hover:scale-105 active:scale-95 group"
+                    style={{
+                        background: 'color-mix(in srgb, var(--theme-card) 40%, transparent)',
+                        border: '1px solid color-mix(in srgb, var(--theme-text) 10%, transparent)',
+                        color: 'color-mix(in srgb, var(--theme-text) 80%, transparent)',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                    }}
                 >
-                    Read or leave a testimonial
-                    <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
+                    <span>Read all stories</span>
+                    <div
+                        className="p-1 rounded-lg transition-transform duration-300 group-hover:bg-white/10"
+                    >
+                        <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-300" />
+                    </div>
                 </a>
             </div>
         </div>

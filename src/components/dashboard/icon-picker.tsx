@@ -7,7 +7,9 @@ import {
     ShoppingBag,
     Link2,
     Upload,
-    X
+    X,
+    Laptop,
+    Share2
 } from 'lucide-react';
 
 import { CldUploadButton } from 'next-cloudinary';
@@ -24,7 +26,13 @@ import {
     TwitchIcon,
     KofiIcon,
     MediumIcon,
-    TopmateIcon
+    TopmateIcon,
+    LeetCodeIcon,
+    CodeChefIcon,
+    CodeforcesIcon,
+    HackerRankIcon,
+    HackerEarthIcon,
+    GeeksforGeeksIcon
 } from '@/components/icons';
 
 const PRESET_ICONS = [
@@ -44,6 +52,14 @@ const PRESET_ICONS = [
     { name: 'kofi', icon: KofiIcon, label: 'Ko-fi' },
     { name: 'email', icon: Mail, label: 'Email' },
     { name: 'shop', icon: ShoppingBag, label: 'Shop' },
+    { name: 'leetcode', icon: LeetCodeIcon, label: 'LeetCode' },
+    { name: 'codechef', icon: CodeChefIcon, label: 'CodeChef' },
+    { name: 'codeforces', icon: CodeforcesIcon, label: 'Codeforces' },
+    { name: 'hackerrank', icon: HackerRankIcon, label: 'HackerRank' },
+    { name: 'hackerearth', icon: HackerEarthIcon, label: 'HackerEarth' },
+    { name: 'gfg', icon: GeeksforGeeksIcon, label: 'GeeksforGeeks' },
+    { name: 'laptop', icon: Laptop, label: 'Laptop / Coding' },
+    { name: 'socials', icon: Share2, label: 'Socials' },
     { name: 'link', icon: Link2, label: 'Custom Link' },
 ];
 

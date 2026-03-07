@@ -3,56 +3,8 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import PromoFooter from '@/components/public-profile/promo-footer';
-import LinkButton from '@/components/link-button';
+import ProfileLinks from '@/components/public-profile/profile-links';
 import ProfileActions from '@/components/public-profile/profile-actions';
-
-// Icon map for preview (simplified version of the main one)
-import {
-    Link2,
-    Globe,
-    Mail,
-    MessageCircle,
-    Send,
-    Music2,
-    Twitch,
-    Coffee,
-    ShoppingBag
-} from 'lucide-react';
-import {
-    XIcon,
-    InstagramIcon,
-    YoutubeIcon,
-    LinkedinIcon,
-    GithubIcon,
-    FacebookIcon,
-    WhatsappIcon,
-    TelegramIcon,
-    SpotifyIcon,
-    TwitchIcon,
-    KofiIcon,
-    MediumIcon,
-    TopmateIcon
-} from '@/components/icons';
-
-const iconMap: Record<string, any> = {
-    website: Globe,
-    instagram: InstagramIcon,
-    youtube: YoutubeIcon,
-    twitter: XIcon,
-    github: GithubIcon,
-    linkedin: LinkedinIcon,
-    facebook: FacebookIcon,
-    medium: MediumIcon,
-    topmate: TopmateIcon,
-    whatsapp: WhatsappIcon,
-    telegram: TelegramIcon,
-    spotify: SpotifyIcon,
-    twitch: TwitchIcon,
-    kofi: KofiIcon,
-    email: Mail,
-    shop: ShoppingBag,
-    link: Link2,
-};
 
 interface ProfilePreviewProps {
     data: {
@@ -152,36 +104,9 @@ export default function ProfilePreview({ data, device = 'mobile' }: ProfilePrevi
 
                 {/* Links */}
                 <div className="space-y-3 flex-1 w-full">
-                    {data.links?.map((link) => {
-                        const IconComponent = (link.icon && iconMap[link.icon]) ? iconMap[link.icon] : Link2;
-                        const isCustomIcon = link.icon?.startsWith('http');
-
-                        return (
-                            <LinkButton
-                                key={link.id}
-                                link={{
-                                    id: link.id,
-                                    url: link.url,
-                                    title: link.title
-                                }}
-                                icon={
-                                    isCustomIcon && link.icon ? (
-                                        <Image
-                                            src={link.icon}
-                                            alt=""
-                                            width={20}
-                                            height={20}
-                                            className="w-5 h-5 object-contain"
-                                        />
-                                    ) : (
-                                        <IconComponent className="w-5 h-5" />
-                                    )
-                                }
-                            />
-                        );
-                    })}
-
-                    {(!data.links || data.links.length === 0) && (
+                    {data.links && data.links.length > 0 ? (
+                        <ProfileLinks links={data.links} />
+                    ) : (
                         <div className="text-center p-4 opacity-50 text-sm" style={{ color: 'var(--theme-text)' }}>
                             No links added yet
                         </div>

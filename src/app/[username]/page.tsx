@@ -48,8 +48,17 @@ export default async function ProfilePage({ params }: Props) {
         where: { username: params.username },
         include: {
             links: {
-                where: { isActive: true },
+                where: {
+                    isActive: true,
+                    parentId: null
+                },
                 orderBy: { order: 'asc' },
+                include: {
+                    children: {
+                        where: { isActive: true },
+                        orderBy: { order: 'asc' }
+                    }
+                }
             },
         },
     });
@@ -139,13 +148,15 @@ export default async function ProfilePage({ params }: Props) {
 
                 {/* Links */}
                 {isAdmin && (
-                    <div className="flex items-center justify-center gap-2 mb-4">
+                    <div className="mt-16 mb-10 flex items-center gap-4 px-2 animate-fade-in" style={{ animationDelay: '400ms' }}>
+                        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[var(--theme-text)] to-transparent opacity-20" />
                         <span
-                            className="text-sm font-bold tracking-widest uppercase"
-                            style={{ color: 'color-mix(in srgb, var(--theme-text) 50%, transparent)' }}
+                            className="text-[10px] sm:text-xs font-bold tracking-[0.3em] uppercase whitespace-nowrap"
+                            style={{ color: 'color-mix(in srgb, var(--theme-text) 40%, transparent)' }}
                         >
-                            ✦ My Links
+                            Links & Collections
                         </span>
+                        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-[var(--theme-text)] to-transparent opacity-20" />
                     </div>
                 )}
                 <ProfileLinks links={user.links} />
