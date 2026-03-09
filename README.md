@@ -39,9 +39,7 @@
 
 ## MiniLink Demo
 
-
-
-https://github.com/user-attachments/assets/35dbd0f1-e2dc-475d-a2c7-b05a51d77500
+[Click Here to view demo](https://youtu.be/BVS7qoXoRCs?si=inbXyVGfRnwLge0V)
 
 
 
